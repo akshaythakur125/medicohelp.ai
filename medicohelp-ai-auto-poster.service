@@ -1,0 +1,17 @@
+[Unit]
+Description=MedicoHelp AI Auto Poster
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/medicohelp-ai-auto-poster
+EnvironmentFile=/opt/medicohelp-ai-auto-poster/.env
+ExecStart=/opt/medicohelp-ai-auto-poster/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+Restart=always
+RestartSec=5
+User=medicohelp
+Group=medicohelp
+
+[Install]
+WantedBy=multi-user.target

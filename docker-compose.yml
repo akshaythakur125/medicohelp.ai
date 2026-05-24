@@ -1,0 +1,12 @@
+services:
+  medicohelp-ai-auto-poster:
+    build: .
+    container_name: medicohelp-ai-auto-poster
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./generated:/app/generated
+      - ./logs:/app/logs
