@@ -257,4 +257,153 @@ TOPICS = [
         "high_yield_takeaway": "5 W's: Wind (Day 1), Water (Day 3-5), Wound (Day 5), Walking/DVT (Day 5-7), Wonder drugs. Secondary haemorrhage at 7-10 days. Wound dehiscence: serous pink fluid at Day 7.",
         "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Anesthesiology", "#PYQ"],
     },
+    # ── Mnemonic ─────────────────────────────────────────────────────────────
+    {
+        "title": "ASA Physical Status Classification — Mnemonic",
+        "subject": Subject.anesthesiology,
+        "content_format": ContentFormat.mnemonic,
+        "poster_text": "ASA Physical Status: I (healthy) → VI (brain dead). Mnemonic: I Never Smoked, Vaping Every Evening.",
+        "caption": (
+            "ASA Physical Status Classification — Mnemonic\n\n"
+            "ASA I: Normal healthy patient (no disease, non-smoker, no meds)\n"
+            "ASA II: Mild systemic disease (controlled HTN, DM, asthma, obesity, smoker)\n"
+            "ASA III: Severe systemic disease (COPD on treatment, CAD, CKD, poorly controlled DM)\n"
+            "ASA IV: Severe systemic disease — constant threat to life (recent MI, sepsis, advanced organ failure)\n"
+            "ASA V: Moribund — not expected to survive without surgery (ruptured AAA, major trauma)\n"
+            "ASA VI: Brain-dead organ donor\n"
+            "E: Emergency suffix — added to any class when surgery is emergency (e.g., ASA IIIE)\n\n"
+            "Mnemonic: \"I Never Smoked, Vaping Every Evening\"\n"
+            "I — I = 1 (Normal healthy)\n"
+            "Never — II = 2 (Mild disease)\n"
+            "Smoked — III = 3 (Severe disease)\n"
+            "Vaping — IV = 4 (Constant threat)\n"
+            "Every — V = 5 (Not expected to survive)\n"
+            "Evening — E (Emergency)\n\n"
+            "Key exam points:\n"
+            "• ASA I: No physiological/psychological disturbance; e.g., healthy fit patient for hernia repair\n"
+            "• ASA II: Smoker, mild COPD, controlled hypertension, pregnancy (all are ASA II)\n"
+            "• ASA III: Patient with a pacemaker, chest pain on walking, severe COPD\n"
+            "• ASA IV: Patient on ICU with organ failure needing emergency surgery\n"
+            "• Emergency (E): Any class can have 'E' suffix — ALWAYS ask: is this elective or emergency?\n\n"
+            "⚠️ Exam Trap: Pregnancy is NOT a disease — it is ASA II (physiological state). "
+            "Morbid obesity alone (BMI > 40) = ASA III."
+        ),
+        "high_yield_takeaway": "ASA I: healthy → VI: brain dead. E = emergency suffix. Pregnancy = ASA II (not I). Morbid obesity = ASA III. Mnemonic: I Never Smoked, Vaping Every Evening.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Anesthesiology", "#Mnemonic", "#ASA"],
+    },
+    # ── Flashcard ─────────────────────────────────────────────────────────────
+    {
+        "title": "IV Induction Agents — Propofol vs Thiopentone vs Ketamine vs Etomidate",
+        "subject": Subject.anesthesiology,
+        "content_format": ContentFormat.flashcard,
+        "poster_text": "IV induction agents: Propofol (smooth) | Thiopentone (barbiturate) | Ketamine (hypotensive-safe) | Etomidate (haemodynamically stable)",
+        "caption": (
+            "Intravenous Induction Agents — Flashcard\n\n"
+            "PROPOFOL:\n"
+            "• Class: Alkylphenol; most widely used induction agent\n"
+            "• Dose: 1.5–2.5 mg/kg IV\n"
+            "• Onset: 30–45 seconds; Duration: 4–8 min\n"
+            "• Key features: Anti-emetic, rapid smooth induction, good recovery\n"
+            "• Side effects: Hypotension (decreased SVR, caution in unstable patients); pain on injection\n"
+            "• Uses: Day-case surgery, TIVA, ICU sedation\n\n"
+            "THIOPENTONE (Thiopental):\n"
+            "• Class: Barbiturate — now less commonly used\n"
+            "• Dose: 3–5 mg/kg IV\n"
+            "• Key features: Decreases CMRO2, decreases ICP (neuroprotective)\n"
+            "• Side effects: Hypotension, respiratory depression, laryngospasm; prolonged sedation in obese\n"
+            "• CI: Porphyria (ABSOLUTE), status asthmaticus\n\n"
+            "KETAMINE:\n"
+            "• Class: Dissociative anaesthetic (NMDA antagonist)\n"
+            "• Dose: 1–2 mg/kg IV; 4–5 mg/kg IM\n"
+            "• Key features: Maintains BP (sympathomimetic — ↑HR, ↑BP) — NOT hypotensive\n"
+            "  Bronchodilator — ideal for asthmatics; analgesic at sub-anaesthetic doses\n"
+            "• Side effects: Emergence delirium (hallucinations); increased ICP; increased secretions\n"
+            "• Uses: Haemodynamically unstable patients, asthmatics, battlefield anaesthesia\n\n"
+            "ETOMIDATE:\n"
+            "• Class: Imidazole derivative\n"
+            "• Dose: 0.2–0.3 mg/kg IV\n"
+            "• Key features: Haemodynamically most stable (minimal CV effects); rapid onset\n"
+            "• Side effects: Adrenal suppression (even single dose — blocks 11β-hydroxylase); myoclonus; pain on injection\n"
+            "• Uses: RSI in haemodynamically unstable patients (cardiac tamponade, trauma, septic shock)\n\n"
+            "⚠️ Exam Trap: Ketamine = safe in hypotension, asthma. Etomidate = most haemodynamically stable but causes adrenal suppression. "
+            "Propofol = causes hypotension (↓SVR). Thiopentone = CI in porphyria."
+        ),
+        "question": "Compare propofol, thiopentone, ketamine, and etomidate as IV induction agents — which is best for haemodynamically unstable patients?",
+        "correct_answer": "Ketamine (↑BP, bronchodilator) or etomidate (minimal CV effects, but adrenal suppression) for unstable patients. Not propofol (↓SVR).",
+        "high_yield_takeaway": "Ketamine: safe in shock/asthma (↑BP, bronchodilator). Etomidate: haemodynamically stable but adrenal suppression. Propofol: ↓BP. Thiopentone: CI porphyria.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Anesthesiology", "#Flashcard", "#IVInduction"],
+    },
+    # ── True/False ────────────────────────────────────────────────────────────
+    {
+        "title": "Propofol in Haemodynamically Unstable Patients",
+        "subject": Subject.anesthesiology,
+        "content_format": ContentFormat.true_false,
+        "poster_text": "Propofol causes more hypotension than ketamine during induction — avoids propofol in shocked patients",
+        "caption": (
+            "True or False: Propofol is the induction agent of choice for haemodynamically unstable patients.\n\n"
+            "ANSWER: FALSE\n\n"
+            "Propofol causes hypotension through:\n"
+            "• Decreased systemic vascular resistance (SVR) — venodilation + arteriolar dilation\n"
+            "• Mild myocardial depression\n"
+            "• Blunted baroreceptor response\n\n"
+            "This makes Propofol relatively contraindicated in:\n"
+            "• Hypovolaemic shock (trauma, haemorrhage)\n"
+            "• Cardiogenic shock\n"
+            "• Septic shock (though may be used with vasopressors)\n"
+            "• Severe aortic stenosis (fixed cardiac output — dependent on SVR)\n"
+            "• Cardiac tamponade\n\n"
+            "Preferred agents in haemodynamically unstable patients:\n"
+            "1. KETAMINE: Sympathomimetic — increases HR, BP, CO via catecholamine release; "
+            "agent of choice for trauma, hypotension, cardiac tamponade\n"
+            "2. ETOMIDATE: Most haemodynamically stable induction agent; minimal CV effects; "
+            "ideal for RSI in unstable patients but causes adrenal suppression (even single dose)\n\n"
+            "When is propofol acceptable in unstable patients?\n"
+            "• Reduce dose (1 mg/kg instead of 2 mg/kg)\n"
+            "• Give slowly, with vasopressors ready\n"
+            "• With IV fluids pre-loading\n\n"
+            "⚠️ Exam Trap: For 'haemodynamically unstable' or 'hypotensive' patient needing induction → "
+            "choose Ketamine or Etomidate. Never choose Propofol or Thiopentone."
+        ),
+        "question": "Propofol is the induction agent of choice for haemodynamically unstable patients.",
+        "correct_answer": "FALSE",
+        "explanation": "Propofol causes hypotension (decreased SVR, mild myocardial depression). Ketamine (sympathomimetic, maintains BP) or etomidate (minimal CV effects, but adrenal suppression) are preferred for haemodynamically unstable patients.",
+        "high_yield_takeaway": "Unstable patient → Ketamine (↑BP) or Etomidate (stable CV). NOT propofol (↓BP).",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Anesthesiology", "#TrueFalse", "#Propofol"],
+    },
+    # ── One-liner Recall ──────────────────────────────────────────────────────
+    {
+        "title": "Succinylcholine Contraindication — One-liner Recall",
+        "subject": Subject.anesthesiology,
+        "content_format": ContentFormat.one_liner_recall,
+        "poster_text": "Succinylcholine is contraindicated in burns, crush injury, denervation → lethal hyperkalaemia risk",
+        "caption": (
+            "One-liner Recall: Succinylcholine Contraindications\n\n"
+            "Fill in the blank:\n\n"
+            "\"Succinylcholine is contraindicated in burn patients after ___ hours, due to risk of\n"
+            "life-threatening ___\"\n\n"
+            "Answer: 24 hours; hyperkalaemic cardiac arrest\n\n"
+            "Full explanation:\n"
+            "Succinylcholine (suxamethonium) is a depolarising neuromuscular blocker used for RSI.\n"
+            "It causes sustained muscle contraction (fasciculations) before paralysis by persistently\n"
+            "activating nicotinic ACh receptors.\n\n"
+            "Contraindications to succinylcholine:\n"
+            "1. Burns > 24 hours after injury: Upregulation of extra-junctional ACh receptors →\n"
+            "   massive K+ efflux → hyperkalaemic cardiac arrest\n"
+            "2. Crush injuries > 24 hours\n"
+            "3. Denervation injuries: Spinal cord injury, nerve transection, prolonged immobility\n"
+            "4. Stroke with hemiplegia\n"
+            "5. Muscular dystrophy (Duchenne): Risk of rhabdomyolysis + hyperkalaemia\n"
+            "6. Malignant hyperthermia susceptibility\n"
+            "7. Pseudocholinesterase deficiency → prolonged paralysis ('scoline apnoea')\n"
+            "8. Penetrating eye injury: Transient increase in IOP\n\n"
+            "Safe alternative for RSI when succinylcholine is contraindicated:\n"
+            "• Rocuronium 1.2 mg/kg (high dose) — reversed with sugammadex\n\n"
+            "⚠️ Exam Trap: Burns < 24 hours = succinylcholine is safe. Burns > 24 hours = ABSOLUTE CONTRAINDICATION. "
+            "Suxamethonium is avoided > 24 hrs post-burns because of hyperkalaemia risk."
+        ),
+        "question": "Succinylcholine is contraindicated in burn patients after ___ hours, due to risk of ___",
+        "correct_answer": "24 hours; hyperkalaemic cardiac arrest",
+        "high_yield_takeaway": "Suxamethonium CI: >24 hrs post-burns/crush → upregulation of extrajunctional ACh receptors → hyperkalaemic arrest. Rocuronium + sugammadex is the safe alternative.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Anesthesiology", "#OneLiner", "#Succinylcholine"],
+    },
 ]

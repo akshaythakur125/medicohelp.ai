@@ -255,4 +255,134 @@ TOPICS = [
         "high_yield_takeaway": "Previous attempt = #1 risk factor. Males complete, females attempt. Lithium reduces bipolar suicide; clozapine reduces schizophrenia suicide. SAD PERSONS mnemonic.",
         "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Psychiatry", "#PYQ"],
     },
+    # ── Mnemonic ─────────────────────────────────────────────────────────────
+    {
+        "title": "DIG FAST — Mania Diagnostic Criteria Mnemonic",
+        "subject": Subject.psychiatry,
+        "content_format": ContentFormat.mnemonic,
+        "poster_text": "DIG FAST: Mnemonic for DSM-5 manic episode criteria — high-yield for NEET-PG!",
+        "caption": (
+            "DIG FAST — Mania Mnemonic\n\n"
+            "DSM-5 requires ≥ 3 of these symptoms (≥ 4 if mood is only irritable) during a distinct period\n"
+            "of elevated/expansive/irritable mood + increased goal-directed activity — lasting ≥ 7 days\n"
+            "(or any duration if hospitalised):\n\n"
+            "D — Distractibility (attention easily diverted by irrelevant stimuli)\n"
+            "I — Indiscretion/Impulsivity (risky behaviour — spending sprees, sexual indiscretion, gambling)\n"
+            "G — Grandiosity (inflated self-esteem, believes they have special powers/mission)\n"
+            "F — Flight of ideas (rapid shifting from one topic to another; may be pressured internally)\n"
+            "A — Activity increase (increased goal-directed activity: social, work, sexual)\n"
+            "S — Sleep deficit (reduced need for sleep — not insomnia; feels rested after 2–3 hours)\n"
+            "T — Talkativeness (pressured speech, loud, rapid, difficult to interrupt)\n\n"
+            "Hypomania same criteria but ≥ 4 DAYS, no marked impairment, no psychosis, no hospitalisation.\n\n"
+            "Bipolar I: Full manic episodes (most common exam scenario)\n"
+            "Bipolar II: Hypomania + major depressive episodes (never full mania)\n\n"
+            "First-line acute treatment: Antipsychotic (haloperidol/olanzapine) ± benzodiazepine\n"
+            "First-line prophylaxis: Lithium (gold standard; 0.8–1.2 mEq/L therapeutic range)\n\n"
+            "⚠️ Exam Trap: SSRI monotherapy in bipolar → risk of manic switch. Always use with mood stabiliser."
+        ),
+        "high_yield_takeaway": "DIG FAST = Mania criteria. Hypomania = shorter (≥4 days), less severe. Lithium = gold standard prophylaxis. SSRI alone → manic switch.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Psychiatry", "#Mnemonic", "#Mania"],
+    },
+    # ── Flashcard ─────────────────────────────────────────────────────────────
+    {
+        "title": "Generalized Anxiety Disorder — DSM-5 Criteria and Treatment",
+        "subject": Subject.psychiatry,
+        "content_format": ContentFormat.flashcard,
+        "poster_text": "GAD = excessive anxiety/worry ≥ 6 months + 3 of 6 associated symptoms. First-line Rx = SSRI/SNRI.",
+        "caption": (
+            "Generalized Anxiety Disorder (GAD) — Flashcard\n\n"
+            "DSM-5 DIAGNOSTIC CRITERIA:\n"
+            "A. Excessive anxiety and worry (apprehensive expectation) occurring more days than not\n"
+            "   for ≥ 6 months, about multiple events or activities\n"
+            "B. Difficulty controlling the worry\n"
+            "C. Associated with ≥ 3 of the following 6 symptoms (with some present for more days than not):\n"
+            "   1. Restlessness or feeling \"on edge\"\n"
+            "   2. Easily fatigued\n"
+            "   3. Difficulty concentrating or mind going blank\n"
+            "   4. Irritability\n"
+            "   5. Muscle tension\n"
+            "   6. Sleep disturbance (difficulty falling/staying asleep, restless unsatisfying sleep)\n"
+            "D. Causes clinically significant distress or functional impairment\n"
+            "E. Not due to substance/medical condition and not better explained by another disorder\n\n"
+            "PREVALENCE: Lifetime 5–7%; F > M; onset often in 20s–30s\n\n"
+            "TREATMENT:\n"
+            "First-line pharmacotherapy: SSRI (escitalopram, sertraline, paroxetine) or SNRI (venlafaxine, duloxetine)\n"
+            "• Takes 2–4 weeks for onset; 8–12 weeks for full effect\n"
+            "• Start low, go slow (to minimise initial anxiety/jitteriness)\n\n"
+            "First-line psychotherapy: CBT (cognitive behavioural therapy) — gold standard non-pharmacological treatment\n\n"
+            "Benzodiazepines: Used only short-term or for acute exacerbations (tolerance, dependence, withdrawal risks)\n"
+            "Buspirone: Alternative; no dependence risk but less effective; takes 2 weeks to work\n\n"
+            "⚠️ Exam Trap: Benzodiazepines are NOT first-line for GAD — SSRIs/SNRIs are first-line. "
+            "Benzos are used as adjuncts for short-term relief only."
+        ),
+        "question": "What are the DSM-5 criteria for GAD and what is the first-line pharmacotherapy?",
+        "correct_answer": "GAD: ≥6 months excessive worry + ≥3 of 6 symptoms. First-line treatment: SSRI/SNRI — NOT benzodiazepines.",
+        "high_yield_takeaway": "GAD: 6 months worry + 3/6 symptoms. First-line = SSRI/SNRI. Benzos = short-term adjunct only.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Psychiatry", "#Flashcard", "#GAD"],
+    },
+    # ── True/False ────────────────────────────────────────────────────────────
+    {
+        "title": "Benzodiazepines as First-Line Treatment for GAD",
+        "subject": Subject.psychiatry,
+        "content_format": ContentFormat.true_false,
+        "poster_text": "Benzodiazepines are NOT first-line for GAD — SSRIs/SNRIs are first-line pharmacotherapy.",
+        "caption": (
+            "True or False: Benzodiazepines are recommended as first-line pharmacotherapy for\n"
+            "Generalized Anxiety Disorder (GAD).\n\n"
+            "ANSWER: FALSE\n\n"
+            "First-line pharmacotherapy for GAD is an SSRI (escitalopram, sertraline, paroxetine)\n"
+            "or SNRI (venlafaxine, duloxetine). These are preferred because:\n"
+            "• Treat the underlying anxiety without tolerance or dependence\n"
+            "• No withdrawal syndrome (vs benzodiazepines)\n"
+            "• Also effective for comorbid depression (common with GAD)\n\n"
+            "Benzodiazepines (alprazolam, lorazepam, clonazepam) are:\n"
+            "• Used only as short-term adjuncts (2–4 weeks) for acute symptom relief\n"
+            "• NOT recommended as monotherapy or long-term treatment\n"
+            "• Problems: Tolerance, dependence, withdrawal, cognitive impairment, fall risk in elderly\n\n"
+            "CBT (Cognitive Behavioural Therapy) is the gold-standard non-pharmacological treatment\n"
+            "and is as effective as medication for mild–moderate GAD.\n\n"
+            "⚠️ Exam Trap: The exam always tests this — always choose SSRI/SNRI as first-line for GAD, "
+            "not benzodiazepines. Benzos are first-line only for acute panic attacks and status epilepticus."
+        ),
+        "question": "Benzodiazepines are recommended as first-line pharmacotherapy for Generalized Anxiety Disorder.",
+        "correct_answer": "FALSE",
+        "explanation": "First-line pharmacotherapy for GAD is SSRI/SNRI. Benzodiazepines are reserved for short-term adjunctive use only due to tolerance, dependence, and withdrawal risks. CBT is the gold-standard non-pharmacological treatment.",
+        "high_yield_takeaway": "GAD first-line: SSRI/SNRI, NOT benzodiazepines. CBT = gold-standard psychotherapy.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Psychiatry", "#TrueFalse", "#GAD"],
+    },
+    # ── One-liner Recall ──────────────────────────────────────────────────────
+    {
+        "title": "First-Line Treatment for Moderate MDD — One-liner Recall",
+        "subject": Subject.psychiatry,
+        "content_format": ContentFormat.one_liner_recall,
+        "poster_text": "First-line pharmacotherapy for moderate-to-severe MDD: SSRI (fluoxetine/sertraline/escitalopram)",
+        "caption": (
+            "One-liner Recall: MDD First-Line Treatment\n\n"
+            "Fill in the blank:\n\n"
+            "\"The first-line pharmacological treatment for moderate-to-severe major depressive disorder\n"
+            "is a class of drugs called ___\"\n\n"
+            "Answer: SSRIs (Selective Serotonin Reuptake Inhibitors)\n\n"
+            "Examples: Fluoxetine, Sertraline, Escitalopram, Paroxetine, Citalopram\n\n"
+            "Why SSRIs are first-line:\n"
+            "• Best efficacy-to-tolerability ratio among antidepressants\n"
+            "• Safe in overdose (unlike TCAs — narrow therapeutic index, cardiotoxic)\n"
+            "• Once-daily dosing\n"
+            "• Treat comorbid anxiety disorders effectively\n\n"
+            "Treatment duration:\n"
+            "• 4–8 weeks to therapeutic response\n"
+            "• Continue same SSRI for 6–12 months after remission (prevent relapse)\n"
+            "• 2+ episodes → consider maintenance therapy for ≥ 2 years\n\n"
+            "Second-line options:\n"
+            "• SNRI (venlafaxine, duloxetine) — if SSRI fails or for pain comorbidity\n"
+            "• Mirtazapine — good for insomnia + weight loss\n"
+            "• Bupropion — no sexual side effects; also helps smoking cessation\n"
+            "• TCA (amitriptyline, nortriptyline) — effective but dangerous in overdose\n\n"
+            "⚠️ Exam Trap: For MDD with psychotic features → antidepressant + antipsychotic combination "
+            "or ECT. First-line for moderate-severe MDD = SSRI alone (unless psychotic)."
+        ),
+        "question": "The first-line pharmacological treatment for moderate-to-severe major depressive disorder is a class of drugs called ___",
+        "correct_answer": "SSRIs (Selective Serotonin Reuptake Inhibitors)",
+        "high_yield_takeaway": "Moderate-severe MDD → SSRI first-line (fluoxetine, sertraline). 4-8 weeks for response. TCA = second-line (dangerous in overdose). MDD + psychosis → add antipsychotic or ECT.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Psychiatry", "#OneLiner", "#MDD"],
+    },
 ]

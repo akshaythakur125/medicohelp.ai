@@ -256,4 +256,150 @@ TOPICS = [
         "high_yield_takeaway": "BHL #1 = sarcoidosis. Popcorn calcification = hamartoma. Massive effusion + no shift = mesothelioma. Air bronchogram = consolidation (not collapse).",
         "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Radiology", "#PYQ"],
     },
+    # ── Mnemonic ─────────────────────────────────────────────────────────────
+    {
+        "title": "Mediastinal Masses — 4T / 3B / 3N Mnemonic",
+        "subject": Subject.radiology,
+        "content_format": ContentFormat.mnemonic,
+        "poster_text": "Mediastinal compartments and their masses: 4T (anterior) / 3B (middle) / 3N (posterior)",
+        "caption": (
+            "Mediastinal Masses — Compartment Mnemonics\n\n"
+            "Anterior Mediastinum (prevascular) — 4 T's:\n"
+            "T1 — Thymoma (most common anterior mediastinal mass in adults)\n"
+            "T2 — Teratoma / Germ cell tumours (seminoma, non-seminoma)\n"
+            "T3 — Thyroid mass (retrosternal goitre: most common cause of superior mediastinal mass)\n"
+            "T4 — Terrible lymphoma (Hodgkin's > NHL; anterior mediastinal nodes)\n\n"
+            "Middle Mediastinum (visceral) — 3 B's:\n"
+            "B1 — Bronchogenic cyst (most common mediastinal cyst; near carina)\n"
+            "B2 — Bronchogenic carcinoma (central tumours, hilar nodes)\n"
+            "B3 — Broncho-oesophageal cysts (rare; near oesophagus)\n\n"
+            "Posterior Mediastinum (paravertebral) — 3 N's:\n"
+            "N1 — Neurogenic tumours (most common posterior mediastinal mass)\n"
+            "  — Schwannoma, neurofibroma, ganglioneuroma, neuroblastoma\n"
+            "N2 — Neurenteric cysts (associated with vertebral anomalies)\n"
+            "N3 — Notochord remnants (extramedullary hematopoiesis)\n\n"
+            "Key radiological clue:\n"
+            "• Lateral CXR: Anterior = behind sternum; Middle = around hilum; Posterior = in front of spine\n"
+            "• CT is the investigation of choice for assessing mediastinal masses\n"
+            "• Calcification: Seen in teratoma (teeth/bone), thymoma, goitre, lymph nodes (TB/silicosis)\n\n"
+            "⚠️ Exam Trap: Most common anterior mediastinal mass in adults = Thymoma. "
+            "Most common posterior = Neurogenic tumour. Most common overall = Thymoma."
+        ),
+        "high_yield_takeaway": "Anterior: 4T (Thymoma, Teratoma, Thyroid, Terrible lymphoma). Middle: 3B (Bronchogenic cyst/carcinoma, Broncho-oesophageal). Posterior: 3N (Neurogenic, Neurenteric, Notochord).",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Radiology", "#Mnemonic", "#Mediastinum"],
+    },
+    # ── Flashcard ─────────────────────────────────────────────────────────────
+    {
+        "title": "Imaging in Acute Stroke — CT vs MRI-DWI Approach",
+        "subject": Subject.radiology,
+        "content_format": ContentFormat.flashcard,
+        "poster_text": "Acute stroke imaging: CT first (exclude haemorrhage) → MRI-DWI for ischaemic stroke confirmation",
+        "caption": (
+            "Imaging in Acute Stroke — Flashcard\n\n"
+            "GOAL: Differentiate ischaemic vs haemorrhagic stroke; assess for thrombolysis candidacy.\n\n"
+            "NON-CONTRAST CT HEAD (First-line, within 20 min of arrival):\n"
+            "• Purpose: EXCLUDE intracranial haemorrhage BEFORE thrombolysis\n"
+            "• Hyperdense vessel sign: Clot in MCA → hyperdense MCA sign (early ischaemic sign)\n"
+            "• Loss of grey-white differentiation: Insular ribbon sign, blurring of basal ganglia\n"
+            "• ASPECTS score: 10-point scoring system for MCA territory; score ≤ 7 = poor outcome\n"
+            "• Sensitivity for acute ischaemia: Low in first 6 hours (about 50–60%)\n\n"
+            "CT ANGIOGRAPHY (CTA):\n"
+            "• Identifies vessel occlusion (carotid, MCA, basilar)\n"
+            "• Collateral assessment\n"
+            "• Performed if thrombectomy is being considered\n\n"
+            "CT PERFUSION (CTP):\n"
+            "• Ischaemic core (irreversible) vs penumbra (salvageable — target for reperfusion)\n"
+            "• Mismatch ratio: core < 70 mL, mismatch > 1.2, penumbra > 15 mL\n\n"
+            "MRI BRAIN WITH DWI:\n"
+            "• DWI: Positive within MINUTES of ischaemic onset (earliest and most sensitive)\n"
+            "• ADC: Restricted diffusion → dark on ADC map\n"
+            "• MRI shows ischaemia within 30–60 min vs CT which may be normal for 6–12 hours\n"
+            "• T2/FLAIR: Positive at 6–12 hours (DWI-FLAIR mismatch helps time the stroke)\n"
+            "• GRE/SWI: Detects haemorrhage (blooming artefact) — alternative if CT not done\n\n"
+            "THROMBOLYSIS ELIGIBILITY:\n"
+            "• Alteplase (tPA): 0.9 mg/kg IV (max 90 mg): within 4.5 hours of symptom onset\n"
+            "• Contraindications: Haemorrhage on CT, recent surgery/stroke, BP > 185/110, INR > 1.7\n"
+            "• Mechanical thrombectomy: Up to 24 hours for selected patients (large vessel occlusion)\n\n"
+            "⚠️ Exam Trap: CT is always first (rules out bleed). DWI-MRI is most sensitive for acute ischaemia. "
+            "Thrombolysis window = 4.5 hours. Thrombectomy window = up to 24 hours."
+        ),
+        "question": "What is the imaging approach for acute stroke and how does DWI-MRI differ from non-contrast CT?",
+        "correct_answer": "CT head first (exclude haemorrhage). MRI-DWI most sensitive for acute ischaemia. Thrombolysis ≤4.5h. Thrombectomy ≤24h for LVO.",
+        "high_yield_takeaway": "Acute stroke: CT first (rule out bleed) → MRI-DWI (most sensitive for ischaemia). Alteplase ≤ 4.5 hrs. Thrombectomy ≤ 24 hrs for LVO.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Radiology", "#Flashcard", "#Stroke"],
+    },
+    # ── True/False ────────────────────────────────────────────────────────────
+    {
+        "title": "CT for Posterior Fossa Brain Tumour Assessment",
+        "subject": Subject.radiology,
+        "content_format": ContentFormat.true_false,
+        "poster_text": "CT is NOT the best modality for posterior fossa — MRI is superior due to lack of beam-hardening artefact",
+        "caption": (
+            "True or False: Non-contrast CT of the head is the investigation of choice for evaluating\n"
+            "a suspected posterior fossa brain tumour.\n\n"
+            "ANSWER: FALSE\n\n"
+            "MRI is the investigation of choice for posterior fossa pathology, NOT CT.\n\n"
+            "Reasons:\n"
+            "1. Beam-hardening artefact on CT: The dense petrous temporal bones and occipital bone\n"
+            "   cause severe streak artefact in the posterior fossa, obscuring the brainstem,\n"
+            "   cerebellum, and 4th ventricle\n"
+            "2. Poor soft-tissue contrast: CT poorly differentiates grey-white matter,\n"
+            "   oedema, and tumour margins in the posterior fossa\n"
+            "3. MRI superior soft-tissue resolution: Clearly delineates cerebellar hemispheres,\n"
+            "   brainstem, 4th ventricle, and CP angle\n\n"
+            "Common posterior fossa tumours (more common in children):\n"
+            "• Medulloblastoma: 4th ventricle, midline, hyperdense on CT, restricted diffusion\n"
+            "• Pilocytic astrocytoma: Cerebellar hemisphere, cystic + enhancing mural nodule\n"
+            "• Ependymoma: 4th ventricle → 'extends through foramina' (Luschka, Magendie)\n"
+            "• Brainstem glioma: Diffuse expansion of pons\n"
+            "• Haemangioblastoma: Cerebellar, cystic with mural nodule; associated with VHL\n"
+            "• CP angle masses: Vestibular schwannoma, meningioma, epidermoid\n\n"
+            "When is CT useful for posterior fossa?\n"
+            "• Acute haemorrhage (CT detects blood well)\n"
+            "• Calcification (tumour calcification)\n"
+            "• Bony assessment (acoustic neuroma → IAM widening)\n\n"
+            "⚠️ Exam Trap: Posterior fossa tumour in child → MRI. "
+            "CT 'misses' posterior fossa lesions due to bone artefact."
+        ),
+        "question": "Non-contrast CT head is the investigation of choice for evaluating a suspected posterior fossa brain tumour.",
+        "correct_answer": "FALSE",
+        "explanation": "MRI is the investigation of choice for posterior fossa pathology. CT images the posterior fossa poorly due to beam-hardening artefact from the petrous temporal bones. MRI provides superior soft-tissue contrast without bone artefact.",
+        "high_yield_takeaway": "Posterior fossa → MRI (not CT — bone artefact). CT is first-line for acute haemorrhage or bony assessment.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Radiology", "#TrueFalse", "#PosteriorFossa"],
+    },
+    # ── One-liner Recall ──────────────────────────────────────────────────────
+    {
+        "title": "Gold Standard Investigation for Acute Intracranial Haemorrhage",
+        "subject": Subject.radiology,
+        "content_format": ContentFormat.one_liner_recall,
+        "poster_text": "Non-contrast CT head is the gold standard for diagnosing acute intracranial haemorrhage",
+        "caption": (
+            "One-liner Recall: Acute Intracranial Haemorrhage\n\n"
+            "Fill in the blank:\n\n"
+            "\"The gold standard investigation for diagnosing acute intracranial haemorrhage is ___\"\n\n"
+            "Answer: Non-contrast CT (NCCT) head\n\n"
+            "Why NCCT is gold standard:\n"
+            "• 95–100% sensitivity for acute blood (0–72 hours)\n"
+            "• Blood appears hyperdense (white, 60–80 HU) on NCCT\n"
+            "• Detects: Subarachnoid, intraparenchymal, subdural, epidural, intraventricular haemorrhage\n"
+            "• Fast (minutes) — critical in emergency settings\n"
+            "• Widely available, no contraindications (vs MRI)\n\n"
+            "Types of haemorrhage on CT:\n"
+            "• Epidural: Biconvex/lentiform; does NOT cross suture lines; may cross falx\n"
+            "• Subdural: Crescentic; crosses suture lines; does NOT cross falx\n"
+            "• Subarachnoid: Blood in basal cisterns, sylvian fissures, sulci\n"
+            "• Intraparenchymal: Hyperdense mass within brain tissue\n"
+            "• Intraventricular: Blood layering in occipital horns (sedimentation)\n\n"
+            "Timing of blood on CT:\n"
+            "• Acute (0–72 hrs): Hyperdense (white)\n"
+            "• Subacute (3–21 days): Isodense → may be missed\n"
+            "• Chronic (> 21 days): Hypodense (liquefaction)\n\n"
+            "⚠️ Exam Trap: If CT is negative for SAH but clinical suspicion remains → "
+            "perform LP (xanthochromia after 12 hours). CT sensitivity for SAH drops from 98% (day 1) to 50% (day 7)."
+        ),
+        "question": "The gold standard investigation for diagnosing acute intracranial haemorrhage is ___",
+        "correct_answer": "Non-contrast CT head (NCCT)",
+        "high_yield_takeaway": "Acute haemorrhage → NCCT (hyperdense 60-80 HU). SAH → CT first, then LP if negative. Epidural = biconvex, Subdural = crescentic.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Radiology", "#OneLiner", "#ICH"],
+    },
 ]

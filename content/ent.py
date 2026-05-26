@@ -279,4 +279,135 @@ TOPICS = [
         "correct_answer": None,
         "explanation": None,
     },
+    # ── Mnemonic ─────────────────────────────────────────────────────────────
+    {
+        "title": "Mnemonic: Ossicles — Malleus → Incus → Stapes",
+        "subject": Subject.ent,
+        "content_format": ContentFormat.mnemonic,
+        "poster_text": "Mnemonic: 'MIS' — Malleus, Incus, Stapes (lateral to medial)",
+        "caption": (
+            "Ossicles Mnemonic — Lateral to Medial\n\n"
+            "The three auditory ossicles from lateral (tympanic membrane) to medial (oval window):\n\n"
+            "M — Malleus (Handle attached to TM; head articulates with incus)\n"
+            "I — Incus (Body articulates with malleus; long process → stapes)\n"
+            "S — Stapes (Footplate sits in oval window; smallest bone in body)\n\n"
+            "Alternate mnemonic: 'MIS' — Malleus → Incus → Stapes\n\n"
+            "Key anatomical facts:\n"
+            "• Malleus: Largest ossicle; lateral process → Tympanic membrane (Mallear prominence)\n"
+            "• Incus: Most vulnerable to erosion in cholesteatoma (long process)\n"
+            "• Stapes: 3 mm tall; footplate 3.25 mm × 1.75 mm; annular ligament attaches to oval window\n\n"
+            "Function:\n"
+            "• Ossicular chain provides impedance matching (air → fluid)\n"
+            "• Reduces sound amplitude by ~30 dB at oval window\n"
+            "• Stapedius muscle (CN VII) dampens loud sounds → protects cochlea\n\n"
+            "Clinical correlations:\n"
+            "• Otosclerosis: Stapes footplate fixation → conductive hearing loss; Schwartze sign\n"
+            "• Incus erosion: Cholesteatoma → ossicular discontinuity → conductive hearing loss\n"
+            "• Tympanosclerosis: Calcification of TM/ossicles → CHL\n\n"
+            "⚠️ Exam Trap: Long process of incus is the FIRST ossicle eroded in cholesteatoma."
+        ),
+        "high_yield_takeaway": "MIS: Malleus → Incus → Stapes (lateral→medial). Incus long process = first eroded in cholesteatoma. Stapes footplate = otosclerosis site.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#ENT", "#Mnemonic", "#Ossicles"],
+    },
+    # ── Flashcard ─────────────────────────────────────────────────────────────
+    {
+        "title": "CSOM: Safe vs Unsafe — Types, Features, and Management",
+        "subject": Subject.ent,
+        "content_format": ContentFormat.flashcard,
+        "poster_text": "Safe CSOM = Tubotympanic (central perforation) | Unsafe CSOM = Atticoantral (marginal/attic perforation)",
+        "caption": (
+            "CSOM: Safe vs Unsafe — Flashcard\n\n"
+            "SAFE (TUBOTYMPANIC):\n"
+            "• Perforation: Central (pars tensa)\n"
+            "• Extent: Middle ear mucosa only\n"
+            "• Discharge: Profuse, mucoid, non-foul, pulsatile\n"
+            "• Hearing loss: Mild to moderate CHL\n"
+            "• Complications: Rare (usually none)\n"
+            "• Treatment: Aural toilet + antibiotics (topical ± systemic);\n"
+            "  Watchful waiting in inactive safe CSOM\n"
+            "• Surgery: Type I tympanoplasty (myringoplasty) AFTER 6 weeks dry ear\n\n"
+            "UNSAFE (ATTICOANTRAL):\n"
+            "• Perforation: Marginal/attic (pars flaccida/Shrapnell's)\n"
+            "• Extent: Middle ear + mastoid air cells + bone\n"
+            "• Discharge: Scanty, foul-smelling, non-pulsatile\n"
+            "• Hearing loss: Moderate-severe CHL; possible mixed\n"
+            "• Complications: Common (fistula, facial palsy, intracranial)\n"
+            "• Treatment: Surgery mandatory — mastoidectomy (CWU or CWD)\n"
+            "• Association: Cholesteatoma in most cases\n\n"
+            "Key distinguishing features:\n"
+            "• Attic crust (scanty foul discharge + crust over attic region) = UNSAFE\n"
+            "• Positive fistula sign (nystagmus on tragal pressure) = LSC erosion\n"
+            "• Aural polyp = usually unsafe (granulation tissue from cholesteatoma)\n\n"
+            "⚠️ Never miss: Unsafe CSOM with headache, fever, earache → suspect intracranial complication."
+        ),
+        "question": "What are the key differences between safe (tubotympanic) and unsafe (atticoantral) CSOM?",
+        "correct_answer": "Safe: central pars tensa perforation, medical management. Unsafe: attic/marginal pars flaccida perforation, cholesteatoma — requires surgery.",
+        "high_yield_takeaway": "Safe CSOM = pars tensa, central perforation, medical management. Unsafe = pars flaccida, attic perforation, cholesteatoma, surgery mandatory.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#ENT", "#Flashcard", "#CSOM"],
+    },
+    # ── True/False ────────────────────────────────────────────────────────────
+    {
+        "title": "Otitis Media with Effusion in Children — Antibiotics",
+        "subject": Subject.ent,
+        "content_format": ContentFormat.true_false,
+        "poster_text": "Otitis Media with Effusion (OME) = GLUE EAR — antibiotics are NOT first-line treatment",
+        "caption": (
+            "True or False: Otitis Media with Effusion (OME) in children requires a course of oral antibiotics.\n\n"
+            "ANSWER: FALSE\n\n"
+            "OME (glue ear) is defined as middle ear effusion without signs of acute infection "
+            "(no pain, no fever, no bulging erythematous TM). It is common in children aged 1–3 years "
+            "following an episode of AOM or due to Eustachian tube dysfunction.\n\n"
+            "Management of OME:\n"
+            "• Watchful waiting for 3 months (60–80% resolve spontaneously)\n"
+            "• Auto-inflation if tolerated (shown to improve effusion clearance)\n"
+            "• Treat underlying cause: allergic rhinitis, adenoid hypertrophy\n"
+            "• Speech and language assessment if bilateral and persistent\n\n"
+            "Antibiotics are NOT indicated for OME alone — they do NOT improve resolution rates or "
+            "long-term outcomes vs watchful waiting.\n\n"
+            "WHEN TO INTERVENE (Grommets/Ventilation tubes):\n"
+            "1. Persistent bilateral OME for ≥ 3 months with hearing loss ≥ 25–30 dB\n"
+            "2. Bilateral OME with speech/language delay or learning difficulties\n"
+            "3. Recurrent AOM (≥ 3 in 6 months or ≥ 4 in 12 months) with OME between episodes\n"
+            "4. Structural TM changes (atelectasis, retraction pocket)\n\n"
+            "Grommets + Adenoidectomy: Most effective surgical combination for persistent OME "
+            "in children > 3 years with adenoid hypertrophy.\n\n"
+            "⚠️ Exam Trap: OME = glue ear = no acute inflammation = NO antibiotics. "
+            "Amoxicillin is for AOM (with bulging TM and fever), not OME."
+        ),
+        "question": "Otitis Media with Effusion in children requires a course of oral antibiotics.",
+        "correct_answer": "FALSE",
+        "explanation": "OME (glue ear) has no acute inflammation and resolves spontaneously in 60–80% of cases within 3 months. Antibiotics do not improve resolution rates. Management is watchful waiting ± grommets for persistent cases with hearing loss.",
+        "high_yield_takeaway": "OME ≠ AOM. OME: watchful waiting, no antibiotics. AOM: bulging TM + fever → amoxicillin. Grommets for persistent OME ≥ 3 months with hearing loss.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#ENT", "#TrueFalse", "#OME"],
+    },
+    # ── One-liner Recall ──────────────────────────────────────────────────────
+    {
+        "title": "Tonsillitis Grading — One-liner Recall",
+        "subject": Subject.ent,
+        "content_format": ContentFormat.one_liner_recall,
+        "poster_text": "Tonsillar hypertrophy grading: Grade 1–4 based on the relationship to pharyngeal pillars",
+        "caption": (
+            "One-liner Recall: Tonsillitis Grading\n\n"
+            "Fill in the blank:\n\n"
+            "\"In tonsillar enlargement grading, Grade ___ = tonsils meet at the ___ line\"\n\n"
+            "Answer: Grade 3 = tonsils meet at the MIDLINE (kissing tonsils)\n\n"
+            "Full grading:\n"
+            "Grade 0: Tonsils within the tonsillar fossa (post-tonsillectomy)\n"
+            "Grade 1: Tonsils visible between anterior and posterior pillars (normal)\n"
+            "Grade 2: Tonsils extend beyond the posterior pillar but not to midline\n"
+            "Grade 3: Tonsils meet at the MIDLINE ('kissing tonsils')\n"
+            "Grade 4: Tonsils extend past midline (contralateral side)\n\n"
+            "Clinical significance:\n"
+            "• Grades 3–4: May cause obstructive sleep apnoea, dysphagia, muffled voice\n"
+            "• Indications for tonsillectomy: ≥ 7 episodes in 1 year, ≥ 5/year for 2 years, "
+            "≥ 3/year for 3 years; or obstructive sleep apnoea;\n"
+            "  or peritonsillar abscess (quinsy) unresponsive to drainage + antibiotics\n\n"
+            "⚠️ Exam Trap: Quinsy = peritonsillar abscess = most common complication of tonsillitis. "
+            "Tonsils meet at midline = Grade 3."
+        ),
+        "question": "In tonsillar enlargement grading, Grade ___ = tonsils meet at the ___ line",
+        "correct_answer": "Grade 3 = MIDLINE",
+        "high_yield_takeaway": "Tonsil grading: Grade 0 (absent) → 1 (fossa) → 2 (beyond pillars) → 3 (midline = kissing tonsils) → 4 (past midline).",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#ENT", "#OneLiner", "#Tonsillitis"],
+    },
 ]
