@@ -26,18 +26,17 @@ _SUBJECT_EMOJI: dict[str, str] = {
 }
 
 _FORMAT_LABEL: dict[str, str] = {
-    "mcq": "MCQ",
-    "rapid_revision": "Rapid Revision",
-    "concise_notes": "Concise Notes",
-    "clinical_case": "Clinical Case",
-    "image_based_question": "Image-Based MCQ",
-    "practical_viva": "Practical Viva",
-    "pyq_concept": "PYQ Concept",
-    "exam_news_update": "Exam News",
-    "residency_survival_tip": "Residency Tip",
+    "mcq": "MCQ CHALLENGE",
+    "rapid_revision": "RAPID REVISION",
+    "concise_notes": "CONCISE NOTES",
+    "clinical_case": "CLINICAL CASE",
+    "image_based_question": "IMAGE MCQ",
+    "practical_viva": "VIVA HIGH-YIELD",
+    "pyq_concept": "PYQ SPECIAL",
+    "exam_news_update": "EXAM NEWS",
+    "residency_survival_tip": "RESIDENCY TIP",
 }
 
-_DIVIDER = "━━━━━━━━━━━━━━━━━━━━"
 _MAX_LEN = 4096
 
 
@@ -51,12 +50,19 @@ def _subject_emoji(content: GeneratedContent) -> str:
     return "📰"
 
 
-def _subject_label(content: GeneratedContent) -> str:
+def _subject_name(content: GeneratedContent) -> str:
     if content.subject:
-        return content.subject.value.replace("_", " ").upper()
+        return content.subject.value.replace("_", " ").title()
     if content.news_topic:
-        return content.news_topic.value.replace("_", " ").upper()
-    return "MEDICINE"
+        return content.news_topic.value.replace("_", " ").title()
+    return "Medicine"
+
+
+def _fmt_label(content: GeneratedContent) -> str:
+    return _FORMAT_LABEL.get(
+        content.content_format.value,
+        content.content_format.value.replace("_", " ").upper(),
+    )
 
 
 def _hashtags(content: GeneratedContent) -> str:
@@ -64,21 +70,46 @@ def _hashtags(content: GeneratedContent) -> str:
     return " ".join(t if t.startswith("#") else f"#{t}" for t in tags)
 
 
+def _extract_breakdown(caption: str, max_points: int = 6) -> list[str]:
+    """Extract first-level bullet points from caption for numbered breakdown list."""
+    points = []
+    for line in caption.split("\n"):
+        stripped = line.strip()
+        if stripped.startswith("• "):
+            points.append(stripped[2:].rstrip())
+            if len(points) >= max_points:
+                break
+    return points
+
+
 def format_for_telegram(content: GeneratedContent) -> str:
+    fmt = content.content_format
     emoji = _subject_emoji(content)
-    subject = _subject_label(content)
-    fmt_label = _FORMAT_LABEL.get(
-        content.content_format.value,
-        content.content_format.value.replace("_", " ").title(),
-    )
+    label = _fmt_label(content)
+    subject = _subject_name(content)
 
-    header = f"{emoji} <b>{subject} — {fmt_label}</b>"
-    body = _build_body(content)
+    header = f"{emoji} <b>{label}: {subject}</b>"
 
-    parts = [header, _DIVIDER, "", body]
+    if fmt == ContentFormat.mcq:
+        body = _body_mcq(content)
+    elif fmt == ContentFormat.image_based_question:
+        body = _body_ibq(content)
+    elif fmt == ContentFormat.clinical_case:
+        body = _body_case(content)
+    elif fmt == ContentFormat.practical_viva:
+        body = _body_viva(content)
+    elif fmt in (ContentFormat.exam_news_update, ContentFormat.residency_survival_tip):
+        body = _body_news(content)
+    else:
+        body = _body_notes(content)
 
-    if content.high_yield_takeaway:
-        parts += ["", f"💡 <b>High-Yield:</b> {_esc(content.high_yield_takeaway)}"]
+    parts = [header, "", body]
+
+    if content.high_yield_takeaway and fmt not in (
+        ContentFormat.exam_news_update,
+        ContentFormat.residency_survival_tip,
+    ):
+        parts += ["", f"⚡ <b>Key Point:</b> {_esc(content.high_yield_takeaway)}"]
 
     parts += ["", _hashtags(content)]
 
@@ -86,22 +117,23 @@ def format_for_telegram(content: GeneratedContent) -> str:
     return text[:_MAX_LEN]
 
 
-def _build_body(content: GeneratedContent) -> str:
-    fmt = content.content_format
+def _body_notes(content: GeneratedContent) -> str:
+    """Format rapid_revision, concise_notes, and pyq_concept posts."""
+    parts: list[str] = []
 
-    if fmt == ContentFormat.mcq:
-        return _body_mcq(content)
-    if fmt == ContentFormat.image_based_question:
-        return _body_ibq(content)
-    if fmt == ContentFormat.clinical_case:
-        return _body_case(content)
-    if fmt == ContentFormat.practical_viva:
-        return _body_viva(content)
-    if fmt in (ContentFormat.rapid_revision, ContentFormat.concise_notes, ContentFormat.pyq_concept):
-        return _esc(content.caption)
-    if fmt in (ContentFormat.exam_news_update, ContentFormat.residency_survival_tip):
-        return _body_news(content)
-    return _esc(content.caption)
+    if content.poster_text:
+        parts.append(f"<i>Scenario: {_esc(content.poster_text)}</i>")
+        parts.append("")
+
+    points = _extract_breakdown(content.caption)
+    if points:
+        parts.append("<b>The Breakdown:</b>")
+        for i, pt in enumerate(points, 1):
+            parts.append(f"{i}. {_esc(pt)}")
+    else:
+        parts.append(_esc(content.caption))
+
+    return "\n".join(parts)
 
 
 def _body_mcq(content: GeneratedContent) -> str:
@@ -156,12 +188,20 @@ def _body_case(content: GeneratedContent) -> str:
 
 def _body_viva(content: GeneratedContent) -> str:
     parts: list[str] = []
+    if content.poster_text:
+        parts.append(f"<i>Scenario: {_esc(content.poster_text)}</i>\n")
     if content.question:
         parts.append(f"<b>Viva Q:</b> {_esc(content.question)}\n")
     if content.explanation:
-        parts.append(f"<b>Answer framework:</b>\n{_esc(content.explanation)}")
+        parts.append(f"<b>Answer Framework:</b>\n{_esc(content.explanation)}")
     elif content.caption:
-        parts.append(_esc(content.caption))
+        points = _extract_breakdown(content.caption)
+        if points:
+            parts.append("<b>The Breakdown:</b>")
+            for i, pt in enumerate(points, 1):
+                parts.append(f"{i}. {_esc(pt)}")
+        else:
+            parts.append(_esc(content.caption))
     return "\n".join(parts)
 
 

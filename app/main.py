@@ -94,6 +94,16 @@ async def generate_all_subjects(request: GenerateAllSubjectsRequest) -> list[Gen
     return results
 
 
+@app.get("/stats")
+async def engine_stats() -> dict:
+    """SmartContentEngine: spaced-repetition send history and library coverage."""
+    try:
+        from app.services.content_engine import SmartContentEngine
+        return SmartContentEngine(settings).stats()
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
 @app.get("/subjects")
 async def subjects() -> list[str]:
     return [subject.value for subject in Subject]

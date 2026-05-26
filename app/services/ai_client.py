@@ -139,6 +139,18 @@ class AIContentClient:
             raise ValueError("AI provider returned invalid content JSON.") from exc
 
     def _library_or_mock(self, subject: Subject, content_format: ContentFormat) -> GeneratedContent:
+        # 1. Try SmartContentEngine (spaced repetition + variation)
+        try:
+            from app.services.content_engine import SmartContentEngine
+            engine = SmartContentEngine(self.settings)
+            content = engine.generate(subject, content_format)
+            if content:
+                logger.info("SmartContentEngine served: %s", content.title)
+                return content
+        except Exception as exc:
+            logger.debug("SmartContentEngine unavailable: %s", exc)
+
+        # 2. Fallback: raw library (no history tracking)
         try:
             from content.loader import get_library
             content = get_library().get(subject, content_format)
@@ -147,6 +159,8 @@ class AIContentClient:
                 return content
         except Exception as exc:
             logger.debug("Content library unavailable: %s", exc)
+
+        # 3. Final fallback: procedural mock
         logger.warning("Falling back to procedural mock for %s / %s", subject.value, content_format.value)
         return self._mock_content(subject, content_format)
 

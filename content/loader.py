@@ -76,6 +76,14 @@ class ContentLibrary:
             items = [t for t in items if t.content_format == content_format]
         return items
 
+    def pool(
+        self,
+        subject: Subject | None,
+        content_format: ContentFormat | None,
+    ) -> list[GeneratedContent]:
+        """Public access to the filtered topic pool (used by SmartContentEngine)."""
+        return self._pool(subject, content_format)
+
     def total(self) -> int:
         return sum(len(v) for v in self._topics.values())
 

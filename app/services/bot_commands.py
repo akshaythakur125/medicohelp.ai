@@ -78,12 +78,26 @@ class BotCommandHandler:
         target = self.settings.telegram_chat_id or "not configured"
         provider = self.settings.ai_provider.upper()
         mode = "text-only" if self.settings.text_only_mode else "image poster"
+
+        stats_line = ""
+        try:
+            from app.services.content_engine import SmartContentEngine
+            st = SmartContentEngine(self.settings).stats()
+            stats_line = (
+                f"\n📚 Library: {st['library_topics']} topics | "
+                f"Sent: {st['topics_sent']} | "
+                f"Fresh: {st['topics_unseen']} unseen"
+            )
+        except Exception:
+            pass
+
         msg = (
             "✅ <b>MedicoHelp is running</b>\n\n"
             f"🕐 Schedule: <code>{schedule}</code> ({self.settings.timezone})\n"
             f"📬 Posting to: <code>{target}</code>\n"
             f"🤖 AI provider: {provider}\n"
-            f"📄 Post mode: {mode}\n"
+            f"📄 Post mode: {mode}"
+            f"{stats_line}\n"
         )
         await self.telegram.send_message_to(chat_id, msg)
 
