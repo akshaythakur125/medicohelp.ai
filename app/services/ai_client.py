@@ -4,7 +4,6 @@ import random
 from typing import Any
 
 import httpx
-from openai import AsyncOpenAI
 
 from app.config import Settings
 from app.models import ContentCategory, ContentFormat, GeneratedContent, PostLane, Subject
@@ -17,21 +16,41 @@ class AIContentClient:
         self.settings = settings
 
     async def generate(self, subject: Subject, content_format: ContentFormat) -> GeneratedContent:
-        prompt = self._build_prompt(subject, content_format)
+        # AI path: only when a provider + key are both configured
+        if self._ai_configured():
+            prompt = self._build_prompt(subject, content_format)
+            try:
+                return await self._dispatch_ai(prompt, subject, content_format)
+            except Exception as exc:
+                logger.warning("AI generation failed, falling back to library: %s", exc)
 
-        if self.settings.ai_provider == "anthropic" and self.settings.anthropic_api_key:
+        # Library path: always available, no API key required
+        return self._serve_from_library(subject, content_format)
+
+    # ── AI dispatch ────────────────────────────────────────────────────────────
+
+    def _ai_configured(self) -> bool:
+        p = self.settings.ai_provider
+        return (
+            (p == "anthropic" and bool(self.settings.anthropic_api_key))
+            or (p == "openai" and bool(self.settings.openai_api_key))
+            or (p == "gemini" and bool(self.settings.gemini_api_key))
+        )
+
+    async def _dispatch_ai(
+        self,
+        prompt: str,
+        subject: Subject,
+        content_format: ContentFormat,
+    ) -> GeneratedContent:
+        p = self.settings.ai_provider
+        if p == "anthropic":
             return await self._generate_with_anthropic(prompt, subject, content_format)
-
-        if self.settings.ai_provider == "openai" and self.settings.openai_api_key:
+        if p == "openai":
             return await self._generate_with_openai(prompt, subject, content_format)
-
-        if self.settings.ai_provider == "gemini" and self.settings.gemini_api_key:
+        if p == "gemini":
             return await self._generate_with_gemini(prompt, subject, content_format)
-
-        if self.settings.allow_mock_ai:
-            return self._library_or_mock(subject, content_format)
-
-        raise RuntimeError("No AI provider API key configured and ALLOW_MOCK_AI=false.")
+        raise RuntimeError(f"Unknown ai_provider: {p}")
 
     def _build_prompt(self, subject: Subject, content_format: ContentFormat) -> str:
         template_path = self.settings.prompts_dir / f"{content_format.value}.md"
@@ -80,6 +99,8 @@ class AIContentClient:
         subject: Subject,
         content_format: ContentFormat,
     ) -> GeneratedContent:
+        from openai import AsyncOpenAI
+
         client = AsyncOpenAI(api_key=self.settings.openai_api_key)
         response = await client.chat.completions.create(
             model=self.settings.ai_model,
@@ -138,8 +159,10 @@ class AIContentClient:
             logger.exception("AI response parsing failed: %s", raw[:500])
             raise ValueError("AI provider returned invalid content JSON.") from exc
 
-    def _library_or_mock(self, subject: Subject, content_format: ContentFormat) -> GeneratedContent:
-        # 1. Try SmartContentEngine (spaced repetition + variation)
+    # ── Library path (offline, no API key required) ────────────────────────────
+
+    def _serve_from_library(self, subject: Subject, content_format: ContentFormat) -> GeneratedContent:
+        # 1. SmartContentEngine: spaced repetition + format variation
         try:
             from app.services.content_engine import SmartContentEngine
             engine = SmartContentEngine(self.settings)
@@ -150,21 +173,21 @@ class AIContentClient:
         except Exception as exc:
             logger.debug("SmartContentEngine unavailable: %s", exc)
 
-        # 2. Fallback: raw library (no history tracking)
+        # 2. Raw library: direct lookup with format fallback
         try:
             from content.loader import get_library
             content = get_library().get(subject, content_format)
             if content:
-                logger.info("Serving static library content: %s / %s", subject.value, content_format.value)
+                logger.info("Library served: %s / %s", subject.value, content_format.value)
                 return content
         except Exception as exc:
             logger.debug("Content library unavailable: %s", exc)
 
-        # 3. Final fallback: procedural mock
-        logger.warning("Falling back to procedural mock for %s / %s", subject.value, content_format.value)
-        return self._mock_content(subject, content_format)
+        # 3. Procedural fallback: built-in subject-specific content
+        logger.info("Using procedural fallback for %s / %s", subject.value, content_format.value)
+        return self._procedural_fallback(subject, content_format)
 
-    def _mock_content(self, subject: Subject, content_format: ContentFormat) -> GeneratedContent:
+    def _procedural_fallback(self, subject: Subject, content_format: ContentFormat) -> GeneratedContent:
         display_subject = subject.value.replace("_", " ").title()
         display_format = content_format.value.replace("_", " ").title()
         high_yield_topics = {

@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     project_name: str = "MedicoHelp AI Auto Poster"
     openai_api_key: str | None = None
     gemini_api_key: str | None = None
-    ai_provider: str = Field(default="openai", pattern="^(openai|gemini|anthropic)$")
+    ai_provider: str = Field(default="none", pattern="^(openai|gemini|anthropic|none)$")
     ai_model: str = "gpt-4o-mini"
     anthropic_api_key: str | None = None
     generate_realistic_images: bool = False

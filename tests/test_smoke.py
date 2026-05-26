@@ -11,11 +11,10 @@ def test_curriculum_has_19_subjects() -> None:
     assert len(Subject) == 19
 
 
-def test_mock_generation_text_mode() -> None:
-    """In default text-only mode, poster_path is 'text-only' and no PNG is created."""
+def test_library_generation_text_mode() -> None:
+    """Library-first generation works with no AI key: poster_path is 'text-only'."""
     settings = get_settings()
-    settings.allow_mock_ai = True
-    # text_only_mode=True is the default
+    # No AI provider key needed — library path is always available
     orchestrator = PostOrchestrator(settings)
 
     result = asyncio.run(
@@ -34,10 +33,9 @@ def test_mock_generation_text_mode() -> None:
     assert result.telegram_posted is False
 
 
-def test_mock_generation_creates_poster() -> None:
-    """With text_only_mode=False an actual PNG poster is generated."""
+def test_library_generation_creates_poster() -> None:
+    """With text_only_mode=False an actual PNG poster is generated from library content."""
     settings = get_settings()
-    settings.allow_mock_ai = True
     settings.text_only_mode = False
     orchestrator = PostOrchestrator(settings)
 
