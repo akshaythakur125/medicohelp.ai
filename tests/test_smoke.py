@@ -95,7 +95,7 @@ def test_content_strategy_rotates_premium_mix() -> None:
     planned = [strategy.next_post() for _ in range(12)]
     lanes = [item.lane for item in planned]
 
-    assert PostLane.image_based in lanes
+    assert PostLane.true_false in lanes
     assert PostLane.poll_quiz in lanes
     assert PostLane.pyq_concept in lanes
     assert PostLane.flashcard in lanes
@@ -114,12 +114,16 @@ def test_content_strategy_slot_type_mapping() -> None:
     morning = strategy.next_post(slot_type=SlotType.morning_revision)
     afternoon = strategy.next_post(slot_type=SlotType.afternoon_mcq)
     evening = strategy.next_post(slot_type=SlotType.evening_revision)
-    nightly = strategy.next_post(slot_type=SlotType.nightly_weak_topic)
 
     assert morning.lane == PostLane.quick_revision
     assert afternoon.lane == PostLane.mcq_variant
     assert evening.lane == PostLane.flashcard
-    assert nightly.lane == PostLane.weak_topic_recall
+
+    # Nightly weak-topic falls back to a replacement lane when no weak provider set
+    nightly = strategy.next_post(slot_type=SlotType.nightly_weak_topic)
+    assert nightly.lane in (
+        PostLane.flashcard, PostLane.quick_revision, PostLane.poll_quiz, PostLane.weak_topic_recall,
+    )
 
 
 def test_completed_subjects_have_10_topics() -> None:

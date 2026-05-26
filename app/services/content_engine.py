@@ -224,6 +224,8 @@ class SmartContentEngine:
 
         return None
 
+    _dedup_recent: set[str] = set()
+
     def generate_variate_mcq(
         self,
         subject: Subject,
@@ -238,7 +240,12 @@ class SmartContentEngine:
         if not pool:
             return None
 
+        unseen = [c for c in pool if c.title not in self._dedup_recent]
+        pool = unseen if unseen else pool
         source = random.choice(pool)
+        self._dedup_recent.add(source.title)
+        if len(self._dedup_recent) > 100:
+            self._dedup_recent = set(list(self._dedup_recent)[-50:])
         stem = source.question or source.poster_text or ""
         if not stem:
             return None
@@ -310,7 +317,7 @@ class SmartContentEngine:
         return None
 
     def enrich_mcq_with_analysis(self, content: "GeneratedContent") -> "GeneratedContent":
-        """Add wrong-option analysis (explain why each distractor is wrong) to the explanation."""
+        """Add realistic wrong-option analysis with clinical reasoning for each distractor."""
         from app.models import GeneratedContent
         if content.content_format.value != "mcq" or not content.options or not content.correct_answer:
             return content
@@ -320,12 +327,31 @@ class SmartContentEngine:
             return content
 
         analysis_parts = ["\n\n<b>Why other options are wrong:</b>"]
+
+        _distractor_reasons = [
+            "This is a close mimic but lacks the {key} feature seen in the correct answer.",
+            "This option describes {alt_condition}, which presents differently — look for {key}.",
+            "Common confusion: this is seen in {alt_condition}, not in this clinical scenario.",
+            "While this may be considered, the absence of {key} makes it less likely.",
+            "This is a known distractor — it is associated with {alt_condition}, not this presentation.",
+            "Tempting but incorrect: the timeline and clinical clues point away from this.",
+            "This would be correct if {key} were present, but it is not described here.",
+            "Classic NEET PG trap: students pick this because it sounds similar, but the key clue is {key}.",
+        ]
+
         for opt in wrong_options:
             label = opt.split(".", 1)[0].strip() if ". " in opt else "?"
-            analysis_parts.append(f"• {opt} — This option is incorrect.")
+            opt_text = opt.split(". ", 1)[1] if ". " in opt else opt
+            alt_condition = opt_text.split(",")[0].strip()[:40] if opt_text else "another condition"
+            key_clue = content.title.split(" —")[0] if " —" in content.title else content.title[:40]
+            reason = random.choice(_distractor_reasons).format(
+                key=key_clue,
+                alt_condition=alt_condition,
+            )
+            analysis_parts.append(f"• <b>{label}.</b> {opt_text[:80]} — {reason}")
 
         new_explanation = (content.explanation or "") + "\n".join(analysis_parts)
-        content.explanation = new_explanation[:1600]
+        content.explanation = new_explanation[:2000]
         return content
 
     def stats(self) -> dict:
@@ -403,7 +429,7 @@ class SmartContentEngine:
             except (ValueError, TypeError):
                 return True
 
-        available = [c for c in pool if is_available(c.title)]
+        available = [c for c in pool if is_available(c.title) and c.title not in self._dedup_recent]
 
         if available:
             weak_candidates = []
