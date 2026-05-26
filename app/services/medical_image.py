@@ -249,7 +249,7 @@ class MedicalImageGenerator:
         seed = abs(hash(short_prompt)) % 99999
         url = (
             f"https://image.pollinations.ai/prompt/{encoded}"
-            f"?width=1024&height=1024&model=flux&nologo=true&seed={seed}"
+            f"?width=1024&height=1024&model=flux-pro&nologo=true&seed={seed}"
         )
 
         logger.info("Generating medical visual via Pollinations.ai (FLUX)…")
@@ -298,57 +298,49 @@ class MedicalImageGenerator:
     # ── Prompt builder ─────────────────────────────────────────────────────────
 
     def _build_prompt(self, content: GeneratedContent) -> str:
-        """Build a concise, FLUX-optimised prompt focused on the specific topic.
+        """Build a FLUX-optimised prompt: modality first, then topic, then detail.
 
-        FLUX (Pollinations) works best with short, specific prompts (~300 chars).
-        Long boilerplate dilutes the topic signal and produces generic results.
+        FLUX performs best when the image modality (microscopy slide, anatomical
+        diagram, ECG trace) leads — this anchors the visual style before the
+        subject-specific content is added.
         """
         subj_key = _subject_key(content)
-
-        # Lead with the specific medical concept — most important signal for FLUX
         topic = content.title or content.poster_text or subj_key.replace("_", " ")
-        subject_display = subj_key.replace("_", " ").title()
-
-        # What to visually show
+        modality = _SUBJECT_MODALITY.get(subj_key, "medical education diagram")
         visual_desc = content.visual_description or ""
         labels = (content.visual_labels or content.image_based_data or [])[:3]
 
-        # Concise subject-specific style keyword (not the long multi-sentence block)
-        style_hint = _SUBJECT_STYLE_SHORT.get(subj_key, "medical diagram, labeled, educational")
-
-        parts = [f"{subject_display} medical illustration: {topic}"]
-
+        parts = [modality, f"showing {topic}"]
         if visual_desc:
-            parts.append(visual_desc[:120])
+            parts.append(visual_desc[:100])
         if labels:
-            parts.append("show and label: " + ", ".join(labels))
+            parts.append("labeled: " + ", ".join(labels))
+        parts.append("educational, clean white background, no text overlay, no watermark")
 
-        parts.append(style_hint)
-        parts.append("clean white background, professional, no watermark")
-
-        return ". ".join(parts)[:500]
+        return ", ".join(parts)[:450]
 
 
-_SUBJECT_STYLE_SHORT: dict[str, str] = {
-    "anatomy":               "anatomical cross-section, labeled structures, Netter-style",
-    "physiology":            "physiology diagram, accurate graph or process schematic",
-    "biochemistry":          "metabolic pathway, enzyme-substrate, color-coded molecules",
-    "pathology":             "histopathology field, H&E stain colors, labeled findings",
-    "pharmacology":          "drug mechanism of action, receptor-ligand diagram, dose-response curve",
-    "microbiology":          "microbiology diagram, Gram stain, labeled organisms",
-    "forensic_medicine":     "forensic injury pattern diagram, body chart, educational",
-    "community_medicine":    "epidemiology infographic, 2x2 table or epidemic curve",
-    "general_medicine":      "clinical ECG trace or physical examination schematic, labeled",
-    "general_surgery":       "surgical anatomy diagram, operative field illustration",
-    "obstetrics_gynecology": "obstetrics schematic, fetal lie diagram or partograph",
-    "pediatrics":            "pediatric assessment chart, growth chart, friendly medical style",
-    "ophthalmology":         "fundus diagram, eye cross-section, labeled disc and vessels",
-    "ent":                   "otoscopic view, tympanic membrane labeled, ENT diagram",
-    "orthopedics":           "joint anatomy, fracture classification schematic, labeled X-ray",
-    "dermatology":           "skin layers cross-section, lesion morphology, Fitzpatrick style",
-    "psychiatry":            "brain lateral view labeled lobes, neurotransmitter pathway",
-    "radiology":             "chest X-ray with labeled findings, CT cross-section, annotated",
-    "anesthesiology":        "airway anatomy sagittal cross-section, Mallampati classification",
+# Modality-first descriptors — anchors FLUX to the right visual domain
+_SUBJECT_MODALITY: dict[str, str] = {
+    "anatomy":               "labeled anatomical cross-section diagram, color-coded tissue layers, Netter medical atlas style",
+    "physiology":            "physiology graph or process schematic with labeled axes, clean educational infographic",
+    "biochemistry":          "biochemical pathway diagram, color-coded molecules, directional arrows",
+    "pathology":             "histopathology microscope slide H&E stain, pink eosinophilic cytoplasm, purple nuclei, circular field of view",
+    "pharmacology":          "pharmacology dose-response curve or receptor mechanism diagram, labeled axes",
+    "microbiology":          "microbiology microscopy Gram stain, labeled bacteria morphology, circular microscope field",
+    "forensic_medicine":     "forensic body chart injury pattern diagram, anatomical illustration",
+    "community_medicine":    "epidemiology infographic or 2x2 contingency table, clean data-visualization style",
+    "general_medicine":      "medical ECG tracing with labeled PQRST waves, or clinical examination schematic",
+    "general_surgery":       "surgical anatomy diagram, operative field illustration, labeled structures",
+    "obstetrics_gynecology": "obstetrics diagram fetal lie or pelvic anatomy cross-section, labeled",
+    "pediatrics":            "pediatric growth chart or clinical assessment schematic, clear labels",
+    "ophthalmology":         "ophthalmology fundus diagram or eye cross-section, labeled disc vessels retina",
+    "ent":                   "otoscopic tympanic membrane view labeled, or nasal anatomy cross-section",
+    "orthopedics":           "orthopedic joint anatomy or fracture classification schematic, labeled X-ray style",
+    "dermatology":           "skin layers cross-section diagram, labeled lesion morphology, dermoscopy pattern",
+    "psychiatry":            "lateral brain diagram labeled lobes and limbic structures, neurotransmitter pathway",
+    "radiology":             "PA chest X-ray with labeled findings, black and white radiograph, annotated landmarks",
+    "anesthesiology":        "airway anatomy sagittal cross-section, laryngoscopy view, Mallampati classification diagram",
 }
 
 
