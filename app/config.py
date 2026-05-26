@@ -30,6 +30,7 @@ class Settings(BaseSettings):
     timezone: str = "Asia/Kolkata"
     run_scheduler: bool = True
     text_only_mode: bool = True  # Send rich-text messages instead of image posters
+    posting_paused: bool = False  # Global pause for scheduled posting
 
     app_host: str = "0.0.0.0"
     app_port: int = 8000

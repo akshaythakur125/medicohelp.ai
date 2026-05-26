@@ -68,6 +68,23 @@ class PostLane(str, Enum):
     flashcard = "flashcard"
     mnemonic = "mnemonic"
     daily_pack = "daily_pack"
+    mcq_variant = "mcq_variant"
+    weak_topic_recall = "weak_topic_recall"
+    true_false = "true_false"
+    one_liner_recall = "one_liner_recall"
+
+
+class Difficulty(str, Enum):
+    easy = "easy"
+    moderate = "moderate"
+    exam_level = "exam_level"
+
+
+class SlotType(str, Enum):
+    morning_revision = "morning_revision"
+    afternoon_mcq = "afternoon_mcq"
+    evening_revision = "evening_revision"
+    nightly_weak_topic = "nightly_weak_topic"
 
 
 class GeneratedContent(BaseModel):

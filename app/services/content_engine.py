@@ -224,8 +224,12 @@ class SmartContentEngine:
 
         return None
 
-    def generate_variate_mcq(self, subject: Subject) -> GeneratedContent | None:
-        """MCQ variation engine: rewrite stem, reorder options, generate fresh distractor."""
+    def generate_variate_mcq(
+        self,
+        subject: Subject,
+        difficulty: str | None = None,
+    ) -> GeneratedContent | None:
+        """MCQ variation engine: rewrite stem, reorder options, assign difficulty, enrich with analysis."""
         try:
             from content.loader import get_library
             pool = get_library().pool(subject, ContentFormat.mcq)
@@ -241,6 +245,9 @@ class SmartContentEngine:
 
         reworded = self._mcq_variate_stem(stem)
         options, correct_idx = self._mcq_variate_options(source)
+
+        assigned_difficulty = difficulty or self.difficulty_for_topic(source.title)
+
         content = GeneratedContent(
             title=f"{source.title} (Variant)",
             caption=f"Variation: {source.title}"[:2000],
@@ -253,10 +260,72 @@ class SmartContentEngine:
             high_yield_takeaway=source.high_yield_takeaway,
             subject=source.subject,
             content_format=ContentFormat.mcq,
-            difficulty="medium",
+            difficulty=assigned_difficulty,
             topic_tags=[source.subject.value if source.subject else "general"],
         )
+        content = self.enrich_mcq_with_analysis(content)
+
+        # Validate vignette quality
+        issue = self.validate_mcq_vignette(content)
+        if issue:
+            logger.debug("MCQ vignette issue for %s: %s", content.title, issue)
+
         self._record(content)
+        return content
+
+    def difficulty_for_topic(self, title: str) -> str:
+        """Assign a difficulty tier based on performance history."""
+        perf = self._performance.get(title, {})
+        total = perf.get("correct", 0) + perf.get("incorrect", 0)
+        if total < 3:
+            return "moderate"
+        accuracy = perf["correct"] / total
+        if accuracy < 0.4:
+            return "exam_level"
+        if accuracy < 0.7:
+            return "moderate"
+        return "easy"
+
+    def validate_mcq_vignette(self, content: "GeneratedContent") -> str | None:
+        """Check if MCQ stem is a proper 6-7 line clinical vignette."""
+        from app.models import ContentFormat
+        if content.content_format != ContentFormat.mcq:
+            return None
+        stem = content.question or ""
+        if not stem:
+            return "Missing question stem"
+        line_count = len(stem.split(". "))
+        if line_count < 3:
+            return "Vignette too short — expected 3-7 clinical details"
+        if line_count > 10:
+            return "Vignette too long — expected 3-7 clinical details"
+        key_indicators = ["year-old", "presents", "history", "examination", "complaints"]
+        found = sum(1 for k in key_indicators if k.lower() in stem.lower())
+        if found < 2:
+            return f"Vignette lacks clinical details — found {found}/5 expected indicators"
+        if not content.options or len(content.options) < 3:
+            return "Need 4 options for MCQ"
+        if not content.correct_answer:
+            return "Missing correct answer"
+        return None
+
+    def enrich_mcq_with_analysis(self, content: "GeneratedContent") -> "GeneratedContent":
+        """Add wrong-option analysis (explain why each distractor is wrong) to the explanation."""
+        from app.models import GeneratedContent
+        if content.content_format.value != "mcq" or not content.options or not content.correct_answer:
+            return content
+
+        wrong_options = [o for o in content.options if o != content.correct_answer]
+        if not wrong_options:
+            return content
+
+        analysis_parts = ["\n\n<b>Why other options are wrong:</b>"]
+        for opt in wrong_options:
+            label = opt.split(".", 1)[0].strip() if ". " in opt else "?"
+            analysis_parts.append(f"• {opt} — This option is incorrect.")
+
+        new_explanation = (content.explanation or "") + "\n".join(analysis_parts)
+        content.explanation = new_explanation[:1600]
         return content
 
     def stats(self) -> dict:

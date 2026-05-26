@@ -94,12 +94,41 @@ async def generate_all_subjects(request: GenerateAllSubjectsRequest) -> list[Gen
     return results
 
 
+@app.post("/planned-post", response_model=GenerateResponse)
+async def planned_post(request: GenerateRequest) -> GenerateResponse:
+    """Generate the next post from the 12-slot rotation."""
+    try:
+        return await orchestrator.generate_planned_post(
+            publish_to_telegram=request.publish_to_telegram,
+            subject_override=request.subject,
+        )
+    except Exception as exc:
+        logger.exception("Planned post failed.")
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.post("/pause")
+async def pause_posting() -> dict:
+    orchestrator.pause()
+    return {"status": "paused"}
+
+
+@app.post("/resume")
+async def resume_posting() -> dict:
+    orchestrator.resume()
+    return {"status": "resumed"}
+
+
+@app.get("/pause-status")
+async def pause_status() -> dict:
+    return {"paused": orchestrator.paused}
+
+
 @app.get("/stats")
 async def engine_stats() -> dict:
     """SmartContentEngine: spaced-repetition send history and library coverage."""
     try:
-        from app.services.content_engine import SmartContentEngine
-        return SmartContentEngine(settings).stats()
+        return orchestrator.get_engine_stats()
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 

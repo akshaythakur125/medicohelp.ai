@@ -5,10 +5,19 @@ from apscheduler.triggers.cron import CronTrigger
 from apscheduler.triggers.interval import IntervalTrigger
 
 from app.config import Settings
+from app.models import SlotType
 from app.services.bot_commands import BotCommandHandler
 from app.services.orchestrator import PostOrchestrator
 
 logger = logging.getLogger(__name__)
+
+# Four-phase day schedule (IST)
+_DEFAULT_SCHEDULE: list[tuple[str, SlotType]] = [
+    ("08:00", SlotType.morning_revision),
+    ("14:00", SlotType.afternoon_mcq),
+    ("20:00", SlotType.evening_revision),
+    ("22:00", SlotType.nightly_weak_topic),
+]
 
 
 class PostingScheduler:
@@ -21,14 +30,13 @@ class PostingScheduler:
             orchestrator=orchestrator,
             telegram=orchestrator.telegram,
         )
+        self._register_post_jobs()
 
     def start(self) -> None:
         if self.scheduler.running:
             return
 
-        self._register_post_jobs()
         self._register_command_polling()
-
         self.scheduler.start()
         logger.info("Scheduler started.")
 
@@ -45,7 +53,12 @@ class PostingScheduler:
         ]
 
         if schedule_times:
-            for time_str in schedule_times:
+            # Use configured HH:MM slots — map by index to SlotType
+            slot_types = list(_DEFAULT_SCHEDULE)
+            for i, time_str in enumerate(schedule_times):
+                if i >= len(slot_types):
+                    break
+                _, slot_type = slot_types[i]
                 try:
                     hour_str, minute_str = time_str.split(":")
                     self.scheduler.add_job(
@@ -55,15 +68,22 @@ class PostingScheduler:
                             minute=int(minute_str),
                             timezone=self.settings.timezone,
                         ),
+                        kwargs={"slot_type": slot_type},
                         id=f"auto_post_{time_str}",
                         replace_existing=True,
                         max_instances=1,
                         coalesce=True,
                     )
-                    logger.info("Scheduled post at %s %s", time_str, self.settings.timezone)
+                    logger.info(
+                        "Scheduled %s at %s %s",
+                        slot_type.value,
+                        time_str,
+                        self.settings.timezone,
+                    )
                 except ValueError:
                     logger.error("Invalid schedule time: %s (expected HH:MM)", time_str)
         else:
+            # Fallback: interval-based posting
             self.scheduler.add_job(
                 self._run_job,
                 trigger=IntervalTrigger(hours=self.settings.post_interval_hours),
@@ -85,12 +105,18 @@ class PostingScheduler:
             max_instances=1,
             coalesce=True,
         )
-        logger.info("Bot command polling enabled for admin_chat_id=%s", self.settings.admin_chat_id)
+        logger.info(
+            "Bot command polling enabled for admin_chat_id=%s",
+            self.settings.admin_chat_id,
+        )
 
-    async def _run_job(self) -> None:
-        logger.info("Scheduled post job triggered.")
+    async def _run_job(self, slot_type: SlotType | None = None) -> None:
+        logger.info("Scheduled post job triggered (slot=%s).", slot_type)
         try:
-            await self.orchestrator.generate_planned_post(publish_to_telegram=True)
+            await self.orchestrator.generate_planned_post(
+                publish_to_telegram=True,
+                slot_type=slot_type,
+            )
         except Exception as exc:
             logger.exception("Scheduled post failed: %s", exc)
 
