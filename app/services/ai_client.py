@@ -19,6 +19,9 @@ class AIContentClient:
     async def generate(self, subject: Subject, content_format: ContentFormat) -> GeneratedContent:
         prompt = self._build_prompt(subject, content_format)
 
+        if self.settings.ai_provider == "anthropic" and self.settings.anthropic_api_key:
+            return await self._generate_with_anthropic(prompt, subject, content_format)
+
         if self.settings.ai_provider == "openai" and self.settings.openai_api_key:
             return await self._generate_with_openai(prompt, subject, content_format)
 
@@ -43,6 +46,34 @@ class AIContentClient:
             f"Content format: {content_format.value}\n\n"
             f"{detail}"
         ).strip()
+
+    async def _generate_with_anthropic(
+        self,
+        prompt: str,
+        subject: Subject,
+        content_format: ContentFormat,
+    ) -> GeneratedContent:
+        import anthropic
+
+        model = self.settings.ai_model
+        if not model.startswith("claude"):
+            model = "claude-haiku-4-5-20251001"
+
+        client = anthropic.AsyncAnthropic(api_key=self.settings.anthropic_api_key)
+        system = (
+            "You are an expert MBBS and NEET PG medical educator. "
+            "Produce accurate, concise, exam-oriented undergraduate medical teaching content. "
+            "Respond ONLY with valid JSON — no markdown fences, no extra text. "
+            "Start your response with { and end with }."
+        )
+        message = await client.messages.create(
+            model=model,
+            max_tokens=1500,
+            system=system,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        raw = message.content[0].text
+        return self._parse_content(raw, subject, content_format)
 
     async def _generate_with_openai(
         self,

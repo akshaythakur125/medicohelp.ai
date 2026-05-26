@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: medicohelp-ai
+    env: python
+    region: singapore   # Closest to India; also try: frankfurt, ohio
+    plan: free          # Free tier sleeps after 15 min inactivity — set up UptimeRobot to ping /health every 5 min
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+
+    envVars:
+      # ── Runtime behaviour ────────────────────────────────────────────────────
+      - key: RUN_SCHEDULER
+        value: "true"
+      - key: TIMEZONE
+        value: "Asia/Kolkata"
+      - key: TEXT_ONLY_MODE
+        value: "true"                    # No Pillow/image generation needed on cloud
+      - key: POST_SCHEDULE_TIMES
+        value: "08:00,14:00,20:00"      # Morning / Afternoon / Evening IST
+      - key: LOG_LEVEL
+        value: "INFO"
+      - key: ALLOW_MOCK_AI
+        value: "false"                   # Use real AI on production
+
+      # ── AI provider (pick one) ────────────────────────────────────────────────
+      - key: AI_PROVIDER
+        value: "anthropic"              # Recommended: cheapest, highest quality
+      - key: AI_MODEL
+        value: "claude-haiku-4-5-20251001"
+
+      # ── Secrets (set these in Render dashboard, NOT here) ────────────────────
+      # ANTHROPIC_API_KEY      — get from console.anthropic.com
+      # OPENAI_API_KEY         — alternative if AI_PROVIDER=openai
+      # TELEGRAM_BOT_TOKEN     — from @BotFather on Telegram
+      # TELEGRAM_CHAT_ID       — your channel/group ID (e.g. -100123456789)
+      # ADMIN_CHAT_ID          — your personal chat ID for /post /status commands

@@ -9,8 +9,9 @@ class Settings(BaseSettings):
     project_name: str = "MedicoHelp AI Auto Poster"
     openai_api_key: str | None = None
     gemini_api_key: str | None = None
-    ai_provider: str = Field(default="openai", pattern="^(openai|gemini)$")
+    ai_provider: str = Field(default="openai", pattern="^(openai|gemini|anthropic)$")
     ai_model: str = "gpt-4o-mini"
+    anthropic_api_key: str | None = None
     generate_realistic_images: bool = False
     openai_image_model: str = "gpt-image-1"
     openai_image_size: str = "1024x1024"
@@ -18,10 +19,13 @@ class Settings(BaseSettings):
 
     telegram_bot_token: str | None = None
     telegram_chat_id: str | None = None
+    admin_chat_id: str | None = None
 
     post_interval_hours: int = Field(default=6, ge=1)
+    post_schedule_times: str = ""  # Comma-separated HH:MM slots, e.g. "08:00,14:00,20:00"
     timezone: str = "Asia/Kolkata"
     run_scheduler: bool = True
+    text_only_mode: bool = True  # Send rich-text messages instead of image posters
 
     app_host: str = "0.0.0.0"
     app_port: int = 8000

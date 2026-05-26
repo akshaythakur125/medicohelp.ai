@@ -1,10 +1,12 @@
 import logging
 import random
+from pathlib import Path
 
 from app.config import Settings
 from app.models import ContentCategory, ContentFormat, GenerateResponse, NewsItem, NewsTopic, Subject
 from app.services.ai_client import AIContentClient, legacy_category_to_subject_format
 from app.services.content_strategy import ContentStrategy
+from app.services.formatter import format_for_telegram
 from app.services.medical_image import MedicalImageGenerator
 from app.services.news import NewsSweeper
 from app.services.poster import PosterGenerator
@@ -44,17 +46,24 @@ class PostOrchestrator:
             if category:
                 content.category = category
             self.quality_gate.validate(content)
-            visual_path = None
-            try:
-                visual_path = await self.medical_image_generator.create_visual(content)
-            except Exception as exc:
-                self.store.save_error("Realistic image generation failed; using fallback schematic", {"error": str(exc)})
-            poster_path = self.poster_generator.create(content, visual_image_path=visual_path)
-            telegram_posted = False
 
+            poster_path: Path = Path("text-only")
+            if not self.settings.text_only_mode:
+                visual_path = None
+                try:
+                    visual_path = await self.medical_image_generator.create_visual(content)
+                except Exception as exc:
+                    self.store.save_error("Image generation failed; using fallback schematic", {"error": str(exc)})
+                poster_path = self.poster_generator.create(content, visual_image_path=visual_path)
+
+            telegram_posted = False
             if publish_to_telegram:
-                caption = self._build_caption(content.caption, content.hashtags)
-                telegram_posted = await self.telegram.send_photo(poster_path, caption)
+                if self.settings.text_only_mode:
+                    text = format_for_telegram(content)
+                    telegram_posted = await self.telegram.send_message(text)
+                else:
+                    caption = self._build_caption(content.caption, content.hashtags)
+                    telegram_posted = await self.telegram.send_photo(poster_path, caption)
 
             self.store.save_post(content, poster_path, telegram_posted)
             return GenerateResponse(
@@ -67,9 +76,9 @@ class PostOrchestrator:
                 "Post generation pipeline failed",
                 {
                     "error": str(exc),
-                    "subject": selected_subject,
-                    "content_format": selected_format,
-                    "category": category,
+                    "subject": str(selected_subject),
+                    "content_format": str(selected_format),
+                    "category": str(category) if category else None,
                 },
             )
             raise
@@ -103,12 +112,30 @@ class PostOrchestrator:
             self.store.save_error("News/residency post generation failed", {"error": str(exc), "topic": topic})
             raise
 
-    async def generate_planned_post(self, publish_to_telegram: bool = True) -> GenerateResponse:
+    async def generate_planned_post(
+        self,
+        publish_to_telegram: bool = True,
+        subject_override: Subject | None = None,
+    ) -> GenerateResponse:
         planned = self.content_strategy.next_post()
-        if planned.news_topic:
+        if planned.news_topic and not subject_override:
             return await self.generate_news_post(planned.news_topic, publish_to_telegram=publish_to_telegram)
         return await self.generate_post(
-            subject=planned.subject,
+            subject=subject_override or planned.subject,
             content_format=planned.content_format,
             publish_to_telegram=publish_to_telegram,
         )
+
+    async def generate_news_post_text(self, topic: NewsTopic, publish_to_telegram: bool = False) -> GenerateResponse:
+        """Like generate_news_post but sends as a text message in text_only_mode."""
+        result = await self.generate_news_post(topic=topic, publish_to_telegram=False)
+        if publish_to_telegram and self.settings.text_only_mode:
+            text = format_for_telegram(result.content)
+            telegram_posted = await self.telegram.send_message(text)
+            self.store.save_post(result.content, Path("text-only"), telegram_posted)
+            return GenerateResponse(
+                content=result.content,
+                poster_path="text-only",
+                telegram_posted=telegram_posted,
+            )
+        return result
