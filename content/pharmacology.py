@@ -215,4 +215,119 @@ TOPICS = [
         "high_yield_takeaway": "Partial agonist = submaximal response alone, competitive antagonist vs full agonist. Competitive antagonist = ↑ EC50, same Vmax. Non-competitive = ↓ Vmax.",
         "hashtags": ["#MedicoHelp", "#Pharmacology", "#MBBS", "#NEETPG", "#PYQ"],
     },
+    # ── Mnemonic ──────────────────────────────────────────────────────────────
+    {
+        "title": "NOT GASES — Beta-Blocker Side Effects",
+        "subject": Subject.pharmacology,
+        "content_format": ContentFormat.mnemonic,
+        "poster_text": "NOT GASES = Bronchoconstriction, Heart block, Glucose masked, lipids↑, Sexual dysfunction, Fatigue, Sleep disturbance",
+        "caption": (
+            "Mnemonic: NOT GASES — Beta-Blocker Side Effects\n\n"
+            "N — No beta2 stimulation → Bronchoconstriction\n"
+            "   (Dangerous in asthma/COPD; use cardioselective agents with caution)\n\n"
+            "O — (Heart) bLOCk → Bradycardia + AV block\n"
+            "   (Contraindicated in 2nd/3rd degree AV block; sick sinus syndrome)\n\n"
+            "T — (Hypogly)T(caemia masked) → Masks hypoglycaemic warning signs\n"
+            "   (Blocks tachycardia response; sweating still present; use with caution in DM)\n\n"
+            "G — Glucose/lipid effects → ↑ TG, ↓ HDL (non-cardioselective worse)\n\n"
+            "A — (Sexu)A(l dysfunction) → Impotence/decreased libido\n\n"
+            "S — Sudden fatigue + (cold) extremities (↓ cardiac output, vasoconstriction)\n\n"
+            "E — (Sl)E(ep disturbance) → Nightmares, insomnia (lipophilic: propranolol, metoprolol)\n\n"
+            "S — (Rebound) Syndrome on abrupt withdrawal → Rebound hypertension, angina, MI\n\n"
+            "Memory hook: When NOT on GASES, side effects creep in.\n\n"
+            "⚠️ Exam Trap: Abrupt withdrawal of beta-blockers can precipitate MI in CAD patients — always taper.\n"
+            "Lipophilic (propranolol, metoprolol) → cross BBB → more CNS side effects."
+        ),
+        "high_yield_takeaway": "Beta-blocker SEs: bronchoconstriction, bradycardia/AV block, hypoglycaemia masking, ↑TG/↓HDL, sexual dysfunction, fatigue, sleep disturbance. Never stop abruptly in CAD.",
+        "hashtags": ["#MedicoHelp", "#Pharmacology", "#MBBS", "#NEETPG", "#Mnemonic"],
+    },
+    # ── Flashcard ─────────────────────────────────────────────────────────────
+    {
+        "title": "First-Line Antihypertensive in Pregnancy",
+        "subject": Subject.pharmacology,
+        "content_format": ContentFormat.flashcard,
+        "poster_text": "First-line antihypertensive in pregnancy = Methyldopa or Labetalol",
+        "caption": (
+            "First-Line Drug for Hypertension in Pregnancy — Flashcard\n\n"
+            "QUESTION: Which antihypertensive is safe in pregnancy as first-line?\n\n"
+            "ANSWER: Methyldopa (first-line, longest safety record) or Labetalol (IV for acute)\n\n"
+            "Safe antihypertensives in pregnancy:\n"
+            "• Methyldopa: Alpha-2 agonist; longest safety data; first-line for chronic HTN in pregnancy\n"
+            "• Labetalol: Alpha + beta blocker; IV form for hypertensive urgency in pregnancy\n"
+            "• Nifedipine (CCB): Oral; used in pre-eclampsia; tocolytic at high doses\n"
+            "• Hydralazine: IV for acute pre-eclampsia; direct vasodilator\n\n"
+            "CONTRAINDICATED in pregnancy:\n"
+            "• ACE inhibitors (ramipril, enalapril): Teratogenic (renal agenesis, oligohydramnios)\n"
+            "• ARBs (losartan, valsartan): Same mechanism — contraindicated\n"
+            "• Atenolol: Associated with IUGR; avoid\n\n"
+            "Pre-eclampsia severe: MgSO4 (seizure prophylaxis) + IV labetalol or hydralazine\n\n"
+            "⚠️ Exam Trap: ACEi/ARBs are Category D/X in pregnancy — must switch before conception if possible."
+        ),
+        "question": "Which antihypertensive is safe and used as first-line in pregnancy?",
+        "correct_answer": "Methyldopa (first-line, safest long-term record) and Labetalol (IV for acute). Nifedipine and Hydralazine are also safe. ACE inhibitors and ARBs are CONTRAINDICATED in pregnancy.",
+        "high_yield_takeaway": "Safe in pregnancy: Methyldopa (1st line), Labetalol, Nifedipine, Hydralazine. CONTRAINDICATED: ACEi and ARBs (renal teratogens). MgSO4 for pre-eclampsia seizure prophylaxis.",
+        "hashtags": ["#MedicoHelp", "#Pharmacology", "#MBBS", "#NEETPG", "#Flashcard"],
+    },
+    # ── True/False ────────────────────────────────────────────────────────────
+    {
+        "title": "ACE Inhibitors in Pregnancy — Safe or Not?",
+        "subject": Subject.pharmacology,
+        "content_format": ContentFormat.true_false,
+        "poster_text": "ACE inhibitors = CONTRAINDICATED in pregnancy (teratogenic — renal agenesis)",
+        "caption": (
+            "True or False: ACE inhibitors are safe and recommended in pregnancy for hypertension management.\n\n"
+            "ANSWER: FALSE\n\n"
+            "ACE inhibitors are CONTRAINDICATED in pregnancy — they are known teratogens.\n\n"
+            "Mechanism of teratogenicity:\n"
+            "• Angiotensin II is essential for normal fetal renal development\n"
+            "• ACEi block Ang II → fetal renal hypoperfusion\n"
+            "• Result: Renal tubular dysplasia, renal agenesis\n"
+            "• Leads to: Oligohydramnios → pulmonary hypoplasia, limb contractures, IUGR\n"
+            "• ACE inhibitor fetopathy / neonatal renal failure\n\n"
+            "FDA/pregnancy categories:\n"
+            "• 1st trimester: Category C (risk of cardiovascular malformations)\n"
+            "• 2nd–3rd trimester: Category D (confirmed fetotoxicity)\n"
+            "• ARBs: Same mechanism — equally contraindicated\n\n"
+            "What to use instead:\n"
+            "• Methyldopa (safest, first-line)\n"
+            "• Labetalol (IV for acute), Nifedipine, Hydralazine\n\n"
+            "Post-partum: ACEi/ARBs can be restarted (compatible with breastfeeding at low doses)\n\n"
+            "⚠️ Exam Trap: Women on ACEi/ARBs planning pregnancy should be switched BEFORE conception."
+        ),
+        "question": "ACE inhibitors are safe and recommended in pregnancy for hypertension management.",
+        "correct_answer": "FALSE",
+        "explanation": "ACE inhibitors are CONTRAINDICATED in pregnancy. They block Ang II-dependent fetal renal development, causing renal agenesis, oligohydramnios, pulmonary hypoplasia and IUGR. ARBs are equally contraindicated. Use Methyldopa or Labetalol instead.",
+        "high_yield_takeaway": "ACEi/ARBs = contraindicated in pregnancy (teratogen — renal agenesis, oligohydramnios). Switch to Methyldopa or Labetalol. Risk greatest in 2nd-3rd trimester.",
+        "hashtags": ["#MedicoHelp", "#Pharmacology", "#MBBS", "#NEETPG", "#TrueFalse"],
+    },
+    # ── One-liner Recall ──────────────────────────────────────────────────────
+    {
+        "title": "Morphine Mechanism — One-liner Recall",
+        "subject": Subject.pharmacology,
+        "content_format": ContentFormat.one_liner_recall,
+        "poster_text": "Morphine: mu-opioid agonist; reversed by naloxone",
+        "caption": (
+            "One-liner Recall: Morphine Mechanism\n\n"
+            "Fill in the blank:\n\n"
+            "\"Morphine mechanism: acts on ___ receptors; reversed by ___\"\n\n"
+            "Answer: Mu (μ) opioid receptors (also kappa and delta); reversed by Naloxone\n\n"
+            "Full picture:\n"
+            "• Primary receptor: Mu (μ) opioid receptor (GPCR — Gi coupled)\n"
+            "  → ↓ cAMP, opens K⁺ channels, closes Ca²⁺ channels → ↓ neuronal excitability\n"
+            "• Kappa (κ): dysphoria, sedation, spinal analgesia\n"
+            "• Delta (δ): mood, spinal analgesia\n\n"
+            "Morphine clinical pharmacology:\n"
+            "• Analgesia, euphoria, sedation, respiratory depression, constipation (no tolerance)\n"
+            "• Miosis (pinpoint pupils): pathognomonic of opioid toxicity\n"
+            "• Histamine release: hypotension, pruritus, bronchospasm\n\n"
+            "Reversal agents:\n"
+            "• Naloxone: competitive opioid antagonist; short-acting (re-narcotization risk)\n"
+            "• Naltrexone: longer-acting; oral; used in addiction\n\n"
+            "⚠️ Exam Trap: Constipation from opioids has NO tolerance development. Miosis persists."
+        ),
+        "question": "Morphine mechanism: acts on ___ receptors; reversed by ___",
+        "correct_answer": "Mu (μ) opioid receptors (Gi-coupled GPCR); reversed by Naloxone",
+        "high_yield_takeaway": "Morphine = mu-opioid agonist (Gi-coupled). Causes miosis, respiratory depression, constipation (no tolerance). Reversed by Naloxone. Constipation has no tolerance.",
+        "hashtags": ["#MedicoHelp", "#Pharmacology", "#MBBS", "#NEETPG", "#OneLiner"],
+    },
 ]

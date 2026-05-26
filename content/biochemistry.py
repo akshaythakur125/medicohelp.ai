@@ -197,4 +197,118 @@ TOPICS = [
         "high_yield_takeaway": "Competitive inhibition: ↑ Km, same Vmax. Non-competitive: same Km, ↓ Vmax. Lineweaver-Burk: competitive lines cross Y-axis; non-competitive cross X-axis.",
         "hashtags": ["#MedicoHelp", "#Biochemistry", "#MBBS", "#NEETPG", "#PYQ"],
     },
+    # ── Mnemonic ──────────────────────────────────────────────────────────────
+    {
+        "title": "COAL CAR — Urea Cycle Enzymes in Order",
+        "subject": Subject.biochemistry,
+        "content_format": ContentFormat.mnemonic,
+        "poster_text": "COAL CAR = CPS-I, OTC, AS, AL, CARginase (Arginase)",
+        "caption": (
+            "Mnemonic: COAL CAR — Urea Cycle Enzymes in Order\n\n"
+            "C — CPS-I (Carbamoyl Phosphate Synthetase I)\n"
+            "   Location: Mitochondria; RATE-LIMITING step\n"
+            "   Activated by N-acetylglutamate (NAG); needs ATP + biotin\n\n"
+            "O — OTC (Ornithine TransCarbamylase)\n"
+            "   Mitochondria; most common urea cycle disorder; X-linked\n\n"
+            "A — AS (Argininosuccinate Synthetase)\n"
+            "   Cytosol; incorporates aspartate (2nd nitrogen source)\n\n"
+            "L — AL (Argininosuccinate Lyase)\n"
+            "   Cytosol; cleaves argininosuccinate → Arginine + Fumarate\n\n"
+            "CAR — CARginase = ARGINASE\n"
+            "   Cytosol; Arginine → Urea + Ornithine (regenerates ornithine for cycle)\n\n"
+            "Memory hook: 'COAL CAR drives nitrogen out of the body'\n\n"
+            "Key clinical points:\n"
+            "• All urea cycle defects → hyperammonaemia (NH₃ toxic to brain)\n"
+            "• OTC deficiency: most common; X-linked recessive; males most affected\n"
+            "• CPS-I deficiency: autosomal recessive; elevated glutamine, low citrulline\n"
+            "• Argininosuccinate aciduria (AL defect): elevated argininosuccinate in urine\n\n"
+            "⚠️ Exam Trap: OTC deficiency is X-linked (NOT autosomal). Heterozygous females can be symptomatic."
+        ),
+        "high_yield_takeaway": "COAL CAR = CPS-I → OTC → AS → AL → Arginase. CPS-I is rate-limiting (mitochondria). OTC deficiency = most common urea cycle disorder, X-linked recessive.",
+        "hashtags": ["#MedicoHelp", "#Biochemistry", "#MBBS", "#NEETPG", "#Mnemonic"],
+    },
+    # ── Flashcard ─────────────────────────────────────────────────────────────
+    {
+        "title": "Rate-Limiting Step of Urea Cycle",
+        "subject": Subject.biochemistry,
+        "content_format": ContentFormat.flashcard,
+        "poster_text": "Rate-limiting enzyme of urea cycle = CPS-I (activated by N-acetylglutamate)",
+        "caption": (
+            "Rate-Limiting Step of Urea Cycle — Flashcard\n\n"
+            "QUESTION: Which enzyme is rate-limiting in the urea cycle?\n\n"
+            "ANSWER: Carbamoyl Phosphate Synthetase I (CPS-I)\n\n"
+            "Details:\n"
+            "• Location: Mitochondrial matrix\n"
+            "• Reaction: NH₃ + CO₂ + 2 ATP → Carbamoyl phosphate\n"
+            "• Allosteric activator: N-Acetylglutamate (NAG)\n"
+            "  - NAG synthesis stimulated by arginine and acetyl-CoA\n"
+            "  - High protein intake → ↑ arginine → ↑ NAG → ↑ CPS-I activity\n\n"
+            "Clinical significance:\n"
+            "• CPS-I deficiency → hyperammonaemia in neonates\n"
+            "• Valproate toxicity: depletes NAG → inhibits CPS-I → hyperammonaemia\n\n"
+            "Distinguishing CPS-I from CPS-II:\n"
+            "• CPS-I: mitochondria; urea cycle; uses NH₃; activated by NAG\n"
+            "• CPS-II: cytosol; pyrimidine synthesis; uses glutamine; NOT activated by NAG\n\n"
+            "⚠️ Exam Trap: Valproate-induced hyperammonaemia = CPS-I inhibition via NAG depletion."
+        ),
+        "question": "Which enzyme is the rate-limiting step in the urea cycle, and what activates it?",
+        "correct_answer": "CPS-I (Carbamoyl Phosphate Synthetase I) is rate-limiting. It is allosterically activated by N-acetylglutamate (NAG), which is upregulated by arginine and acetyl-CoA.",
+        "high_yield_takeaway": "Urea cycle rate-limiting enzyme = CPS-I (mitochondria). Activated by N-acetylglutamate. Valproate inhibits via NAG depletion causing hyperammonaemia.",
+        "hashtags": ["#MedicoHelp", "#Biochemistry", "#MBBS", "#NEETPG", "#Flashcard"],
+    },
+    # ── True/False ────────────────────────────────────────────────────────────
+    {
+        "title": "OTC Deficiency — Inheritance Pattern",
+        "subject": Subject.biochemistry,
+        "content_format": ContentFormat.true_false,
+        "poster_text": "OTC deficiency = X-LINKED recessive (NOT autosomal dominant)",
+        "caption": (
+            "True or False: OTC deficiency is the most common urea cycle disorder and is autosomal dominant.\n\n"
+            "ANSWER: FALSE\n\n"
+            "OTC (Ornithine TransCarbamylase) deficiency IS the most common urea cycle disorder — but it is X-LINKED RECESSIVE, NOT autosomal dominant.\n\n"
+            "Key facts about OTC deficiency:\n"
+            "• Inheritance: X-linked recessive (gene on X chromosome)\n"
+            "• Most common urea cycle disorder\n"
+            "• Affects males severely (hemizygous); females are often carriers but can be symptomatic\n"
+            "• Biochemistry: Orotic acid elevated in urine (carbamoyl phosphate leaks into cytosol → pyrimidine synthesis → orotic acid)\n"
+            "• Low citrulline, elevated ammonia\n\n"
+            "Distinguishing from CPS-I deficiency:\n"
+            "• CPS-I deficiency: also elevated ammonia + low citrulline; but orotic acid is LOW/normal\n"
+            "• OTC: elevated orotic acid = key distinguishing feature\n\n"
+            "Management:\n"
+            "• Protein restriction, ammonia scavengers (sodium benzoate, sodium phenylacetate)\n"
+            "• Liver transplant (curative — replaces the deficient hepatic enzyme)\n\n"
+            "⚠️ Exam Trap: The presence of elevated orotic acid differentiates OTC from CPS-I deficiency."
+        ),
+        "question": "OTC deficiency is the most common urea cycle disorder and is autosomal dominant.",
+        "correct_answer": "FALSE",
+        "explanation": "OTC deficiency is the most common urea cycle disorder, but it is X-LINKED RECESSIVE, not autosomal dominant. Males are severely affected. Elevated orotic acid in urine distinguishes it from CPS-I deficiency (where orotic acid is normal).",
+        "high_yield_takeaway": "OTC deficiency = most common urea cycle disorder; X-linked recessive. Elevated orotic acid in urine (vs CPS-I: orotic acid normal). Both cause hyperammonaemia.",
+        "hashtags": ["#MedicoHelp", "#Biochemistry", "#MBBS", "#NEETPG", "#TrueFalse"],
+    },
+    # ── One-liner Recall ──────────────────────────────────────────────────────
+    {
+        "title": "PKU — One-liner Recall",
+        "subject": Subject.biochemistry,
+        "content_format": ContentFormat.one_liner_recall,
+        "poster_text": "PKU = phenylalanine hydroxylase deficiency → phenylpyruvate accumulation",
+        "caption": (
+            "One-liner Recall: Phenylketonuria (PKU)\n\n"
+            "Fill in the blank:\n\n"
+            "\"PKU = deficiency of ___ causing accumulation of ___ in blood\"\n\n"
+            "Answer: Phenylalanine hydroxylase (PAH); Phenylalanine (and phenylpyruvate)\n\n"
+            "Full picture:\n"
+            "• Enzyme deficient: Phenylalanine hydroxylase (PAH) — converts Phe → Tyr\n"
+            "• Cofactor: Tetrahydrobiopterin (BH4); BH4 deficiency = malignant PKU\n"
+            "• Accumulated metabolite: Phenylalanine → Phenylpyruvate (musty/mousy urine odour)\n"
+            "• Clinical: intellectual disability, seizures, fair skin/hair (↓ melanin from ↓ tyrosine)\n"
+            "• Newborn screening: elevated Phe on day 3-5 blood spot\n"
+            "• Diet: Low-phenylalanine diet + tyrosine supplementation\n"
+            "• Maternal PKU: uncontrolled PKU in pregnancy → fetal microcephaly + cardiac defects"
+        ),
+        "question": "PKU = deficiency of ___ causing accumulation of ___ in blood",
+        "correct_answer": "Phenylalanine hydroxylase (PAH); Phenylalanine (phenylpyruvate in urine → musty odour)",
+        "high_yield_takeaway": "PKU = PAH deficiency → Phe accumulation → intellectual disability, fair skin, musty urine. BH4 cofactor deficiency = malignant PKU. Newborn screened.",
+        "hashtags": ["#MedicoHelp", "#Biochemistry", "#MBBS", "#NEETPG", "#OneLiner"],
+    },
 ]

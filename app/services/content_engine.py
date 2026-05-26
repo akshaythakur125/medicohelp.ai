@@ -30,6 +30,140 @@ class SmartContentEngine:
         self._history_path = Path("logs/topic_history.json")
         self._history: dict[str, str] = self._load_history()
 
+    def generate_flashcard(self, subject: Subject) -> GeneratedContent | None:
+        """Create a flashcard from an existing rapid_revision or concise_notes topic."""
+        source = self._get_with_spaced_repetition(subject, ContentFormat.rapid_revision)
+        if not source:
+            source = self._get_with_spaced_repetition(subject, ContentFormat.concise_notes)
+        if not source:
+            return None
+        content = GeneratedContent(
+            title=f"Flashcard: {source.title}",
+            caption=f"Flashcard based on: {source.title}\n\n{source.poster_text}"[:2000],
+            hashtags=_swap_tag(source.hashtags, "", "Flashcard"),
+            poster_text=f"What do you know about: {source.title}?"[:320],
+            question=source.poster_text or source.title,
+            correct_answer=(source.high_yield_takeaway or source.caption[:200])[:200],
+            explanation=source.caption[:800],
+            high_yield_takeaway=source.high_yield_takeaway,
+            subject=source.subject,
+            content_format=ContentFormat.flashcard,
+            difficulty="medium",
+            topic_tags=[source.subject.value if source.subject else "general"],
+        )
+        self._record(content)
+        return content
+
+    def generate_true_false(self, subject: Subject) -> GeneratedContent | None:
+        """Create a True/False statement from an existing topic's high_yield_takeaway."""
+        pool = []
+        try:
+            from content.loader import get_library
+            pool = get_library().pool(subject, None)
+        except Exception:
+            return None
+        if not pool:
+            return None
+
+        source = random.choice(pool)
+        takeaway = source.high_yield_takeaway or ""
+        if not takeaway:
+            return None
+
+        # Split on ". " to get individual facts, pick one as a TRUE statement
+        facts = [f.strip() for f in takeaway.replace(";", ".").split(".") if len(f.strip()) > 15]
+        if not facts:
+            return None
+
+        statement = random.choice(facts)
+        explanation = f"This is a TRUE statement. {takeaway}"
+
+        content = GeneratedContent(
+            title=f"True/False: {source.title}",
+            caption=f"True/False question based on: {source.title}"[:2000],
+            hashtags=_swap_tag(source.hashtags, "", "TrueFalse"),
+            poster_text=f"True or False: {statement}"[:320],
+            question=statement,
+            correct_answer="TRUE",
+            explanation=explanation[:1600],
+            high_yield_takeaway=source.high_yield_takeaway,
+            subject=source.subject,
+            content_format=ContentFormat.true_false,
+            difficulty="easy",
+            topic_tags=[source.subject.value if source.subject else "general"],
+        )
+        self._record(content)
+        return content
+
+    def generate_one_liner(self, subject: Subject) -> GeneratedContent | None:
+        """Create a fill-in-the-blank from a high_yield_takeaway."""
+        pool = []
+        try:
+            from content.loader import get_library
+            pool = get_library().pool(subject, None)
+        except Exception:
+            return None
+
+        candidates = [c for c in pool if c.high_yield_takeaway and len(c.high_yield_takeaway) > 20]
+        if not candidates:
+            return None
+
+        source = random.choice(candidates)
+        takeaway = source.high_yield_takeaway or ""
+
+        # Make a fill-in-the-blank by finding a key term to blank out
+        words = takeaway.split()
+        blank_idx = len(words) // 2  # blank the middle-ish term
+        answer = words[blank_idx] if words else "?"
+        blanked = " ".join(w if i != blank_idx else "___" for i, w in enumerate(words))
+
+        content = GeneratedContent(
+            title=f"One-Liner: {source.title}",
+            caption=f"One-liner recall from: {source.title}"[:2000],
+            hashtags=_swap_tag(source.hashtags, "", "OneLiner"),
+            poster_text=f"Fill in: {blanked}"[:320],
+            question=blanked,
+            correct_answer=answer[:200],
+            explanation=takeaway[:1600],
+            high_yield_takeaway=source.high_yield_takeaway,
+            subject=source.subject,
+            content_format=ContentFormat.one_liner_recall,
+            difficulty="easy",
+            topic_tags=[source.subject.value if source.subject else "general"],
+        )
+        self._record(content)
+        return content
+
+    def generate_daily_pack(self, count: int = 5) -> list[GeneratedContent]:
+        """Return a mixed set of items from different subjects for a daily revision pack."""
+        subjects = list(Subject)
+        random.shuffle(subjects)
+        selected_subjects = subjects[:count]
+
+        pack: list[GeneratedContent] = []
+        formats = [
+            ContentFormat.mcq,
+            ContentFormat.rapid_revision,
+            ContentFormat.true_false,
+            ContentFormat.flashcard,
+            ContentFormat.one_liner_recall,
+        ]
+
+        for i, subj in enumerate(selected_subjects):
+            fmt = formats[i % len(formats)]
+            if fmt == ContentFormat.flashcard:
+                item = self.generate_flashcard(subj)
+            elif fmt == ContentFormat.true_false:
+                item = self.generate_true_false(subj)
+            elif fmt == ContentFormat.one_liner_recall:
+                item = self.generate_one_liner(subj)
+            else:
+                item = self.generate(subj, fmt)
+            if item:
+                pack.append(item)
+
+        return pack
+
     def generate(self, subject: Subject, content_format: ContentFormat) -> GeneratedContent | None:
         """Return content with spaced repetition applied. Falls back to a variation if no fresh topic."""
         content = self._get_with_spaced_repetition(subject, content_format)

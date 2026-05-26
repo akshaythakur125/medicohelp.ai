@@ -46,6 +46,10 @@ class ContentFormat(str, Enum):
     exam_news_update = "exam_news_update"
     residency_survival_tip = "residency_survival_tip"
     pyq_concept = "pyq_concept"
+    flashcard = "flashcard"
+    true_false = "true_false"
+    one_liner_recall = "one_liner_recall"
+    mnemonic = "mnemonic"
 
 
 class NewsTopic(str, Enum):
@@ -60,6 +64,10 @@ class PostLane(str, Enum):
     quick_revision = "quick_revision"
     residency_tip = "residency_tip"
     exam_news = "exam_news"
+    poll_quiz = "poll_quiz"
+    flashcard = "flashcard"
+    mnemonic = "mnemonic"
+    daily_pack = "daily_pack"
 
 
 class GeneratedContent(BaseModel):
@@ -86,6 +94,8 @@ class GeneratedContent(BaseModel):
     subject: Subject | None = None
     content_format: ContentFormat
     category: ContentCategory | None = None
+    difficulty: str | None = Field(default=None, max_length=10)
+    topic_tags: list[str] = Field(default_factory=list, max_length=10)
 
 
 class GenerateRequest(BaseModel):

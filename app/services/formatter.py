@@ -35,6 +35,10 @@ _FORMAT_LABEL: dict[str, str] = {
     "pyq_concept": "PYQ SPECIAL",
     "exam_news_update": "EXAM NEWS",
     "residency_survival_tip": "RESIDENCY TIP",
+    "flashcard": "FLASHCARD",
+    "true_false": "TRUE OR FALSE",
+    "one_liner_recall": "ONE-LINER RECALL",
+    "mnemonic": "MNEMONIC",
 }
 
 _MAX_LEN = 4096
@@ -100,6 +104,14 @@ def format_for_telegram(content: GeneratedContent) -> str:
         body = _body_viva(content)
     elif fmt in (ContentFormat.exam_news_update, ContentFormat.residency_survival_tip):
         body = _body_news(content)
+    elif fmt == ContentFormat.flashcard:
+        body = _body_flashcard(content)
+    elif fmt == ContentFormat.true_false:
+        body = _body_true_false(content)
+    elif fmt == ContentFormat.one_liner_recall:
+        body = _body_one_liner(content)
+    elif fmt == ContentFormat.mnemonic:
+        body = _body_mnemonic(content)
     else:
         body = _body_notes(content)
 
@@ -202,6 +214,61 @@ def _body_viva(content: GeneratedContent) -> str:
                 parts.append(f"{i}. {_esc(pt)}")
         else:
             parts.append(_esc(content.caption))
+    return "\n".join(parts)
+
+
+def _body_flashcard(content: GeneratedContent) -> str:
+    """Q on front, spoiler answer on back."""
+    parts: list[str] = []
+    question = content.question or content.poster_text or content.title
+    parts.append(f"<b>Front:</b> {_esc(question)}")
+    answer = content.correct_answer or content.high_yield_takeaway or content.caption
+    if answer:
+        parts.append(f"\n<tg-spoiler>✅ <b>Answer:</b> {_esc(answer)}</tg-spoiler>")
+        parts.append("<i>👆 Tap to reveal</i>")
+    return "\n".join(parts)
+
+
+def _body_true_false(content: GeneratedContent) -> str:
+    """True/False with spoiler reveal."""
+    parts: list[str] = []
+    statement = content.question or content.poster_text
+    if statement:
+        parts.append(f"<b>Statement:</b> <i>{_esc(statement)}</i>")
+    if content.correct_answer or content.explanation:
+        inner = ""
+        verdict = content.correct_answer or "?"
+        colour = "✅" if verdict.upper().startswith("TRUE") else "❌"
+        inner += f"{colour} <b>{_esc(verdict.upper())}</b>"
+        if content.explanation:
+            inner += f"\n\n{_esc(content.explanation)}"
+        parts.append(f"\n<tg-spoiler>{inner}</tg-spoiler>")
+        parts.append("<i>👆 Tap to reveal</i>")
+    return "\n".join(parts)
+
+
+def _body_one_liner(content: GeneratedContent) -> str:
+    """Fill-in-the-blank one-liner recall."""
+    parts: list[str] = []
+    stem = content.question or content.poster_text or content.title
+    if stem:
+        parts.append(f"<b>Complete:</b>\n<i>{_esc(stem)}</i>")
+    if content.correct_answer:
+        inner = f"<b>{_esc(content.correct_answer)}</b>"
+        if content.explanation:
+            inner += f"\n\n{_esc(content.explanation)}"
+        parts.append(f"\n<tg-spoiler>{inner}</tg-spoiler>")
+        parts.append("<i>👆 Tap to reveal</i>")
+    return "\n".join(parts)
+
+
+def _body_mnemonic(content: GeneratedContent) -> str:
+    """Mnemonic breakdown with clinical hook."""
+    parts: list[str] = []
+    if content.poster_text:
+        parts.append(f"<b>🔤 {_esc(content.poster_text)}</b>")
+        parts.append("")
+    parts.append(_esc(content.caption))
     return "\n".join(parts)
 
 

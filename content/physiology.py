@@ -166,4 +166,112 @@ TOPICS = [
         "high_yield_takeaway": "ACE-I + bilateral RAS → acute renal failure (efferent dilation blocked). NSAIDs also ↓ GFR.",
         "hashtags": ["#MedicoHelp", "#Physiology", "#MBBS", "#NEETPG", "#Renal"],
     },
+    # ── Mnemonic ─────────────────────────────────────────────────────────────
+    {
+        "title": "CADET — Factors Shifting ODC to the Right",
+        "subject": Subject.physiology,
+        "content_format": ContentFormat.mnemonic,
+        "poster_text": "CADET face right: CO2, Acid, DPG, Exercise, Temperature↑",
+        "caption": (
+            "CADET — Oxygen Dissociation Curve Right Shift Mnemonic\n\n"
+            "Right shift = ↓ O2 affinity = ↑ O2 RELEASE to tissues (Bohr effect)\n\n"
+            "C — CO2 ↑ (hypercapnia)\n"
+            "A — Acid (↓ pH / acidosis)\n"
+            "D — 2,3-DPG ↑ (e.g. chronic anaemia, high altitude adaptation)\n"
+            "E — Exercise (↑ metabolic demand)\n"
+            "T — Temperature ↑ (fever, active muscles)\n\n"
+            "Memory hook: 'CADET face RIGHT' — a cadet marching to the right.\n\n"
+            "What it means clinically:\n"
+            "• Right shift: Hb gives up O2 more readily → beneficial in active/hypoxic tissues\n"
+            "• ↑ P50 (pO2 at 50% saturation; normal = 26 mmHg)\n\n"
+            "Left shift (opposite — ↑ O2 affinity, ↓ release):\n"
+            "• HbF, HbCO, alkalosis, hypothermia, ↓ 2,3-DPG\n"
+            "• ↓ P50\n\n"
+            "⚠️ Exam Trap: CO shifts curve LEFT (not right) — O2 held tightly by Hb."
+        ),
+        "high_yield_takeaway": "CADET = CO2, Acid, 2,3-DPG, Exercise, Temp → right shift of ODC → ↑ P50 → ↑ O2 delivery to tissues.",
+        "hashtags": ["#MedicoHelp", "#Physiology", "#MBBS", "#NEETPG", "#Mnemonic"],
+    },
+    # ── Flashcard ─────────────────────────────────────────────────────────────
+    {
+        "title": "GFR Normal Value",
+        "subject": Subject.physiology,
+        "content_format": ContentFormat.flashcard,
+        "poster_text": "Normal GFR = 125 mL/min; measured by inulin clearance (gold standard)",
+        "caption": (
+            "GFR Normal Value — Flashcard\n\n"
+            "QUESTION: What is the normal GFR and how is it measured?\n\n"
+            "ANSWER:\n"
+            "Normal GFR = ~125 mL/min (in a 70 kg adult male)\n"
+            "• Equivalent to ~180 L/day filtered\n\n"
+            "Gold Standard Measurement: Inulin clearance\n"
+            "• Inulin: freely filtered, NOT secreted, NOT reabsorbed → clearance = GFR exactly\n"
+            "• Formula: GFR = (U_inulin × V) / P_inulin\n\n"
+            "Clinical Estimation (eGFR):\n"
+            "• Creatinine clearance (CrCl): Overestimates slightly (some tubular secretion)\n"
+            "• CKD-EPI or MDRD formula: Used in clinical labs\n"
+            "• Serum creatinine rises only when GFR falls by ~50%\n\n"
+            "Age-related decline:\n"
+            "• GFR decreases ~1 mL/min/year after age 40\n\n"
+            "CKD staging by GFR:\n"
+            "• G1: ≥90 | G2: 60–89 | G3a: 45–59 | G3b: 30–44 | G4: 15–29 | G5: <15\n\n"
+            "⚠️ Exam Trap: Serum creatinine is insensitive — rises late when GFR already halved."
+        ),
+        "question": "What is the normal GFR and how is it measured (gold standard)?",
+        "correct_answer": "Normal GFR = ~125 mL/min. Gold standard = inulin clearance (freely filtered, not secreted/reabsorbed). Clinically estimated by creatinine clearance or CKD-EPI formula.",
+        "high_yield_takeaway": "Normal GFR = 125 mL/min. Gold standard = inulin clearance. Creatinine rises only when GFR falls 50%.",
+        "hashtags": ["#MedicoHelp", "#Physiology", "#MBBS", "#NEETPG", "#Flashcard"],
+    },
+    # ── True/False ────────────────────────────────────────────────────────────
+    {
+        "title": "Loop Diuretics — Site of Action",
+        "subject": Subject.physiology,
+        "content_format": ContentFormat.true_false,
+        "poster_text": "Loop diuretics act on THICK ASCENDING LIMB of Loop of Henle (not PCT)",
+        "caption": (
+            "True or False: Loop diuretics act on the proximal convoluted tubule.\n\n"
+            "ANSWER: FALSE\n\n"
+            "Loop diuretics (furosemide, bumetanide, torsemide) act on the THICK ASCENDING LIMB (TAL) of the Loop of Henle.\n\n"
+            "Mechanism:\n"
+            "• Inhibit Na⁺-K⁺-2Cl⁻ (NKCC2) co-transporter on the luminal membrane\n"
+            "• TAL is normally water-impermeable → loops diuretics abolish the medullary concentration gradient\n"
+            "• Result: ↑ urinary Na⁺, K⁺, Cl⁻, Ca²⁺, Mg²⁺ excretion\n\n"
+            "Sites of action — diuretics overview:\n"
+            "• PCT: Acetazolamide (carbonic anhydrase inhibitor)\n"
+            "• TAL: Loop diuretics (furosemide) ← THE MOST POWERFUL diuretics\n"
+            "• DCT: Thiazides (hydrochlorothiazide) — inhibit Na⁺-Cl⁻ co-transporter\n"
+            "• Collecting duct: Spironolactone (aldosterone antagonist), Amiloride (ENaC blocker)\n\n"
+            "Clinical uses of loop diuretics:\n"
+            "• Acute pulmonary oedema, heart failure, hypercalcaemia, hyperkalaemia\n\n"
+            "⚠️ Exam Trap: Loop diuretics WASTE calcium; thiazides RETAIN calcium."
+        ),
+        "question": "Loop diuretics act on the proximal convoluted tubule.",
+        "correct_answer": "FALSE",
+        "explanation": "Loop diuretics (furosemide, etc.) act on the THICK ASCENDING LIMB of the Loop of Henle, inhibiting the NKCC2 co-transporter. The PCT is the site of action for acetazolamide. The DCT is targeted by thiazides.",
+        "high_yield_takeaway": "Loop diuretics = TAL of Loop of Henle (NKCC2 inhibition). Most powerful diuretics. Waste Ca²⁺ (unlike thiazides which spare Ca²⁺).",
+        "hashtags": ["#MedicoHelp", "#Physiology", "#MBBS", "#NEETPG", "#TrueFalse"],
+    },
+    # ── One-liner Recall ──────────────────────────────────────────────────────
+    {
+        "title": "Normal GFR — One-liner Recall",
+        "subject": Subject.physiology,
+        "content_format": ContentFormat.one_liner_recall,
+        "poster_text": "Normal GFR = 125 mL/min; decreases ~1 mL/min/year after age 40",
+        "caption": (
+            "One-liner Recall: Normal GFR\n\n"
+            "Fill in the blank:\n\n"
+            "\"Normal GFR = ___ mL/min; decreases by ___ mL/min/year after age 40\"\n\n"
+            "Answer: 125 mL/min; decreases by ~1 mL/min/year after age 40\n\n"
+            "Quick facts:\n"
+            "• 125 mL/min = ~180 L/day filtered at glomerulus\n"
+            "• Only ~1.5 L/day excreted as urine (99% reabsorbed)\n"
+            "• Measured by inulin clearance (gold standard)\n"
+            "• Clinically by creatinine clearance (overestimates slightly)\n"
+            "• Creatinine rises only when GFR falls to ~60 mL/min or below"
+        ),
+        "question": "Normal GFR = ___ mL/min; decreases by ___ mL/min/year after age 40",
+        "correct_answer": "125 mL/min; decreases by ~1 mL/min/year after age 40",
+        "high_yield_takeaway": "Normal GFR = 125 mL/min (180 L/day filtered). Declines ~1 mL/min/year after 40. Creatinine insensitive marker — rises only when GFR drops ~50%.",
+        "hashtags": ["#MedicoHelp", "#Physiology", "#MBBS", "#NEETPG", "#OneLiner"],
+    },
 ]

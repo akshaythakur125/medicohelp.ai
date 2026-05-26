@@ -207,4 +207,121 @@ TOPICS = [
         "high_yield_takeaway": "Apoptosis = programmed, no inflammation, DNA ladder pattern. Necrosis = passive, inflammatory, random DNA smearing. Earliest reversible change = cellular swelling (↓ Na/K ATPase).",
         "hashtags": ["#MedicoHelp", "#Pathology", "#MBBS", "#NEETPG", "#PYQ"],
     },
+    # ── Mnemonic ──────────────────────────────────────────────────────────────
+    {
+        "title": "MIST — Causes of Granulomas",
+        "subject": Subject.pathology,
+        "content_format": ContentFormat.mnemonic,
+        "poster_text": "MIST = Mycobacteria, Immune/sarcoid, Schistosoma, Talc/foreign body",
+        "caption": (
+            "Mnemonic: MIST — Causes of Granulomas\n\n"
+            "M — Mycobacteria\n"
+            "   TB (Mycobacterium tuberculosis): CASEATING granulomas\n"
+            "   Leprosy (M. leprae): non-caseating (lepromatous) or caseating (tuberculoid)\n"
+            "   MAI (M. avium-intracellulare): non-caseating in immunocompromised\n\n"
+            "I — Immune / Sarcoidosis\n"
+            "   Sarcoidosis: NON-CASEATING granulomas (classic); bilateral hilar lymphadenopathy\n"
+            "   Crohn's disease: non-caseating in bowel wall\n"
+            "   Primary biliary cholangitis (PBC): granulomas in portal tracts\n\n"
+            "S — Schistosoma / Parasites\n"
+            "   Schistosomiasis: egg-induced granulomas in liver, bladder\n"
+            "   Toxoplasma, Histoplasma, Coccidioides: fungal/parasitic granulomas\n\n"
+            "T — Talc / Beryllium / Silica — Foreign body granulomas\n"
+            "   Berylliosis: non-caseating; mimics sarcoidosis\n"
+            "   Silicosis: 'eggshell' calcification of hilar nodes\n"
+            "   Talc: IV drug users; polarisable crystals in giant cells\n\n"
+            "Memory hook: Think of a MIST settling over inflamed tissue — obscuring the cause.\n\n"
+            "Caseating vs Non-caseating:\n"
+            "• Caseating: TB (most classic), also histoplasmosis, coccidioidomycosis\n"
+            "• Non-caseating: Sarcoidosis, Crohn's, berylliosis, foreign body reactions\n\n"
+            "⚠️ Exam Trap: All TB granulomas are caseating. Sarcoidosis granulomas are NEVER caseating."
+        ),
+        "high_yield_takeaway": "MIST = Mycobacteria (caseating), Immune/sarcoid (non-caseating), Schistosoma/parasites, Talc/beryllium. TB = caseating. Sarcoidosis = non-caseating.",
+        "hashtags": ["#MedicoHelp", "#Pathology", "#MBBS", "#NEETPG", "#Mnemonic"],
+    },
+    # ── Flashcard ─────────────────────────────────────────────────────────────
+    {
+        "title": "Caseating vs Non-caseating Granuloma",
+        "subject": Subject.pathology,
+        "content_format": ContentFormat.flashcard,
+        "poster_text": "Caseating = TB, fungi | Non-caseating = Sarcoidosis, Crohn's, berylliosis",
+        "caption": (
+            "Caseating vs Non-caseating Granuloma — Flashcard\n\n"
+            "QUESTION: What diseases cause caseating granulomas?\n\n"
+            "ANSWER: TB, Histoplasmosis, Coccidioidomycosis (and rarely Leprosy tuberculoid type)\n\n"
+            "Caseating granulomas:\n"
+            "• Gross: Cheese-like (caseous) necrosis in centre — hence 'caseating'\n"
+            "• TB (Mycobacterium tuberculosis): most classic cause\n"
+            "• Histoplasma capsulatum: endemic mycosis; Mississippi/Ohio river valley\n"
+            "• Coccidioides immitis: Arizona/California; spherules seen\n"
+            "• Central necrosis surrounded by epithelioid macrophages + Langhans giant cells\n\n"
+            "Non-caseating granulomas:\n"
+            "• Sarcoidosis (most common cause of non-caseating granulomas)\n"
+            "• Crohn's disease (transmural, skip lesions)\n"
+            "• Berylliosis (occupational; clinically mimics sarcoid)\n"
+            "• Foreign body reaction (talc, sutures, silica)\n"
+            "• Lepromatous leprosy (foamy macrophages — NOT true granulomas)\n\n"
+            "⚠️ Exam Trap: Sarcoidosis NEVER caseates. If you see caseous necrosis in a lung granuloma, think TB first."
+        ),
+        "question": "What diseases cause caseating granulomas, and how do they differ from non-caseating granulomas?",
+        "correct_answer": "Caseating: TB, Histoplasmosis, Coccidioidomycosis. Non-caseating: Sarcoidosis (most common), Crohn's disease, Berylliosis, foreign body reactions. Sarcoidosis NEVER caseates.",
+        "high_yield_takeaway": "Caseating granuloma = TB (classic), fungi. Non-caseating = Sarcoidosis, Crohn's, berylliosis. Sarcoid never caseates — if caseous, think infection first.",
+        "hashtags": ["#MedicoHelp", "#Pathology", "#MBBS", "#NEETPG", "#Flashcard"],
+    },
+    # ── True/False ────────────────────────────────────────────────────────────
+    {
+        "title": "Reed-Sternberg Cells — Which Lymphoma?",
+        "subject": Subject.pathology,
+        "content_format": ContentFormat.true_false,
+        "poster_text": "Reed-Sternberg cells = Hodgkin Lymphoma (NOT Non-Hodgkin)",
+        "caption": (
+            "True or False: Reed-Sternberg cells are pathognomonic of Non-Hodgkin Lymphoma.\n\n"
+            "ANSWER: FALSE\n\n"
+            "Reed-Sternberg (RS) cells are pathognomonic of HODGKIN LYMPHOMA (HL), not Non-Hodgkin Lymphoma.\n\n"
+            "Reed-Sternberg Cell:\n"
+            "• Classic appearance: Binucleated or bilobed giant cell with prominent 'owl-eye' nucleoli\n"
+            "• Origin: Germinal centre B-cell (despite unusual CD15+/CD30+ phenotype)\n"
+            "• Immunophenotype: CD15+, CD30+, CD20−, CD45− (unusual for B-cells)\n\n"
+            "Hodgkin Lymphoma subtypes (WHO):\n"
+            "• Nodular Sclerosis (most common in young women): fibrous bands + lacunar RS cells\n"
+            "• Mixed Cellularity: classic RS cells abundant; often EBV+\n"
+            "• Lymphocyte Rich: best prognosis; few RS cells\n"
+            "• Lymphocyte Depleted: worst prognosis; many RS cells; HIV-associated\n"
+            "• Nodular Lymphocyte Predominant: 'Popcorn cells' (LP cells); CD20+\n\n"
+            "Non-Hodgkin Lymphoma: No RS cells; monoclonal B or T cell proliferation\n\n"
+            "⚠️ Exam Trap: EBV is associated with mixed cellularity HL and Burkitt lymphoma (t[8;14])."
+        ),
+        "question": "Reed-Sternberg cells are pathognomonic of Non-Hodgkin Lymphoma.",
+        "correct_answer": "FALSE",
+        "explanation": "Reed-Sternberg cells are pathognomonic of HODGKIN LYMPHOMA, not Non-Hodgkin Lymphoma. Classic RS cell = binucleated, owl-eye nucleoli, CD15+/CD30+ phenotype. Non-Hodgkin lymphomas do not contain RS cells.",
+        "high_yield_takeaway": "Reed-Sternberg cells = Hodgkin Lymphoma (CD15+, CD30+). Classic owl-eye appearance. Not found in Non-Hodgkin Lymphoma. Most common HL subtype = Nodular Sclerosis.",
+        "hashtags": ["#MedicoHelp", "#Pathology", "#MBBS", "#NEETPG", "#TrueFalse"],
+    },
+    # ── One-liner Recall ──────────────────────────────────────────────────────
+    {
+        "title": "Virchow's Triad — One-liner Recall",
+        "subject": Subject.pathology,
+        "content_format": ContentFormat.one_liner_recall,
+        "poster_text": "Virchow's Triad = Hypercoagulability + Endothelial injury + Stasis",
+        "caption": (
+            "One-liner Recall: Virchow's Triad\n\n"
+            "Fill in the blank:\n\n"
+            "\"Virchow's triad = ___ + ___ + ___\"\n\n"
+            "Answer: Hypercoagulability + Endothelial injury + Stasis (venous stasis)\n\n"
+            "Full picture:\n"
+            "• Describes the three factors predisposing to thrombus formation\n\n"
+            "1. Hypercoagulability: Factor V Leiden, antiphospholipid syndrome, OCP use, malignancy, nephrotic syndrome\n"
+            "2. Endothelial injury: Atherosclerosis, hypertension, trauma, infection, smoking\n"
+            "3. Stasis: Prolonged immobility, AF (atrial fibrillation), varicose veins, post-op\n\n"
+            "Clinical relevance:\n"
+            "• DVT/PE: mainly stasis + hypercoagulability (Virchow described venous thrombosis)\n"
+            "• Arterial thrombosis: mainly endothelial injury (plaque rupture)\n"
+            "• Mural thrombus post-MI: stasis + endothelial injury\n\n"
+            "⚠️ Exam Trap: Most common inherited cause of hypercoagulability = Factor V Leiden mutation."
+        ),
+        "question": "Virchow's triad = ___ + ___ + ___",
+        "correct_answer": "Hypercoagulability + Endothelial injury + Stasis (venous stasis)",
+        "high_yield_takeaway": "Virchow's triad = Hypercoagulability + Endothelial injury + Stasis. Most common inherited hypercoagulable state = Factor V Leiden. DVT/PE = mainly stasis + hypercoagulability.",
+        "hashtags": ["#MedicoHelp", "#Pathology", "#MBBS", "#NEETPG", "#OneLiner"],
+    },
 ]

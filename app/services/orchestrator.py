@@ -3,7 +3,7 @@ import random
 from pathlib import Path
 
 from app.config import Settings
-from app.models import ContentCategory, ContentFormat, GenerateResponse, NewsItem, NewsTopic, Subject
+from app.models import ContentCategory, ContentFormat, GeneratedContent, GenerateResponse, NewsItem, NewsTopic, Subject
 from app.services.ai_client import AIContentClient, legacy_category_to_subject_format
 from app.services.content_strategy import ContentStrategy
 from app.services.formatter import format_for_telegram
@@ -117,14 +117,136 @@ class PostOrchestrator:
         publish_to_telegram: bool = True,
         subject_override: Subject | None = None,
     ) -> GenerateResponse:
+        from app.models import PostLane
         planned = self.content_strategy.next_post()
+
         if planned.news_topic and not subject_override:
             return await self.generate_news_post(planned.news_topic, publish_to_telegram=publish_to_telegram)
+
+        if planned.lane == PostLane.poll_quiz and not subject_override:
+            return await self.generate_poll_post(
+                subject=planned.subject,
+                publish_to_telegram=publish_to_telegram,
+            )
+
+        if planned.lane == PostLane.daily_pack and not subject_override:
+            return await self.generate_daily_pack_post(publish_to_telegram=publish_to_telegram)
+
+        if planned.lane == PostLane.flashcard and not subject_override:
+            return await self.generate_smart_format_post(
+                subject=planned.subject,
+                smart_format="flashcard",
+                publish_to_telegram=publish_to_telegram,
+            )
+
+        if planned.lane == PostLane.mnemonic and not subject_override:
+            return await self.generate_smart_format_post(
+                subject=planned.subject,
+                smart_format="mnemonic",
+                publish_to_telegram=publish_to_telegram,
+            )
+
         return await self.generate_post(
             subject=subject_override or planned.subject,
             content_format=planned.content_format,
             publish_to_telegram=publish_to_telegram,
         )
+
+    async def generate_poll_post(
+        self,
+        subject: Subject | None = None,
+        publish_to_telegram: bool = True,
+    ) -> GenerateResponse:
+        """Generate an MCQ and send it as a native Telegram quiz poll."""
+        selected_subject = subject or random.choice(list(Subject))
+        content = await self.ai_client.generate(selected_subject, ContentFormat.mcq)
+        self.quality_gate.validate(content)
+
+        poster_path = Path("text-only")
+        telegram_posted = False
+
+        if publish_to_telegram:
+            options = _strip_option_letters(content.options)[:4]
+            correct_idx = _correct_option_index(content.options, content.correct_answer or "")
+            explanation = (content.high_yield_takeaway or "")[:200]
+            question = (content.question or content.title)[:300]
+            telegram_posted = await self.telegram.send_poll(
+                question=question,
+                options=options,
+                correct_option_id=correct_idx,
+                explanation=explanation,
+            )
+
+        self.store.save_post(content, poster_path, telegram_posted)
+        return GenerateResponse(content=content, poster_path=str(poster_path), telegram_posted=telegram_posted)
+
+    async def generate_smart_format_post(
+        self,
+        subject: Subject | None = None,
+        smart_format: str = "flashcard",
+        publish_to_telegram: bool = True,
+    ) -> GenerateResponse:
+        """Generate flashcard/mnemonic/true-false/one-liner via SmartContentEngine."""
+        from app.services.content_engine import SmartContentEngine
+        engine = SmartContentEngine(self.settings)
+        selected_subject = subject or random.choice(list(Subject))
+
+        content: GeneratedContent | None = None
+        if smart_format == "flashcard":
+            content = engine.generate_flashcard(selected_subject)
+        elif smart_format == "mnemonic":
+            content = engine.generate(selected_subject, ContentFormat.mnemonic)
+        elif smart_format == "true_false":
+            content = engine.generate_true_false(selected_subject)
+        elif smart_format == "one_liner":
+            content = engine.generate_one_liner(selected_subject)
+
+        if not content:
+            # Fall back to a plain rapid revision
+            content = await self.ai_client.generate(selected_subject, ContentFormat.rapid_revision)
+
+        self.quality_gate.validate(content)
+        poster_path = Path("text-only")
+        telegram_posted = False
+        if publish_to_telegram and self.settings.text_only_mode:
+            text = format_for_telegram(content)
+            telegram_posted = await self.telegram.send_message(text)
+
+        self.store.save_post(content, poster_path, telegram_posted)
+        return GenerateResponse(content=content, poster_path=str(poster_path), telegram_posted=telegram_posted)
+
+    async def generate_daily_pack_post(self, publish_to_telegram: bool = True) -> GenerateResponse:
+        """Send a burst of 5 revision items as a daily pack."""
+        from app.services.content_engine import SmartContentEngine
+        engine = SmartContentEngine(self.settings)
+        pack = engine.generate_daily_pack(count=5)
+
+        telegram_posted = False
+        if publish_to_telegram and pack:
+            header = "📦 <b>Daily Revision Pack</b>\n5 quick questions — one per subject!\n"
+            await self.telegram.send_message(header)
+            for i, item in enumerate(pack, 1):
+                if item.content_format == ContentFormat.mcq:
+                    options = _strip_option_letters(item.options)[:4]
+                    correct_idx = _correct_option_index(item.options, item.correct_answer or "")
+                    await self.telegram.send_poll(
+                        question=f"({i}/5) {(item.question or item.title)[:295]}",
+                        options=options,
+                        correct_option_id=correct_idx,
+                        explanation=(item.high_yield_takeaway or "")[:200],
+                    )
+                else:
+                    text = format_for_telegram(item)
+                    await self.telegram.send_message(text)
+            telegram_posted = True
+
+        # Return the first item as the representative response
+        if pack:
+            self.store.save_post(pack[0], Path("text-only"), telegram_posted)
+            return GenerateResponse(content=pack[0], poster_path="text-only", telegram_posted=telegram_posted)
+
+        # Fallback: plain post
+        return await self.generate_post(publish_to_telegram=publish_to_telegram)
 
     async def generate_news_post_text(self, topic: NewsTopic, publish_to_telegram: bool = False) -> GenerateResponse:
         """Like generate_news_post but sends as a text message in text_only_mode."""
@@ -139,3 +261,32 @@ class PostOrchestrator:
                 telegram_posted=telegram_posted,
             )
         return result
+
+
+def _strip_option_letters(options: list[str]) -> list[str]:
+    """Remove A./B./C./D. letter prefixes for Telegram poll options (max 100 chars each)."""
+    cleaned = []
+    for opt in options:
+        text = opt.strip()
+        if len(text) >= 3 and text[1] in ".)" and text[0].upper() in "ABCDEFGH":
+            text = text[2:].strip()
+        cleaned.append(text[:100])
+    return cleaned
+
+
+def _correct_option_index(options: list[str], correct_answer: str) -> int:
+    """Return the 0-based index of the correct option by matching the letter or full text."""
+    if not correct_answer or not options:
+        return 0
+    ca = correct_answer.strip()
+    # Match by leading letter: "B. ..." → options[1]
+    for i, opt in enumerate(options):
+        if ca and opt.strip().upper().startswith(ca[0].upper() + "."):
+            return i
+        if ca and opt.strip().upper().startswith(ca[0].upper() + ")"):
+            return i
+    # Match by substring
+    for i, opt in enumerate(options):
+        if ca.lower() in opt.lower() or opt.lower() in ca.lower():
+            return i
+    return 0

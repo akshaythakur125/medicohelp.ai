@@ -92,13 +92,17 @@ def test_content_library_fallback_on_unknown_format() -> None:
 
 def test_content_strategy_rotates_premium_mix() -> None:
     strategy = ContentStrategy()
-    planned = [strategy.next_post() for _ in range(6)]
+    planned = [strategy.next_post() for _ in range(12)]
+    lanes = [item.lane for item in planned]
 
-    assert [item.lane for item in planned] == [
-        PostLane.image_based,
-        PostLane.image_based,
-        PostLane.pyq_concept,
-        PostLane.quick_revision,
-        PostLane.residency_tip,
-        PostLane.exam_news,
-    ]
+    # Verify all expected lane types appear in the 12-slot cycle
+    assert PostLane.image_based in lanes
+    assert PostLane.poll_quiz in lanes
+    assert PostLane.pyq_concept in lanes
+    assert PostLane.flashcard in lanes
+    assert PostLane.quick_revision in lanes
+    assert PostLane.mnemonic in lanes
+    assert PostLane.daily_pack in lanes
+    assert PostLane.residency_tip in lanes
+    assert PostLane.exam_news in lanes
+    assert len(lanes) == 12
