@@ -20,6 +20,28 @@ _SPACED_REPETITION_DAYS = 7
 _WEAK_TOPIC_COOLDOWN_DAYS = 3
 _PERFORMANCE_DECAY_DAYS = 30
 
+_MEMORY_ANCHOR_TEMPLATES = [
+    "🧠 *Memory Anchor:* {anchor}",
+    "💡 *Remember:* {anchor}",
+    "📌 *Key Association:* {anchor}",
+    "🔗 *Link it:* {anchor}",
+    "🎯 *Exam Pearl:* {anchor}",
+]
+
+_CLINICAL_PEARL_TEMPLATES = [
+    "⚡ *Revision Pearl:* {pearl}",
+    "🏥 *Clinical Pearl:* {pearl}",
+    "📋 *High-Yield Pearl:* {pearl}",
+    "🩺 *Ward Round Pearl:* {pearl}",
+]
+
+_CONCEPT_CROSS_REF_TEMPLATES = [
+    "\n\n🔗 *Related:* {topic} ({subject}) — {reason}",
+    "\n\n📎 *Cross-Reference:* See also {topic} in {subject} — {reason}",
+    "\n\n🔄 *Integrate:* Link to {topic} ({subject}) — {reason}",
+]
+
+
 _VARIATION_FORMATS = {
     ContentFormat.rapid_revision: ContentFormat.pyq_concept,
     ContentFormat.mcq: ContentFormat.rapid_revision,
@@ -206,6 +228,188 @@ class SmartContentEngine:
 
         return pack
 
+    def add_memory_anchor(self, content: GeneratedContent) -> GeneratedContent:
+        """Append a memory anchor / mnemonic / visual association to the explanation."""
+        subject_anchors: dict[str, list[str]] = {
+            "anatomy": [
+                "Radius is lateral in anatomical position — think 'R' for 'R'ight side.",
+                "Facial nerve: 'Two Zeros, Two Toes' — temporal, zygomatic, buccal, mandibular, cervical.",
+                "Carpal bones: 'She Looks Too Pretty, Try To Catch Her' — scaphoid, lunate, triquetrum, pisiform, trapezium, trapezoid, capitate, hamate.",
+                "Brachial plexus: 'Randy Travis Drinks Cold Beer' — roots, trunks, divisions, cords, branches.",
+            ],
+            "physiology": [
+                "Starling forces: 'Push (capillary hydrostatic) vs Pull (plasma oncotic)' — edema when push > pull.",
+                "ECG lead II: 'Look for the P wave' — atrial depolarization, best seen in II.",
+                "CO = HR × SV — cardiac output is heart rate times stroke volume.",
+            ],
+            "biochemistry": [
+                "Glycolysis: 'Good Friends Always Help In Making ATP' — G-6-P, F-6-P, F-1,6-BP, GAP, 1,3-BPG, 3-PG, PEP, Pyruvate.",
+                "Krebs cycle: 'Citrate Is A Kreb Substrate' — citrate, isocitrate, alpha-KG, succinyl-CoA, succinate, fumarate, malate, oxaloacetate.",
+                "Ketone bodies: 'ABC' — Acetoacetate, Beta-hydroxybutyrate, Acetone.",
+            ],
+            "pathology": [
+                "Robbins red flags: nuclear atypia, increased N:C ratio, hyperchromasia, pleomorphism = malignancy.",
+                "Granuloma: 'Cheese (caseation) or no cheese' — TB has caseating, sarcoid has non-caseating.",
+                "Metaplasia: 'One adult cell type replaces another' — Barrett's = squamous → columnar.",
+            ],
+            "pharmacology": [
+                "Beta blockers: '-olol' suffix — think 'block the heart' (negative chrono/inotrope).",
+                "Statins: 'HMG-CoA reductase inhibitors' — think 'Halt Makers of Cholesterol'.",
+                "ACE inhibitors: '-pril' suffix — 'Pressure Reduction In Lungs' (also cough side effect).",
+            ],
+            "microbiology": [
+                "Gram positive: 'Purple Positives' — Staph, Strep, Enterococcus, Clostridium.",
+                "Gram negative: 'Pink Negatives' — E. coli, Klebsiella, Pseudomonas, Proteus.",
+                "Acid-fast: 'Red Rods' — Mycobacterium (TB and leprosy).",
+            ],
+            "forensic_medicine": [
+                "Drowning: 'Wet vs Dry' — wet (water in lungs) vs dry (laryngospasm, no water).",
+                "Rigor mortis: 'Starts in 1-2 hours, develops fully by 12 hours, resolves by 24-48'.",
+                "Postmortem lividity: 'Fixed vs non-fixed' — test with thumb pressure; fixed = 8+ hours.",
+            ],
+            "community_medicine": [
+                "OPD = Out Patient Department; IPD = In Patient Department.",
+                "Incidence = new cases in time period; Prevalence = total existing cases.",
+                "Vaccination: 'BCG at birth, OPV/Pentavalent at 6, 10, 14 weeks'.",
+            ],
+            "general_medicine": [
+                "Hypertension: '3 Ps' — Prevention, Pharmacotherapy, Lifestyle modification.",
+                "Diabetes: '3 Ps' — Polyuria, Polydipsia, Polyphagia.",
+                "Pneumonia: CURB-65 — Confusion, Urea >7, RR >30, BP <90/60, age >65.",
+            ],
+            "general_surgery": [
+                "Acute abdomen: 'Think 6 Fs' — Flatulence, Feces, Foreign body, Fetus, Fat, Fluid (in that order of likelihood).",
+                "Boas' sign: hyperesthesia below right scapula = acute cholecystitis.",
+                "Cullen's sign: periumbilical ecchymosis = pancreatitis/ectopic pregnancy rupture.",
+            ],
+            "obstetrics_gynecology": [
+                "NA (not applicable)",
+                "Fundal height in cm = weeks of gestation after 20 weeks.",
+                "APGAR: Appearance, Pulse, Grimace, Activity, Respiration — at 1 and 5 minutes.",
+            ],
+            "pediatrics": [
+                "Birth weight: '3-2.5-1.5' — normal >2.5 kg, LBW <2.5, VLBW <1.5.",
+                "Denver chart: 'Smile at 2 months, sit at 6 months, stand at 12 months, speak at 18 months'.",
+                "BCG scar = immunity not guaranteed but good indicator of vaccination.",
+            ],
+            "ophthalmology": [
+                "Red eye: 'Painless vs Painful' — conjunctivitis (painless) vs keratitis/glaucoma/iritis (painful).",
+                "Cataract: 'Painless progressive vision loss' — lens opacity, treat with surgery.",
+                "Glaucoma: 'Silent thief of sight' — open angle is painless, closed angle is painful/red.",
+            ],
+            "ent": [
+                "Hearing loss: 'Conductive vs Sensorineural' — Rinne and Weber tests differentiate.",
+                "Tonsillitis: 'McIsaac criteria' — fever, cough absent, exudate, nodes, age 3-14.",
+                "Vertigo: 'BPPV vs Meniere's' — positional vs episodic + tinnitus.",
+            ],
+            "orthopedics": [
+                "Fracture: 'Open vs Closed' — open = skin breached, closed = skin intact.",
+                "Compartment syndrome: '5 Ps' — Pain (out of proportion), Pallor, Pulselessness, Paresthesia, Paralysis.",
+                "Osteoarthritis: 'Weight bearing joints' — hip, knee, spine; Heberden's nodes (DIP).",
+            ],
+            "dermatology": [
+                "ABCDE of melanoma: Asymmetry, Border irregular, Color variegated, Diameter >6mm, Evolution.",
+                "Psoriasis: 'Auspitz sign' — pinpoint bleeding on scale removal; Koebner phenomenon.",
+                "Eczema: 'Itchy rash' — flexor distribution, atopic triad (asthma, hay fever, eczema).",
+            ],
+            "psychiatry": [
+                "Depression: 'SIGECAPS' — Sleep, Interest, Guilt, Energy, Concentration, Appetite, Psychomotor, Suicidal.",
+                "Mania: 'DIGFAST' — Distractibility, Irresponsibility, Grandiosity, Flight of ideas, Activity increased, Sleep deficit, Talkativeness.",
+                "Schizophrenia: 'Positive (hallucinations/delusions) vs Negative (flat affect/avolition)'.",
+            ],
+            "radiology": [
+                "Chest X-ray: 'ABCDE' — Airway, Bones, Cardiac, Diaphragm, Effusions/fields.",
+                "CT scan: 'White = bone/contrast, Gray = soft tissue, Black = air/fat'.",
+                "Ultrasound: 'Anechoic (black) = fluid, Hyperechoic (white) = stone/calcium'.",
+            ],
+            "anesthesiology": [
+                "Airway: 'Mallampati classification' — I-IV, higher = more difficult intubation.",
+                "ASA classification: 'A healthy, B mild, C severe, D life-threatening, E moribund'.",
+                "LA toxicity: 'CNS first (perioral numbness, seizures) then CVS (arrhythmias, arrest)'.",
+            ],
+        }
+
+        if not content.explanation:
+            return content
+
+        subj_key = content.subject.value if content.subject else "general_medicine"
+        anchors = subject_anchors.get(subj_key, [
+            "Focus on the key clinical clue and link it to management.",
+            "High-yield topics repeat — master the classic presentation.",
+        ])
+        anchor = random.choice(anchors)
+        if anchor in ("NA (not applicable)",):
+            return content
+
+        template = random.choice(_MEMORY_ANCHOR_TEMPLATES)
+        anchor_text = template.format(anchor=anchor)
+        content.explanation = (content.explanation + "\n\n" + anchor_text)[:2000]
+        return content
+
+    def add_clinical_pearl(self, content: GeneratedContent) -> GeneratedContent:
+        """Append a clinical pearl/high-yield point to the explanation."""
+        general_pearls = [
+            "Always look for the key clinical clue before jumping to management.",
+            "Classic presentation + risk factors = most likely diagnosis.",
+            "Know the close mimics — they are the most common distractors.",
+            "Treatment follows diagnosis — invest time in differentials.",
+            "Vital signs + focused examination narrow 90% of differentials.",
+            "Investigations confirm, not replace, clinical suspicion.",
+            "Red flags: unilateral symptoms, systemic features, rapid progression.",
+            "Always check for drug interactions before prescribing.",
+            "Pediatric doses are weight-based — never guess.",
+            "In emergencies, ABC (Airway, Breathing, Circulation) comes first.",
+        ]
+        if content.high_yield_takeaway:
+            pearl = content.high_yield_takeaway[:80]
+        else:
+            pearl = random.choice(general_pearls)
+        template = random.choice(_CLINICAL_PEARL_TEMPLATES)
+        pearl_text = template.format(pearl=pearl)
+        if content.explanation:
+            content.explanation = (content.explanation + "\n\n" + pearl_text)[:2000]
+        return content
+
+    def add_concept_cross_reference(self, content: GeneratedContent) -> GeneratedContent:
+        """Link related concepts across subjects for integrated learning."""
+        cross_refs: dict[str, list[tuple[str, str, str]]] = {
+            "general_medicine": [("Cardiac Biomarkers", "biochemistry", "Troponin is the gold standard for MI")],
+            "pathology": [("Tumor Markers", "biochemistry", "CEA for colon, AFP for liver, PSA for prostate")],
+            "pharmacology": [("Drug Metabolism", "biochemistry", "CYP450 enzyme system — phase I and II reactions")],
+            "general_surgery": [("Wound Healing", "pathology", "Primary vs secondary intention healing")],
+            "obstetrics_gynecology": [("Placental Hormones", "physiology", "hCG, progesterone, estrogen in pregnancy")],
+            "pediatrics": [("Congenital Heart Disease", "anatomy", "Embryologic development of septa and valves")],
+            "ophthalmology": [("Visual Pathway", "anatomy", "Optic nerve → optic chiasm → optic tract → occipital")],
+            "ent": [("Branchial Arches", "anatomy", "First arch = mandible, incus, malleus")],
+            "orthopedics": [("Bone Healing", "pathology", "Inflammatory → soft callus → hard callus → remodeling")],
+            "psychiatry": [("Neurotransmitters", "pharmacology", "Serotonin (mood), Dopamine (psychosis), GABA (anxiety)")],
+            "dermatology": [("Skin Layers", "anatomy", "Epidermis (5 layers), dermis, hypodermis")],
+            "radiology": [("Contrast Media", "pharmacology", "Iodinated for CT, gadolinium for MRI")],
+            "anesthesiology": [("Neuromuscular Blockers", "pharmacology", "Depolarizing vs non-depolarizing")],
+            "community_medicine": [("Epidemiology Measures", "physiology", "Incidence vs prevalence, sensitivity vs specificity")],
+            "forensic_medicine": [("Thanatology", "pathology", "Postmortem changes and time since death estimation")],
+            "microbiology": [("Antimicrobial Resistance", "pharmacology", "MRSA, ESBL, Carbapenemase — mechanisms and management")],
+        }
+        subj_key = content.subject.value if content.subject else "general_medicine"
+        refs = cross_refs.get(subj_key, [])
+        if not refs:
+            return content
+        ref = random.choice(refs)
+        template = random.choice(_CONCEPT_CROSS_REF_TEMPLATES)
+        ref_text = template.format(topic=ref[0], subject=ref[1], reason=ref[2])
+        if content.explanation:
+            content.explanation = (content.explanation + ref_text)[:2000]
+        return content
+
+    def enhance_educational_quality(self, content: GeneratedContent) -> GeneratedContent:
+        """Apply memory anchors, clinical pearls, and cross-references to a piece of content."""
+        content = self.add_memory_anchor(content)
+        if random.random() < 0.5:
+            content = self.add_clinical_pearl(content)
+        if random.random() < 0.3:
+            content = self.add_concept_cross_reference(content)
+        return content
+
     def generate(
         self,
         subject: Subject,
@@ -214,11 +418,13 @@ class SmartContentEngine:
         """Return content with adaptive spaced repetition. Falls back to variations."""
         content = self._get_with_spaced_repetition(subject, content_format)
         if content:
+            content = self.enhance_educational_quality(content)
             self._record(content)
             return content
 
         variation = self._generate_variation(subject)
         if variation:
+            variation = self.enhance_educational_quality(variation)
             self._record(variation)
             return variation
 

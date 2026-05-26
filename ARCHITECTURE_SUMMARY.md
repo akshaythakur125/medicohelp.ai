@@ -28,6 +28,12 @@ MedicoHelp.ai is an autonomous medical education content delivery system that po
 │  ┌─────────────┐  ┌──────────────┐  ┌───────────────────────┐   │
 │  │ QualityGate │  │ RetryQueue   │  │ PostLogStore          │   │
 │  │ (validation)│  │ (3 retries)  │  │ (file-based JSONL)    │   │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌─────────────┐    │
+│  │ EngagementTracker │  │ EducationModes   │  │ MemoryAnchors│   │
+│  │ (streaks/        │  │ (MBBS year/      │  │ (mnemonics/  │   │
+│  │  challenges/     │  │  exam routing)   │  │  pearls/     │   │
+│  │  weekly battles) │  │                  │  │  cross-refs) │   │
+│  └──────────────────┘  └──────────────────┘  └─────────────┘    │
 │  └─────────────┘  └──────────────┘  └───────────────────────┘   │
 │  ┌─────────────┐  ┌──────────────┐  ┌───────────────────────┐   │
 │  │ Formatter   │  │ PosterGen    │  │ TelegramPoster        │   │
@@ -64,17 +70,20 @@ MedicoHelp.ai is an autonomous medical education content delivery system that po
 4. Route to lane handler (poll_quiz / mcq_variant / flashcard / etc.)
 5. SmartContentEngine generates content
    ├── Anti-duplication: skip recently posted titles (set of 100)
+   ├── Education mode filtering (skip excluded subjects)
    ├── Vignette validation (3-7 lines, clinical keywords)
    ├── Difficulty assignment (easy/moderate/exam_level from performance)
    └── Wrong-option analysis (8 distractor reason templates)
-6. Enrichment (hook line, exam tag, memory trick, Bloom's taxonomy)
-7. QualityGate validation (image-based only)
-8. Formatter converts to Telegram HTML
-9. TelegramPoster.send_message() or send_poll()
-10. PostLogStore.save_post() to JSONL
-11. SmartContentEngine.record_performance()
-12. ContentAnalytics.record_post()
-13. ContentStrategy.mark_posted()
+6. Educational enhancement (memory anchor, clinical pearl, concept cross-ref)
+7. Enrichment (hook line, exam tag, memory trick, Bloom's taxonomy)
+8. Engagement tracking (streak update, daily challenge, battle scoring)
+9. QualityGate validation (image-based only)
+10. Formatter converts to Telegram HTML
+11. TelegramPoster.send_message() or send_poll()
+12. PostLogStore.save_post() to JSONL
+13. SmartContentEngine.record_performance()
+14. ContentAnalytics.record_post()
+15. ContentStrategy.mark_posted()
 ```
 
 ## Automation Logic
@@ -84,10 +93,15 @@ MedicoHelp.ai is an autonomous medical education content delivery system that po
 | Post timing | 4-phase CronTrigger (08/14/20/22 IST) | scheduler.py |
 | Subject rotation | `_last_subject` tracking + `_pick_subject()` | content_strategy.py |
 | Format mixing | 12-slot rotation with diverse lane types | content_strategy.py |
+| Education mode filtering | Subject allowlist per MBBS year/exam target | education_modes.py |
 | Weak topic surfacing | SM-2 accuracy tracking → lowest first | content_engine.py |
 | Anti-duplication | `_dedup_recent` set (100 entries), 7-day cooldown, `_posted_titles` (500 entries) | content_engine.py, content_strategy.py |
 | Spaced repetition | History-based cooldown (3-7 days), performance-weighted | content_engine.py |
 | Difficulty distribution | Weighted 30/40/30 (easy/moderate/exam_level) | content_strategy.py |
+| Memory anchors | Subject-specific mnemonics, clinical pearls, cross-references | content_engine.py |
+| Streak tracking | Consecutive active days with milestone messages | engagement_tracker.py |
+| Daily challenge | Daily MCQ posted at 09:00 IST with accuracy scoring | engagement_tracker.py |
+| Weekly battle | Sunday-Monday revision competition with leaderboard | engagement_tracker.py |
 | Failure recovery | 3 retries (1m/5m/15m), library fallback | retry_queue.py, orchestrator.py |
 | Restart safety | State saved to JSON on shutdown, recovered on start | scheduler.py |
 
@@ -101,6 +115,10 @@ MedicoHelp.ai is an autonomous medical education content delivery system that po
 | `logs/topic_history.json` | JSON | Last-sent timestamp per topic |
 | `logs/analytics.json` | JSON | Subject frequency, format usage, weak spotlights |
 | `logs/retry_queue.json` | JSON | Pending retry tasks |
+| `logs/engagement/engagement_stats.json` | JSON | Streak, accuracy, battle score |
+| `logs/engagement/daily_challenge.json` | JSON | Current daily challenge state |
+| `logs/engagement/weekly_battle.json` | JSON | Active weekly battle scores |
+| `logs/scheduler_state.json` | JSON | Pause state, cursor position |
 | `logs/scheduler_state.json` | JSON | Pause state across restarts |
 
 ## Deployment Strategy

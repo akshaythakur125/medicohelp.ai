@@ -4,7 +4,8 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from app.models import ContentFormat, Difficulty, Subject
+from app.models import ContentFormat, Difficulty, EducationMode, Subject
+from app.services.education_modes import get_mode_description
 
 if TYPE_CHECKING:
     from app.config import Settings
@@ -81,6 +82,16 @@ class BotCommandHandler:
                 await self._cmd_weak(chat_id)
             elif cmd == "/start":
                 await self._cmd_help(chat_id)
+            elif cmd == "/mode":
+                await self._cmd_mode(chat_id, args.strip())
+            elif cmd == "/challenge":
+                await self._cmd_challenge(chat_id)
+            elif cmd == "/streak":
+                await self._cmd_streak(chat_id)
+            elif cmd == "/battle":
+                await self._cmd_battle(chat_id)
+            elif cmd == "/engagement":
+                await self._cmd_engagement(chat_id)
         except Exception as exc:
             logger.exception("Bot command %s failed.", cmd)
             await self.telegram.send_message_to(chat_id, f"❌ Error: {exc}")
@@ -97,6 +108,11 @@ class BotCommandHandler:
             "/post_format mcq — Post a specific format across subjects\n"
             "/stats — Show engine stats &amp; weak topics\n"
             "/weak — Force a weak-topic recall post\n"
+            "/mode — Set education mode (comprehensive, first_year_mbbs, etc.)\n"
+            "/challenge — Post the daily challenge MCQ\n"
+            "/streak — Show your current revision streak\n"
+            "/battle — Check weekly battle status\n"
+            "/engagement — Show engagement summary\n"
             "/help — Show this help\n\n"
             "<i>Only messages from your ADMIN_CHAT_ID are processed.</i>"
         )
@@ -289,3 +305,74 @@ class BotCommandHandler:
             )
         except Exception as exc:
             await self.telegram.send_message_to(chat_id, f"❌ Weak topic post failed: {exc}")
+
+    async def _cmd_mode(self, chat_id: str, args: str) -> None:
+        """Set education mode."""
+        from app.models import EducationMode
+
+        if not args:
+            modes = ", ".join(f"{m.value}" for m in EducationMode)
+            current = self.settings.education_mode
+            await self.telegram.send_message_to(
+                chat_id,
+                f"Current mode: <b>{current}</b>\n"
+                f"Usage: /mode <name>\nAvailable: {modes}",
+            )
+            return
+        try:
+            mode = EducationMode(args.lower().strip())
+            self.settings.education_mode = mode.value
+            await self.telegram.send_message_to(
+                chat_id,
+                f"✅ Education mode set to <b>{mode.value}</b>\n"
+                f"{get_mode_description(mode)}",
+            )
+        except ValueError:
+            valid = ", ".join(m.value for m in EducationMode)
+            await self.telegram.send_message_to(
+                chat_id,
+                f"❌ Unknown mode <code>{args}</code>.\nAvailable: {valid}",
+            )
+
+    async def _cmd_challenge(self, chat_id: str) -> None:
+        """Trigger a daily challenge post."""
+        await self.telegram.send_message_to(chat_id, "🎯 Generating daily challenge…")
+        try:
+            result = await self.orchestrator.generate_daily_challenge(publish_to_telegram=True)
+            if result:
+                await self.telegram.send_message_to(
+                    chat_id, "✅ Daily challenge posted!"
+                )
+            else:
+                await self.telegram.send_message_to(
+                    chat_id, "⚠ Could not generate daily challenge."
+                )
+        except Exception as exc:
+            await self.telegram.send_message_to(chat_id, f"❌ Challenge failed: {exc}")
+
+    async def _cmd_streak(self, chat_id: str) -> None:
+        """Send streak info."""
+        await self.telegram.send_message_to(chat_id, "📊 Checking streak…")
+        try:
+            await self.orchestrator.announce_streak(publish_to_telegram=True)
+        except Exception as exc:
+            await self.telegram.send_message_to(chat_id, f"❌ Streak check failed: {exc}")
+
+    async def _cmd_battle(self, chat_id: str) -> None:
+        """Start or check weekly battle status."""
+        from app.services.formatter import format_battle_leaderboard
+
+        stats = self.orchestrator._engagement.stats
+        if stats.weekly_battle_active:
+            msg = format_battle_leaderboard(stats.weekly_battle_scores)
+            await self.telegram.send_message_to(chat_id, msg)
+        else:
+            await self.telegram.send_message_to(chat_id, "⚔ No active battle. Use /battle_start to begin one.")
+
+    async def _cmd_engagement(self, chat_id: str) -> None:
+        """Send engagement summary."""
+        await self.telegram.send_message_to(chat_id, "📊 Generating engagement summary…")
+        try:
+            await self.orchestrator.send_engagement_summary(publish_to_telegram=True)
+        except Exception as exc:
+            await self.telegram.send_message_to(chat_id, f"❌ Summary failed: {exc}")

@@ -8,6 +8,7 @@ from app.models import (
     ContentCategory,
     ContentFormat,
     Difficulty,
+    EducationMode,
     GeneratedContent,
     GenerateResponse,
     NewsItem,
@@ -20,8 +21,22 @@ from app.services.ai_client import AIContentClient, legacy_category_to_subject_f
 from app.services.analytics import ContentAnalytics
 from app.services.content_engine import SmartContentEngine
 from app.services.content_strategy import ContentStrategy
+from app.services.education_modes import (
+    get_mode_description,
+    get_mode_subjects,
+    select_mode_subject,
+)
+from app.services.engagement_tracker import EngagementTracker
 from app.services.enrichment import enrich_for_engagement
-from app.services.formatter import format_for_telegram
+from app.services.formatter import (
+    format_battle_leaderboard,
+    format_challenge_result,
+    format_daily_challenge_intro,
+    format_education_mode_announcement,
+    format_for_telegram,
+    format_streak_message,
+    format_weekly_battle_intro,
+)
 from app.services.medical_image import MedicalImageGenerator
 from app.services.news import NewsSweeper
 from app.services.poster import PosterGenerator
@@ -47,6 +62,7 @@ class PostOrchestrator:
         self._engine = SmartContentEngine(settings)
         self._analytics = ContentAnalytics(settings.logs_dir)
         self._retry_queue = RetryQueue(settings.logs_dir)
+        self._engagement = EngagementTracker(settings.logs_dir)
         self._paused = False
 
         self.content_strategy.set_weak_provider(self._get_weak_list)
@@ -166,6 +182,118 @@ class PostOrchestrator:
     def _get_weak_list(self) -> list[dict]:
         return self._engine.weak_topics(threshold=0.6, min_attempts=1)
 
+    # ── Education Mode ──────────────────────────────────────────────────
+
+    def _get_active_education_mode(self) -> EducationMode:
+        mode_name = self.settings.education_mode
+        for mode in EducationMode:
+            if mode.value == mode_name:
+                return mode
+        return EducationMode.comprehensive
+
+    def set_education_mode(self, mode_name: str) -> str:
+        for mode in EducationMode:
+            if mode.value == mode_name:
+                self.settings.education_mode = mode.value
+                desc = get_mode_description(mode)
+                logger.info("Education mode set to %s", mode.value)
+                return desc
+        return f"Unknown mode: {mode_name}. Available: comprehensive, first_year_mbbs, final_year_revision, neet_pg_revision, inicet_high_yield, emergency_5_min"
+
+    # ── Engagement ──────────────────────────────────────────────────────
+
+    async def generate_daily_challenge(self, publish_to_telegram: bool = True) -> GenerateResponse | None:
+        """Generate and optionally publish the daily challenge MCQ."""
+        if not self.settings.engagement_enabled:
+            return None
+
+        mode = self._get_active_education_mode()
+        subjects = list(get_mode_subjects(mode))
+        if not subjects:
+            subjects = list(Subject)
+        subject = random.choice(subjects)
+
+        content = self._engine.generate_variate_mcq(subject)
+        if not content:
+            content = self._engine.generate(subject, ContentFormat.mcq)
+        if not content:
+            return None
+
+        content = enrich_for_engagement(content)
+        self._engagement.set_daily_challenge(content)
+        self._engagement.update_streak()
+
+        telegram_posted = False
+        if publish_to_telegram and self.settings.text_only_mode:
+            text = format_daily_challenge_intro(content)
+            telegram_posted = await self.telegram.send_message(text)
+
+        self._record_post(content, telegram_posted)
+        return GenerateResponse(
+            content=content, poster_path="text-only", telegram_posted=telegram_posted
+        )
+
+    async def announce_streak(self, publish_to_telegram: bool = True) -> bool:
+        """Send a streak update message."""
+        if not self.settings.engagement_enabled:
+            return False
+        self._engagement.update_streak()
+        if not publish_to_telegram or not self.settings.text_only_mode:
+            return False
+        text = format_streak_message(
+            self._engagement.stats.current_streak,
+            self._engagement.stats.longest_streak,
+        )
+        return await self.telegram.send_message(text)
+
+    async def start_weekly_battle(self, publish_to_telegram: bool = True) -> bool:
+        """Start a new weekly revision battle."""
+        if not self.settings.engagement_enabled:
+            return False
+        self._engagement.start_weekly_battle()
+        if publish_to_telegram and self.settings.text_only_mode:
+            text = format_weekly_battle_intro()
+            return await self.telegram.send_message(text)
+        return False
+
+    async def end_weekly_battle(self, publish_to_telegram: bool = True) -> bool:
+        """End the weekly battle and announce results."""
+        if not self.settings.engagement_enabled or not self._engagement.stats.weekly_battle_active:
+            return False
+        leaderboard = self._engagement.end_battle()
+        if leaderboard and publish_to_telegram and self.settings.text_only_mode:
+            return await self.telegram.send_message(leaderboard)
+        return False
+
+    async def send_engagement_summary(self, publish_to_telegram: bool = True) -> bool:
+        """Send an engagement summary with stats."""
+        if not self.settings.engagement_enabled or not self.settings.text_only_mode:
+            return False
+        stats = self._engagement.stats
+        acc = self._engagement.accuracy_pct()
+        lines = [
+            "📊 <b>Your Engagement Summary</b>\n",
+            f"🔥 Current streak: <b>{stats.current_streak} days</b>",
+            f"🏆 Longest streak: <b>{stats.longest_streak} days</b>",
+            f"📝 Total answered: <b>{stats.total_attempted}</b>",
+            f"✅ Correct: <b>{stats.total_correct}</b>",
+            f"🎯 Accuracy: <b>{acc:.1f}%</b>",
+        ]
+        if stats.weekly_battle_active:
+            lines.append(f"⚔️ Battle score: <b>{stats.weekly_battle_score} pts</b>")
+        text = "\n".join(lines)
+        return await self.telegram.send_message(text)
+
+    # ── Education Mode Filtering ───────────────────────────────────────
+
+    def _filter_subject_by_mode(self, subject: Subject) -> Subject | None:
+        """Return None if the subject is excluded by current education mode."""
+        mode = self._get_active_education_mode()
+        allowed = get_mode_subjects(mode)
+        if mode.value == "comprehensive":
+            return subject
+        return subject if subject in allowed else None
+
     def _build_caption(self, caption: str, hashtags: list[str]) -> str:
         normalized_tags = [tag if tag.startswith("#") else f"#{tag}" for tag in hashtags]
         return f"{caption.strip()}\n\n{' '.join(normalized_tags)}".strip()
@@ -215,7 +343,23 @@ class PostOrchestrator:
             logger.info("Posting is paused — skipping scheduled post.")
             raise RuntimeError("Posting is paused by admin. Use /resume to enable.")
 
+        if self.settings.engagement_enabled:
+            self._engagement.update_streak()
+
         planned = self.content_strategy.next_post(slot_type=slot_type)
+
+        # Filter subject by education mode
+        if planned.subject and not subject_override:
+            filtered = self._filter_subject_by_mode(planned.subject)
+            if filtered is None:
+                logger.info(
+                    "Subject %s excluded by current education mode — picking random allowed subject",
+                    planned.subject,
+                )
+                mode = self._get_active_education_mode()
+                allowed = list(get_mode_subjects(mode))
+                if allowed:
+                    subject_override = random.choice(allowed)
 
         if planned.news_topic and not subject_override:
             return await self.generate_news_post(

@@ -36,6 +36,7 @@ class PostingScheduler:
             telegram=orchestrator.telegram,
         )
         self._register_post_jobs()
+        self._register_engagement_jobs()
 
     def start(self) -> None:
         if self.scheduler.running:
@@ -52,6 +53,70 @@ class PostingScheduler:
             self._save_state()
             self.scheduler.shutdown(wait=False)
             logger.info("Scheduler stopped.")
+
+    def _register_engagement_jobs(self) -> None:
+        if not self.settings.engagement_enabled:
+            return
+
+        # Daily challenge (at configured hour)
+        self.scheduler.add_job(
+            self._run_daily_challenge,
+            trigger=CronTrigger(
+                hour=self.settings.challenge_hour,
+                minute=0,
+                timezone=self.settings.timezone,
+            ),
+            id="daily_challenge",
+            replace_existing=True,
+            max_instances=1,
+            coalesce=True,
+        )
+        logger.info(
+            "Daily challenge scheduled at %s:00 %s",
+            self.settings.challenge_hour,
+            self.settings.timezone,
+        )
+
+        # Weekly battle start (Sunday by default)
+        self.scheduler.add_job(
+            self._run_weekly_battle_start,
+            trigger=CronTrigger(
+                day_of_week=self.settings.battle_weekday,
+                hour=9,
+                minute=0,
+                timezone=self.settings.timezone,
+            ),
+            id="weekly_battle_start",
+            replace_existing=True,
+            max_instances=1,
+            coalesce=True,
+        )
+        logger.info(
+            "Weekly battle start scheduled on weekday %s at 09:00 %s",
+            self.settings.battle_weekday,
+            self.settings.timezone,
+        )
+
+        # Weekly battle end (next day)
+        end_weekday = (self.settings.battle_weekday + 1) % 7
+        self.scheduler.add_job(
+            self._run_weekly_battle_end,
+            trigger=CronTrigger(
+                day_of_week=end_weekday,
+                hour=8,
+                minute=0,
+                timezone=self.settings.timezone,
+            ),
+            id="weekly_battle_end",
+            replace_existing=True,
+            max_instances=1,
+            coalesce=True,
+        )
+        logger.info(
+            "Weekly battle end scheduled on weekday %s at 08:00 %s",
+            end_weekday,
+            self.settings.timezone,
+        )
 
     def _register_post_jobs(self) -> None:
         schedule_times = [
@@ -154,6 +219,32 @@ class PostingScheduler:
             await self.orchestrator.process_retry_queue()
         except Exception as exc:
             logger.error("Retry queue processing error: %s", exc)
+
+    # ── Engagement jobs ──────────────────────────────────────────────────
+
+    async def _run_daily_challenge(self) -> None:
+        """Post the daily challenge MCQ."""
+        logger.info("Daily challenge job triggered.")
+        try:
+            await self.orchestrator.generate_daily_challenge(publish_to_telegram=True)
+        except Exception as exc:
+            logger.exception("Daily challenge failed: %s", exc)
+
+    async def _run_weekly_battle_start(self) -> None:
+        """Start the weekly revision battle."""
+        logger.info("Weekly battle start job triggered.")
+        try:
+            await self.orchestrator.start_weekly_battle(publish_to_telegram=True)
+        except Exception as exc:
+            logger.exception("Weekly battle start failed: %s", exc)
+
+    async def _run_weekly_battle_end(self) -> None:
+        """End the weekly revision battle and announce results."""
+        logger.info("Weekly battle end job triggered.")
+        try:
+            await self.orchestrator.end_weekly_battle(publish_to_telegram=True)
+        except Exception as exc:
+            logger.exception("Weekly battle end failed: %s", exc)
 
     # ── Restart safety ───────────────────────────────────────────────────
 

@@ -277,3 +277,95 @@ def _body_news(content: GeneratedContent) -> str:
     if content.source_url:
         parts.append(f'\n🔗 <a href="{content.source_url}">Read more</a>')
     return "\n".join(parts)
+
+
+# ── Engagement Formatters ────────────────────────────────────────────────────
+
+
+def format_streak_message(streak: int, longest: int) -> str:
+    if streak <= 0:
+        return "📅 Start your revision streak today! Open MedicoHelp to begin."
+    if streak == 1:
+        msg = "🔥 Day 1 streak! You've taken the first step — come back tomorrow!"
+    elif streak < 7:
+        msg = f"🔥 {streak}-day streak! Building momentum — don't break the chain!"
+    elif streak < 30:
+        msg = f"⚡ {streak}-day streak! You're in the zone — unstoppable!"
+    elif streak < 100:
+        msg = f"🏆 {streak}-day streak! Legendary consistency — keep it going!"
+    else:
+        msg = f"👑 {streak}-day streak! You're a revision legend!"
+    return f"📊 <b>Revision Streak</b>\n\n{msg}\n\n<i>Longest streak: {longest} days</i>"
+
+
+def format_daily_challenge_intro(content: GeneratedContent) -> str:
+    """Format a daily challenge intro with the MCQ embedded."""
+    emoji = _subject_emoji(content)
+    subj = _subject_name(content)
+    label = _fmt_label(content)
+    header = f"🎯 <b>Daily Challenge — {label}: {subj}</b>"
+    return header + "\n\n" + _body_mcq(content)
+
+
+def format_weekly_battle_intro() -> str:
+    return (
+        "⚔️ <b>Weekly Revision Battle is LIVE!</b>\n\n"
+        "Answer this week's questions to score points!\n"
+        "🏆 Top scorer gets bragging rights until next week.\n\n"
+        "<i>Questions will be posted throughout the week. "
+        "Answer correctly to earn points!</i>"
+    )
+
+
+def format_battle_leaderboard(scores: dict[str, int]) -> str:
+    if not scores:
+        return "⚔️ <b>Weekly Battle</b>\n\nNo scores yet. Answer questions to earn points!"
+    sorted_users = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+    lines = ["🏆 <b>Weekly Revision Battle</b>", ""]
+    for rank, (uid, pts) in enumerate(sorted_users[:10], 1):
+        medals = {1: "🥇", 2: "🥈", 3: "🥉"}
+        prefix = medals.get(rank, f"{rank}.")
+        lines.append(f"{prefix} <b>User {uid}</b> — {pts} pts")
+    lines.append("")
+    lines.append("<i>Keep answering to climb the leaderboard!</i>")
+    return "\n".join(lines)
+
+
+def format_battle_winner(scores: dict[str, int]) -> str:
+    if not scores:
+        return "⚔️ <b>Battle Over</b>\n\nNo participants this week."
+    winner = max(scores, key=scores.get)
+    return (
+        f"🏆 <b>Weekly Battle — Results!</b>\n\n"
+        f"🥇 <b>Winner: User {winner}</b> — {scores[winner]} pts\n\n"
+        f"{format_battle_leaderboard(scores)}\n\n"
+        f"<i>Next battle starts Sunday! Stay sharp!</i>"
+    )
+
+
+def format_education_mode_announcement(mode_name: str, description: str) -> str:
+    return f"📚 <b>Education Mode: {mode_name}</b>\n\n{description}\n\n<i>Your content will now focus on this track.</i>"
+
+
+def format_challenge_result(accuracy_pct: float, streak: int) -> str:
+    if accuracy_pct >= 80:
+        feeling = "mastered"
+    elif accuracy_pct >= 50:
+        feeling = "building"
+    else:
+        feeling = "needs_review"
+    messages = {
+        "mastered": (
+            f"🎯 <b>Excellent!</b> {accuracy_pct:.0f}% accuracy!\n"
+            f"🔥 {streak}-day streak — you're on fire!"
+        ),
+        "building": (
+            f"📚 <b>Good effort!</b> {accuracy_pct:.0f}% accuracy.\n"
+            f"🔥 {streak}-day streak — keep revising!"
+        ),
+        "needs_review": (
+            f"🔄 <b>Keep reviewing!</b> {accuracy_pct:.0f}% accuracy.\n"
+            f"Focus on weak topics in tomorrow's challenge!"
+        ),
+    }
+    return messages[feeling]

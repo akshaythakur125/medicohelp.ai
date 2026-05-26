@@ -32,6 +32,18 @@ class Settings(BaseSettings):
     text_only_mode: bool = True  # Send rich-text messages instead of image posters
     posting_paused: bool = False  # Global pause for scheduled posting
 
+    education_mode: str = Field(default="comprehensive", pattern="^(comprehensive|first_year_mbbs|final_year_revision|neet_pg_revision|inicet_high_yield|emergency_5_min)$")
+    streak_window_hours: int = Field(default=24, ge=1)
+    battle_weekday: int = Field(default=6, ge=0, le=6)  # 0=Monday, 6=Sunday
+    challenge_hour: int = Field(default=9, ge=0, le=23)  # Hour for daily challenge post
+    engagement_enabled: bool = True
+
+    image_card_enabled: bool = True
+    image_card_fallback_to_text: bool = True
+    assets_images_dir: Path = base_dir / "assets" / "images"
+    image_index_path: Path = base_dir / "assets" / "images" / "index.json"
+    image_card_template: str = "rapid_revision"
+
     app_host: str = "0.0.0.0"
     app_port: int = 8000
     log_level: str = "INFO"

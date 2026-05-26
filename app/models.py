@@ -87,6 +87,35 @@ class SlotType(str, Enum):
     nightly_weak_topic = "nightly_weak_topic"
 
 
+class EducationMode(str, Enum):
+    comprehensive = "comprehensive"
+    first_year_mbbs = "first_year_mbbs"
+    final_year_revision = "final_year_revision"
+    neet_pg_revision = "neet_pg_revision"
+    inicet_high_yield = "inicet_high_yield"
+    emergency_5_min = "emergency_5_min"
+
+
+FIRST_YEAR_SUBJECTS = {
+    Subject.anatomy, Subject.physiology, Subject.biochemistry,
+}
+FINAL_YEAR_SUBJECTS = {
+    Subject.general_medicine, Subject.general_surgery,
+    Subject.obstetrics_gynecology, Subject.pediatrics,
+}
+NEET_PG_CORE_SUBJECTS = {
+    Subject.pathology, Subject.pharmacology, Subject.microbiology,
+    Subject.forensic_medicine, Subject.community_medicine,
+    Subject.ophthalmology, Subject.ent, Subject.orthopedics,
+    Subject.dermatology, Subject.psychiatry, Subject.radiology,
+    Subject.anesthesiology,
+}
+EMERGENCY_5_MIN_FORMATS = {
+    ContentFormat.rapid_revision, ContentFormat.flashcard,
+    ContentFormat.one_liner_recall, ContentFormat.mnemonic,
+}
+
+
 class GeneratedContent(BaseModel):
     title: str = Field(min_length=3, max_length=120)
     caption: str = Field(min_length=10, max_length=2000)
@@ -157,3 +186,89 @@ class HealthResponse(BaseModel):
     posting_paused: bool = False
     ai_provider: str = "none"
     text_only_mode: bool = True
+
+
+class StudentProfile(BaseModel):
+    education_mode: EducationMode = EducationMode.comprehensive
+    weak_subjects: list[Subject] = Field(default_factory=list)
+    streak_days: int = 0
+    last_active_date: str | None = None
+    consecutive_posts_seen: int = 0
+    daily_challenge_completed: bool = False
+    weekly_battle_score: int = 0
+
+
+class EngagementStats(BaseModel):
+    current_streak: int = 0
+    longest_streak: int = 0
+    last_active_date: str | None = None
+    daily_challenge_active: bool = False
+    daily_challenge_content: GeneratedContent | None = None
+    daily_challenge_expiry: str | None = None
+    weekly_battle_active: bool = False
+    weekly_battle_scores: dict[str, int] = Field(default_factory=dict)
+    weekly_battle_score: int = 0
+    weekly_battle_deadline: str | None = None
+    total_correct: int = 0
+    total_attempted: int = 0
+
+
+class DailyChallenge(BaseModel):
+    date: str
+    content: GeneratedContent
+    completed: bool = False
+    scores: list[bool] = Field(default_factory=list)
+
+
+class WeeklyBattle(BaseModel):
+    week_start: str
+    scores: dict[str, int] = Field(default_factory=dict)
+    active: bool = True
+
+
+class OverlayElement(BaseModel):
+    element_type: str = "label"  # label, arrow, highlight, border, callout
+    text: str = ""
+    x: float = 0.0
+    y: float = 0.0
+    color: str = "#FF0000"
+    font_size: int = 18
+    arrow_direction: str | None = None  # up, down, left, right, auto
+
+
+class ImageAsset(BaseModel):
+    asset_id: str
+    file_path: str
+    md5_hash: str
+    subject: str
+    topic: list[str] = Field(default_factory=list)
+    format: list[str] = Field(default_factory=list)
+    tags: list[str] = Field(default_factory=list)
+    caption: str = ""
+    attribution: str = ""
+    width: int = 0
+    height: int = 0
+    file_size_bytes: int = 0
+
+
+class ImageCardTemplate(BaseModel):
+    template_id: str
+    name: str
+    card_format: str  # flashcard, mcq_infographic, rapid_revision, comparison
+    width: int = 1080
+    height: int = 1500
+    background_color: str = "#FFFFFF"
+    header_height: int = 80
+    footer_height: int = 60
+    text_color: str = "#1A1A2E"
+    accent_color: str = "#0F3460"
+    font_family: str = "DejaVuSans"
+
+
+class ImageCardRequest(BaseModel):
+    content: GeneratedContent
+    template_id: str = "rapid_revision"
+    overlays: list[OverlayElement] = Field(default_factory=list)
+    highlight_color: str | None = None
+    show_subject_badge: bool = True
+    show_format_badge: bool = True
