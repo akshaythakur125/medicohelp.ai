@@ -234,48 +234,42 @@ class MedicalImageGenerator:
     # ── Gemini / Imagen 3 ──────────────────────────────────────────────────────
 
     async def _generate_with_gemini(self, content: GeneratedContent, prompt: str) -> Path | None:
-        import base64
+        """Generate via Pollinations.ai (FLUX model, free, no API key required).
 
-        from google import genai
-        from google.genai import types
+        Google's image APIs (Imagen 3 and Gemini Flash image generation) both
+        require paid billing beyond the free text tier, so we use Pollinations
+        as the image backend when the provider is set to Gemini.
+        """
+        import urllib.parse
 
-        client = genai.Client(api_key=self.settings.gemini_api_key)
+        import httpx
 
-        # Use Gemini Flash native image generation — works with the free API key.
-        # Imagen 3 (imagen-3.0-generate-002) requires paid billing so we avoid it.
+        short_prompt = prompt[:600]
+        encoded = urllib.parse.quote(short_prompt)
+        seed = abs(hash(short_prompt)) % 99999
+        url = (
+            f"https://image.pollinations.ai/prompt/{encoded}"
+            f"?width=1024&height=1024&model=flux&nologo=true&seed={seed}"
+        )
+
+        logger.info("Generating medical visual via Pollinations.ai (FLUX)…")
         try:
-            response = await client.aio.models.generate_content(
-                model="gemini-2.0-flash-preview-image-generation",
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    response_modalities=["IMAGE", "TEXT"],
-                ),
-            )
+            async with httpx.AsyncClient(timeout=90, follow_redirects=True) as client:
+                response = await client.get(url)
+                response.raise_for_status()
         except Exception as exc:
-            logger.error("Gemini image generation failed: %s", exc, exc_info=True)
+            logger.error("Pollinations image generation failed: %s", exc, exc_info=True)
             return None
 
-        # Extract the first image part from the response
-        try:
-            parts = response.candidates[0].content.parts
-        except (AttributeError, IndexError):
-            logger.warning("Gemini image response has no candidates/parts.")
+        content_type = response.headers.get("content-type", "")
+        if not content_type.startswith("image/"):
+            logger.warning("Pollinations returned non-image content-type: %s", content_type)
             return None
 
-        for part in parts:
-            inline = getattr(part, "inline_data", None)
-            if inline and inline.data:
-                try:
-                    image_bytes = base64.b64decode(inline.data)
-                except Exception:
-                    image_bytes = inline.data  # already bytes in some SDK versions
-                path = self.settings.generated_dir / f"visual_{_subject_key(content)}_{uuid4().hex[:8]}.png"
-                path.write_bytes(image_bytes)
-                logger.info("Gemini visual saved: %s (%d bytes)", path, len(image_bytes))
-                return path
-
-        logger.warning("Gemini image response contained no image parts for subject=%s", _subject_key(content))
-        return None
+        path = self.settings.generated_dir / f"visual_{_subject_key(content)}_{uuid4().hex[:8]}.png"
+        path.write_bytes(response.content)
+        logger.info("Pollinations visual saved: %s (%d bytes)", path, len(response.content))
+        return path
 
     # ── OpenAI DALL-E / GPT-Image ─────────────────────────────────────────────
 
