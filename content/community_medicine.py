@@ -265,4 +265,181 @@ TOPICS = [
         ),
         "hashtags": ["#MedicoHelp", "#CommunityMedicine", "#MBBS", "#NEETPG", "#NutritionalIndices"],
     },
+
+    # ── 7. Mnemonic ───────────────────────────────────────────────────
+    {
+        "title": "Mnemonic: MUDPILES — Causes of High Anion Gap Metabolic Acidosis",
+        "subject": Subject.community_medicine,
+        "content_format": ContentFormat.mnemonic,
+        "poster_text": "Mnemonic: MUDPILES — high anion gap metabolic acidosis causes",
+        "caption": (
+            "MNEMONIC: MUDPILES — HIGH ANION GAP METABOLIC ACIDOSIS\n\n"
+            "M — Methanol (formic acid metabolite → AGMA + optic neuritis)\n"
+            "U — Uraemia (accumulation of organic acids — phosphate, urate, hippurate)\n"
+            "D — Diabetic Ketoacidosis (β-hydroxybutyrate + acetoacetate)\n"
+            "P — Propylene glycol (metabolised to L-lactate; seen in IV drug formulations)\n"
+            "I — Isoniazid / Iron (INH → seizures + lactic acidosis; Iron → metabolic acidosis)\n"
+            "L — Lactic acidosis (Type A: shock/hypoxia/sepsis; Type B: metformin, malignancy, liver failure)\n"
+            "E — Ethylene glycol (oxalic acid → AGMA + calcium oxalate crystals in urine + acute renal failure)\n"
+            "S — Salicylates (mixed AGMA + respiratory alkalosis — direct stimulation of respiratory centre)\n\n"
+            "CLINICAL PEARLS:\n"
+            "• AGMA = Anion Gap >12 mEq/L (Na⁺ − [Cl⁻ + HCO₃⁻])\n"
+            "• Always calculate Delta-Delta (Δ/Δ) in AGMA:\n"
+            "  Δ/Δ = (AG − 12) / (24 − HCO₃⁻)\n"
+            "  — <1 suggests concomitant NAGMA (e.g. diarrhoea)\n"
+            "  — >2 suggests concomitant metabolic alkalosis (e.g. vomiting with DKA)\n"
+            "• MUDPILES is listed alphabetically, NOT by clinical frequency\n"
+            "• Ethylene glycol poisoning: fluorescent urine under Wood's lamp + oxalate crystals\n"
+            "• Methanol: optic disc hyperaemia + oedema → blindness if untreated\n\n"
+            "EXAM PEARL: Salicylate poisoning is the ONLY cause of mixed respiratory alkalosis\n"
+            "+ high AG metabolic acidosis. Always suspect in overdose with unexplained acid-base."
+        ),
+        "high_yield_takeaway": (
+            "MUDPILES: Methanol, Uraemia, DKA, Propylene glycol, INH/Iron, "
+            "Lactic acidosis, Ethylene glycol, Salicylates. Δ/Δ gap helps detect mixed disorders."
+        ),
+        "hashtags": ["#MedicoHelp", "#CommunityMedicine", "#MBBS", "#NEETPG", "#Mnemonic", "#AcidBase"],
+    },
+
+    # ── 8. Flashcard ──────────────────────────────────────────────────
+    {
+        "title": "Flashcard: Screening vs Diagnostic Tests — Key Differences",
+        "subject": Subject.community_medicine,
+        "content_format": ContentFormat.flashcard,
+        "poster_text": "Screening tests detect disease early; diagnostic tests confirm disease",
+        "caption": (
+            "SCREENING vs DIAGNOSTIC TESTS — KEY DIFFERENCES\n\n"
+            "FEATURE              SCREENING TEST                     DIAGNOSTIC TEST\n"
+            "────────────────────────────────────────────────────────────────────────────\n"
+            "Purpose              Detect early disease in             Confirm/exclude disease\n"
+            "                     asymptomatic individuals            in symptomatic/screen+\n"
+            "────────────────────────────────────────────────────────────────────────────\n"
+            "Target Population    Apparently healthy                  Symptomatic or\n"
+            "                     population                          screen-positive\n"
+            "────────────────────────────────────────────────────────────────────────────\n"
+            "Sensitivity/         HIGH sensitivity preferred          HIGH specificity\n"
+            "Specificity          (SnNout — don't miss disease)       preferred (SpPin)\n"
+            "────────────────────────────────────────────────────────────────────────────\n"
+            "Cost                 Low cost per test                   Higher cost\n"
+            "────────────────────────────────────────────────────────────────────────────\n"
+            "Follow-up            Requires diagnostic testing         Definitive — treatment\n"
+            "                     for positive screens                decisions made\n"
+            "────────────────────────────────────────────────────────────────────────────\n"
+            "Example              Mammography for breast cancer       Biopsy + histopathology\n\n"
+            "KEY CONCEPTS:\n"
+            "• PPV of screening test depends on DISEASE PREVALENCE — low PPV in low-prevalence settings\n"
+            "• WHO Wilson-Jungner criteria (1968) guide screening programme design:\n"
+            "  — Important health problem, acceptable treatment, suitable test, early detection beneficial\n"
+            "• Lead time bias: screening may appear to prolong survival by advancing diagnosis date,\n"
+            "  not necessarily extending life (pseudo-prolongation of survival)\n"
+            "• Length time bias: screening more likely to detect slow-growing (less aggressive) cases\n"
+            "• Overdiagnosis bias: detection of disease that would never have become symptomatic"
+        ),
+        "question": "What are the key differences between screening tests and diagnostic tests?",
+        "correct_answer": (
+            "Screening: asymptomatic, high sensitivity, low cost, preliminary. "
+            "Diagnostic: symptomatic/screen-positive, high specificity, confirmatory."
+        ),
+        "high_yield_takeaway": (
+            "Screening = high sensitivity (SnNout), low cost, asymptomatic population. "
+            "Diagnostic = high specificity (SpPin), confirmatory, symptomatic/screen+."
+        ),
+        "hashtags": ["#MedicoHelp", "#CommunityMedicine", "#MBBS", "#NEETPG", "#Flashcard", "#Screening"],
+    },
+
+    # ── 9. True/False ─────────────────────────────────────────────────
+    {
+        "title": "True or False: BCG vaccine provides protection against pulmonary tuberculosis in adults",
+        "subject": Subject.community_medicine,
+        "content_format": ContentFormat.true_false,
+        "poster_text": "BCG protects against miliary TB and meningitis in children — but NOT pulmonary TB in adults",
+        "caption": (
+            "BCG VACCINE — EFFICACY AND LIMITATIONS\n\n"
+            "TRUE:  BCG protects against disseminated/miliary TB and TB meningitis in children (<5 years)\n"
+            "FALSE: BCG does NOT provide consistent protection against pulmonary TB in adults\n\n"
+            "DETAILED EXPLANATION:\n"
+            "• BCG (Bacille Calmette-Guérin) is a LIVE attenuated vaccine derived from M. bovis\n"
+            "• Efficacy is highest (60–80%) for severe childhood forms (miliary, meningeal)\n"
+            "• Efficacy against pulmonary TB in adults is HIGHLY VARIABLE (0–80% in RCTs)\n"
+            "• Reasons for variable efficacy: latitude, BCG strain differences, prior NTM exposure, genetics\n"
+            "• Protection wanes over 10–15 years\n\n"
+            "INDIA'S SCHEDULE:\n"
+            "• BCG given at BIRTH (or as soon as possible up to 1 year)\n"
+            "• Dose: 0.1 mL intradermal (0.05 mL for neonates) over deltoid insertion\n"
+            "• Scar formation at 6–12 weeks indicates successful vaccination\n"
+            "• Mantoux/TST becomes positive after BCG — cannot distinguish infection from vaccination\n"
+            "  IGRA (Quantiferon) is preferred in BCG-vaccinated individuals\n\n"
+            "CONTRAINDICATIONS:\n"
+            "• Symptomatic HIV-positive children (risk of disseminated BCG disease ~1–10%)\n"
+            "• Congenital immunodeficiency, steroid therapy, malignancy\n"
+            "• Pregnancy (relative contraindication)\n"
+            "• NOT contraindicated in asymptomatic HIV\n\n"
+            "WHO RECOMMENDATIONS:\n"
+            "• BCG at birth in high-TB-burden countries\n"
+            "• Revaccination NOT recommended (no proven additional benefit)\n"
+            "• Neonatal BCG reduces risk of childhood TB by ~60% globally"
+        ),
+        "question": "BCG vaccination provides significant protection against pulmonary tuberculosis in adults.",
+        "correct_answer": "FALSE",
+        "explanation": (
+            "BCG vaccine provides reliable protection (60–80%) against miliary TB and TB meningitis "
+            "in children under 5 years of age, but shows NO consistent protective effect against "
+            "pulmonary tuberculosis in adults. Multiple RCTs across different geographical regions "
+            "have shown efficacy ranging from 0% to 80%, attributed to latitude, genetic factors, "
+            "and prior exposure to non-tuberculous mycobacteria. In India, BCG is given at birth "
+            "primarily to protect infants and young children from severe disseminated disease."
+        ),
+        "high_yield_takeaway": (
+            "BCG protects children (<5 yr) from miliary TB and TB meningitis. "
+            "NO proven protection against adult pulmonary TB. Contraindicated in symptomatic HIV."
+        ),
+        "hashtags": ["#MedicoHelp", "#CommunityMedicine", "#MBBS", "#NEETPG", "#TrueFalse", "#BCG"],
+    },
+
+    # ── 10. One-liner Recall ───────────────────────────────────────────
+    {
+        "title": "One-liner Recall: WHO Growth Standards — Z-score Cutoffs",
+        "subject": Subject.community_medicine,
+        "content_format": ContentFormat.one_liner_recall,
+        "poster_text": "WHO z-score: <-2 SD = underweight/stunting/wasting; <-3 SD = severe",
+        "caption": (
+            "WHO CHILD GROWTH STANDARDS — Z-SCORE CUTOFFS\n\n"
+            "FILL IN THE BLANK:\n"
+            "\"In WHO Child Growth Standards, a z-score below ___ SD defines severe acute "
+            "malnutrition (SAM), while a z-score between ___ and ___ SD defines moderate "
+            "acute malnutrition (MAM).\"\n\n"
+            "ANSWER: -3 SD for SAM; -2 to -3 SD for MAM\n\n"
+            "Z-SCORE FORMULA:\n"
+            "z-score = (Observed value − Median reference value) / SD of reference population\n\n"
+            "WHO CLASSIFICATION BY INDICATOR:\n"
+            "──────────────────────────────────────────────────────────────────────\n"
+            "INDICATOR         <-3 SD (Severe)    -2 to -3 SD (Moderate)    ≥-2 SD\n"
+            "──────────────────────────────────────────────────────────────────────\n"
+            "Weight-for-Height  Severe wasting     Wasting                  Normal\n"
+            "Height-for-Age     Severe stunting    Stunting                 Normal\n"
+            "Weight-for-Age     Severe underweight Underweight              Normal\n"
+            "──────────────────────────────────────────────────────────────────────\n\n"
+            "WHY Z-SCORES?\n"
+            "• Preferred over percent of median (e.g. Gomez) because they account for the\n"
+            "  distribution of the reference population and are sex-/age-independent\n"
+            "• WHO standards (2006) replaced NCHS references; based on MGRS (Multicentre\n"
+            "  Growth Reference Study) — breastfed infants from 6 countries\n\n"
+            "EXAM TIP:\n"
+            "• MUAC <11.5 cm also defines SAM (independent of z-score)\n"
+            "• Bilateral pitting oedema = SAM regardless of anthropometry\n"
+            "• Weight-for-height z-score → wasting (acute); Height-for-age z-score → stunting (chronic)\n"
+            "• Weight-for-age z-score → underweight (mixed acute + chronic)"
+        ),
+        "question": (
+            "\"In WHO Child Growth Standards, a z-score below ___ SD defines severe acute "
+            "malnutrition (SAM), while a z-score between ___ and ___ SD defines moderate "
+            "acute malnutrition (MAM).\""
+        ),
+        "correct_answer": "-3 SD for SAM; -2 to -3 SD for MAM",
+        "high_yield_takeaway": (
+            "WHO z-score: <-3 = severe (SAM); -2 to -3 = moderate (MAM). "
+            "Weight-for-height = wasting; Height-for-age = stunting; Weight-for-age = underweight."
+        ),
+        "hashtags": ["#MedicoHelp", "#CommunityMedicine", "#MBBS", "#NEETPG", "#OneLiner", "#WHOZScore"],
+    },
 ]

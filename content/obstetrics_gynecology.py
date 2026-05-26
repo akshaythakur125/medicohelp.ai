@@ -221,4 +221,78 @@ TOPICS = [
         "high_yield_takeaway": "Pap from age 21. HSIL/ASC-H → colposcopy immediately. HPV 16+18 = 70% cervical cancers. CIN 2/3 = LEEP/cone biopsy.",
         "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#ObsGyn", "#CervicalCancer"],
     },
+    # ── Mnemonic ─────────────────────────────────────────────────────────────
+    {
+        "title": "Mnemonic: Stages of Labour — 'EDD' for First Stage Cervical Dilatation",
+        "subject": Subject.obstetrics_gynecology,
+        "content_format": ContentFormat.mnemonic,
+        "poster_text": "Stages of labour: 1st stage (latent + active), 2nd stage (full dilation to delivery), 3rd stage (placenta)",
+        "caption": (
+            "Stages of labour mnemonic. 1st stage: Latent (0-3 cm, slow progress, up to 8-12 hrs in primigravida) → Active (4-10 cm, 1 cm/hr). "
+            "Friedman's curve. 2nd stage: Full dilation to delivery of baby. Primigravida up to 2 hrs (3 hrs with epidural), "
+            "multigravida up to 1 hr (2 hrs with epidural). 3rd stage: Placenta delivery (active management = oxytocin + controlled cord traction "
+            "reduces PPH risk by 60%). 4th stage: 1-2 hrs postpartum monitoring (vitals, tone, lochia). "
+            "Mnemonic for duration: \"PAL\" — Primigravida Active phase 1 cm/hr, Latent longer."
+        ),
+        "high_yield_takeaway": "1st stage: latent (0-3 cm) + active (4-10 cm). 2nd stage: full dilation to delivery. 3rd stage: placenta. Active management of 3rd stage reduces PPH. 4th stage = 1-2 hr observation.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#ObsGyn", "#Mnemonic", "#StagesOfLabour"],
+    },
+    # ── Flashcard ────────────────────────────────────────────────────────────
+    {
+        "title": "Flashcard: Contraception Methods Comparison",
+        "subject": Subject.obstetrics_gynecology,
+        "content_format": ContentFormat.flashcard,
+        "poster_text": "Contraception: COCP = Pearl index 0.3 | IUCD = 0.2 | Implant = 0.05 | Emergency = within 72-120 hrs",
+        "caption": (
+            "Compare contraceptive methods. COCP (combined oral contraceptive pill): oestrogen + progesterone, Pearl index 0.3, inhibits ovulation, "
+            "side effects: VTE risk, nausea. POP (progesterone only pill): no oestrogen, safe in breastfeeding/lactation. "
+            "IUCD: Cu-IUD (10 years, emergency contraception up to 5 days) vs LNG-IUS/Mirena (5 years, reduces menorrhagia). "
+            "Implant (Nexplanon): 3 years, Pearl index 0.05. DMPA (injection): 3 months. Emergency contraception: Ulipristal (30 mg, up to 120 hrs), "
+            "LNG (1.5 g, up to 72 hrs). Barrier: male condom (prevents STIs). Permanent: tubal ligation, vasectomy."
+        ),
+        "question": "A 28-year-old woman with heavy menstrual bleeding desires long-term contraception. She also wants the bleeding reduced. Which method is BEST?",
+        "correct_answer": "LNG-IUS (Mirena) — provides effective contraception for 5 years and significantly reduces menstrual blood loss by suppressing endometrial proliferation. Pearl index 0.2.",
+        "high_yield_takeaway": "LNG-IUS: 5 yrs, reduces menorrhagia. Cu-IUD: 10 yrs, emergency contraception. Implant: 3 yrs, lowest Pearl index. COCP: VTE risk, not in lactation <6 wks. DMPA: weight gain, bone density concern.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#ObsGyn", "#Flashcard", "#Contraception"],
+    },
+    # ── True/False ───────────────────────────────────────────────────────────
+    {
+        "title": "True or False: Gestational diabetes can be diagnosed by HbA1c alone",
+        "subject": Subject.obstetrics_gynecology,
+        "content_format": ContentFormat.true_false,
+        "poster_text": "GDM screening: OGTT (75 g, 2 hr) is gold standard — HbA1c is NOT reliable in pregnancy",
+        "caption": (
+            "GDM diagnosis requires OGTT (75 g glucose, 2-hour plasma glucose). DIPSI criteria (India): single 75 g OGTT at 24-28 weeks. "
+            "WHO 2013: FBS ≥92, 1-hr ≥180, 2-hr ≥153 (any one). HbA1c is NOT recommended for GDM diagnosis because: pregnancy-induced "
+            "changes in RBC turnover and iron deficiency affect HbA1c; lower HbA1c thresholds in pregnancy not well established. "
+            "Oral glucose challenge test (50 g) for screening. FBS ≥126 or random ≥200 before 20 weeks = overt diabetes, not GDM."
+        ),
+        "question": "Glycosylated haemoglobin (HbA1c) is a reliable test for diagnosing gestational diabetes mellitus (GDM).",
+        "correct_answer": "FALSE",
+        "explanation": (
+            "HbA1c is NOT recommended for GDM diagnosis due to pregnancy-related physiologic changes affecting red cell turnover. "
+            "The gold standard is 75 g OGTT with plasma glucose measurement at fasting, 1-hour, and 2-hour. "
+            "HbA1c can be used for pre-existing diabetes screening pre-pregnancy."
+        ),
+        "high_yield_takeaway": "GDM: 75 g OGTT at 24-28 wks. HbA1c NOT reliable in pregnancy. DIPSI: single 75 g, 2-hr ≥153 = GDM. Overt DM: FBS ≥126 before 20 wks.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#ObsGyn", "#TrueFalse", "#GDM"],
+    },
+    # ── One-liner Recall ─────────────────────────────────────────────────────
+    {
+        "title": "One-liner Recall: Bishop Score for Induction of Labour",
+        "subject": Subject.obstetrics_gynecology,
+        "content_format": ContentFormat.one_liner_recall,
+        "poster_text": "Bishop score ≥8 = favourable cervix for induction. Score = Cervical: Position, Consistency, Effacement, Dilation, Station",
+        "caption": (
+            "Fill in the blank: \"A Bishop score of ≥___ indicates a favourable cervix for induction of labour.\" "
+            "Answer: \"≥8 (favourable, similar to spontaneous labour).\" Then list Bishop score components: Position (0-2), "
+            "Consistency (0-2), Effacement (0-3), Cervical Dilation (0-3), Station (0-3). Maximum = 13. "
+            "Score ≤5 = unfavourable (consider cervical ripening with PGE2/cervical Foley). Score 6-7 = intermediate. "
+            "Score ≥8 = favourable, can proceed with induction (ARM + oxytocin)."
+        ),
+        "question": "A Bishop score of ≥___ indicates a favourable cervix for induction of labour.",
+        "correct_answer": "≥8",
+        "high_yield_takeaway": "Bishop score ≥8 = favourable for induction. Components: Position, Consistency, Effacement, Dilation, Station (max 13). ≤5 = unfavourable (needs ripening). PGE2 (dinoprostone) or Foley catheter for ripening.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#ObsGyn", "#OneLiner", "#BishopScore"],
+    },
 ]

@@ -277,4 +277,127 @@ TOPICS = [
         "correct_answer": None,
         "explanation": None,
     },
+    # ── Mnemonic ──────────────────────────────────────────────────────────────
+    {
+        "title": "Mnemonic: Extraocular Muscles — LR6 SO4 rest by O3",
+        "subject": Subject.ophthalmology,
+        "content_format": ContentFormat.mnemonic,
+        "poster_text": "Mnemonic: LR6 SO4 — Lateral Rectus (CN VI), Superior Oblique (CN IV), rest by Oculomotor (CN III)",
+        "caption": (
+            "Extraocular muscles innervation mnemonic: LR6 (Lateral Rectus = Abducens / CN VI). "
+            "SO4 (Superior Oblique = Trochlear / CN IV). "
+            "Rest = Oculomotor / CN III (Medial Rectus, Inferior Rectus, Superior Rectus, Inferior Oblique). "
+            "Also explain actions of each muscle: SR (elevation + adduction + intorsion), "
+            "IR (depression + adduction + extorsion), MR (adduction), LR (abduction), "
+            "SO (depression + abduction + intorsion — \"SO\" = \"SOnk down, turn in\"), "
+            "IO (elevation + abduction + extorsion). "
+            "Three axes of Fick: X (horizontal), Y (vertical), Z (anteroposterior)."
+        ),
+        "high_yield_takeaway": (
+            "LR6 SO4 rest O3. SO: 'SO turns the eye down and out.' "
+            "IO: 'I O-u-t-turn the eye up and out.' Test: H-pattern of gaze for each muscle."
+        ),
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Ophthalmology", "#Mnemonic", "#ExtraocularMuscles"],
+        "question": None,
+        "options": [],
+        "correct_answer": None,
+        "explanation": None,
+    },
+    # ── Flashcard ─────────────────────────────────────────────────────────────
+    {
+        "title": "Flashcard: Conjunctivitis — Bacterial vs Viral vs Allergic Comparison",
+        "subject": Subject.ophthalmology,
+        "content_format": ContentFormat.flashcard,
+        "poster_text": "Conjunctivitis: Bacterial = purulent, sticky | Viral = watery, pre-auricular node | Allergic = itchy, bilateral",
+        "caption": (
+            "Compare types of conjunctivitis. "
+            "Bacterial: mucopurulent discharge, sticky eyelids, no pre-auricular lymphadenopathy, "
+            "responds to topical antibiotics (chloramphenicol, moxifloxacin). "
+            "Viral: watery discharge, pre-auricular lymphadenopathy, follicular reaction on tarsal conjunctiva, "
+            "contagious (adenovirus most common), no specific treatment. "
+            "Allergic: intense itching, bilateral, cobblestone papillae, gelatinous limbal infiltration "
+            "(in vernal catarrh), treatment = antihistamines + mast cell stabilisers. "
+            "Ophthalmia neonatorum: chemical (silver nitrate) vs gonococcal (hyperacute, copious pus, "
+            "corneal perforation risk) vs chlamydial (inclusion conjunctivitis, subacute). "
+            "Neonatal prophylaxis: erythromycin ointment."
+        ),
+        "question": (
+            "A 5-year-old child presents with itchy, bilateral red eyes, cobblestone papillae on the "
+            "upper tarsal conjunctiva, and a history of asthma. What is the diagnosis and first-line treatment?"
+        ),
+        "correct_answer": (
+            "Vernal keratoconjunctivitis (allergic). "
+            "First-line: topical mast cell stabilisers (sodium cromoglycate) + antihistamines. "
+            "Topical steroids for severe exacerbations."
+        ),
+        "high_yield_takeaway": (
+            "Bacterial = purulent, antibiotics. Viral = watery, follicular, self-limiting. "
+            "Allergic = itchy, cobblestone papillae. Neonatal = prophylaxis with erythromycin."
+        ),
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Ophthalmology", "#Flashcard", "#Conjunctivitis"],
+        "options": [],
+        "explanation": None,
+    },
+    # ── True/False ────────────────────────────────────────────────────────────
+    {
+        "title": "True or False: LASIK can correct all types and degrees of refractive error",
+        "subject": Subject.ophthalmology,
+        "content_format": ContentFormat.true_false,
+        "poster_text": "LASIK: only for myopia up to -8D, hypermetropia up to +4D, astigmatism up to 5D — not for presbyopia",
+        "caption": (
+            "LASIK (Laser-Assisted In Situ Keratomileusis) indications: stable refraction for ≥1 year, "
+            "age ≥18-21, no corneal pathology (keratoconus contraindicated), adequate corneal thickness "
+            "(≥500 microns). Contraindications: thin cornea, keratoconus, severe dry eye, pregnancy, "
+            "autoimmune disease, uncontrolled glaucoma/diabetes. LASIK does NOT correct presbyopia "
+            "(monovision LASIK can be attempted). Alternatives: PRK (thin cornea, athletes), "
+            "SMILE (minimally invasive), ICL (high myopia >-8D), RLE (presbyopia + cataract). "
+            "Complications: dry eye (most common), flap complications, ectasia, under/overcorrection, "
+            "haloes/glare."
+        ),
+        "question": "LASIK surgery can correct all types and degrees of refractive error, including presbyopia.",
+        "correct_answer": "FALSE",
+        "explanation": (
+            "LASIK is effective for myopia (up to -8D), hypermetropia (up to +4D), and astigmatism "
+            "(up to 5D) but does NOT correct presbyopia (age-related loss of accommodation). "
+            "Monovision (one eye for distance, other for near) is a compromise option. "
+            "High myopia >-8D needs ICL. Thin cornea contraindicates LASIK (PRK or SMILE preferred)."
+        ),
+        "high_yield_takeaway": (
+            "LASIK: myopia ≤8D, hypermetropia ≤4D, astigmatism ≤5D. NOT for presbyopia. "
+            "Contraindicated in keratoconus, thin cornea, dry eye. SMILE for small incision, PRK for thin cornea."
+        ),
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Ophthalmology", "#TrueFalse", "#LASIK"],
+        "options": [],
+    },
+    # ── One-liner Recall ──────────────────────────────────────────────────────
+    {
+        "title": "One-liner Recall: Snellen Visual Acuity — '20/40' Meaning",
+        "subject": Subject.ophthalmology,
+        "content_format": ContentFormat.one_liner_recall,
+        "poster_text": "Snellen acuity: 20/20 = normal. 20/40 = sees at 20 ft what normal sees at 40 ft. 20/200 = legal blindness.",
+        "caption": (
+            "Fill in the blank: \"A patient with Snellen visual acuity of 20/40 can read at 20 feet what "
+            "a person with normal vision can read at ___ feet.\" Answer: \"40 feet.\" "
+            "Then explain Snellen fraction: numerator = testing distance (20 ft = 6 m), denominator = "
+            "distance at which the smallest optotype subtends 5 minutes of arc. "
+            "20/20 = normal. 20/40 = 2x larger letters needed. "
+            "20/200 = legal blindness in USA (Snellen equivalent in India: <6/60 or <20/200 or field <20°). "
+            "Counting fingers (CF), Hand movements (HM), Perception of Light (PL), "
+            "No Perception of Light (NPL) for worse vision. "
+            "Landolt C and E-chart for illiterate patients."
+        ),
+        "question": (
+            "A patient with Snellen visual acuity of 20/40 can read at 20 feet what a person with "
+            "normal vision can read at ___ feet."
+        ),
+        "correct_answer": "40 feet",
+        "high_yield_takeaway": (
+            "Snellen: numerator = testing distance, denominator = normal vision distance. "
+            "20/20 = normal. 20/200 = legal blindness. "
+            "CF, HM, PL, NPL for severe vision loss. Pinhole improvement = refractive error (not organic disease)."
+        ),
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Ophthalmology", "#OneLiner", "#Snellen"],
+        "options": [],
+        "explanation": None,
+    },
 ]

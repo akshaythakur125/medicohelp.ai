@@ -261,4 +261,63 @@ TOPICS = [
         ),
         "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#ForensicMedicine", "#Autopsy"],
     },
+
+    # ── 7. Mnemonic ─────────────────────────────────────────────────────
+    {
+        "title": "Mnemonic: Poisoning Antidotes — The 'A' List",
+        "subject": Subject.forensic_medicine,
+        "content_format": ContentFormat.mnemonic,
+        "poster_text": "Mnemonic: 'A-List' — Atropine for organophosphates, Activated charcoal for most poisons, Acetylcysteine for paracetamol",
+        "caption": (
+            "Antidote mnemonics: Organophosphate = Atropine + Pralidoxime (2-PAM). Paracetamol = N-acetylcysteine (NAC). Opioids = Naloxone. Benzodiazepines = Flumazenil. Cyanide = Amyl nitrite + Sodium nitrite + Sodium thiosulfate (Lilly's cocktail). Methanol/Ethylene glycol = Fomepizole (first-line) or Ethanol. Carbon monoxide = 100% O₂ or hyperbaric O₂. Iron = Desferrioxamine. Arsenic/Mercury = BAL (Dimercaprol). Lead = EDTA + BAL. Copper = D-penicillamine. Digitalis = Digoxin-specific Fab antibodies."
+        ),
+        "high_yield_takeaway": "OP poisoning: Atropine (muscarinic) + Pralidoxime (nicotinic). Paracetamol: NAC within 8-10 hours. Cyanide: Lilly's cocktail. Methanol: Fomepizole > Ethanol.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#ForensicMedicine", "#Mnemonic", "#Antidotes"],
+    },
+
+    # ── 8. Flashcard ────────────────────────────────────────────────────
+    {
+        "title": "Flashcard: Burns — Wallace Rule of Nine and Management",
+        "subject": Subject.forensic_medicine,
+        "content_format": ContentFormat.flashcard,
+        "poster_text": "Wallace Rule of Nine: Each arm 9%, each leg 18%, front trunk 18%, back trunk 18%, head 9%",
+        "caption": (
+            "Burns assessment and management. Rule of Nine for adults (head 9%, each arm 9%, front trunk 18%, back trunk 18%, each leg 18%, perineum 1%). Palmer method (patient's palm = 1%). Degree classification: 1st (epidermis, erythema); 2nd (dermis, blisters); 3rd (full thickness, charred, painless). Fluid resuscitation: Parkland formula (4 mL × BSA% × weight in kg, half in first 8 hrs, half in next 16 hrs)."
+        ),
+        "question": "A 70-kg man has burns on front trunk, both legs, and perineum. What BSA% is burned and what is the Parkland fluid requirement for the first 8 hours?",
+        "correct_answer": "BSA = 18% (front trunk) + 36% (both legs) + 1% (perineum) = 55%. Parkland: 4 × 55 × 70 = 15,400 mL in 24 hrs. Half (7,700 mL) in first 8 hrs. Fluid: Ringer's Lactate.",
+        "high_yield_takeaway": "Wallace Rule of 9: head 9, each arm 9, front 18, back 18, each leg 18, perineum 1. Parkland: 4 mL/kg/% burn RL. Half in 8 hrs.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#ForensicMedicine", "#Flashcard", "#Burns"],
+    },
+
+    # ── 9. True/False ───────────────────────────────────────────────────
+    {
+        "title": "True or False: Diatoms in bone marrow is diagnostic of drowning",
+        "subject": Subject.forensic_medicine,
+        "content_format": ContentFormat.true_false,
+        "poster_text": "Diatoms in bone marrow = confirmatory for ante-mortem drowning — but false positives exist",
+        "caption": (
+            "Diatom test principle: microscopic algae from water enter circulation during drowning and reach bone marrow. True positive = diatoms in bone marrow/closed organs. False positives: diatoms in lung only (not bone marrow) can occur from post-mortem immersion. False negatives: dry drowning (laryngeal spasm), no diatoms in water source. The test is confirmatory but must be interpreted with caution."
+        ),
+        "question": "The presence of diatoms in bone marrow is definitive proof of ante-mortem drowning.",
+        "correct_answer": "FALSE",
+        "explanation": "Diatoms in bone marrow is a STRONG indicator of ante-mortem drowning but not definitive. False positives can occur from contamination during autopsy or from inhalation of diatom-containing aerosolized water. Diatoms in lungs alone without bone marrow = inconclusive (could be post-mortem immersion).",
+        "high_yield_takeaway": "Diatoms in bone marrow = strong evidence for drowning, but not 100% definitive. Absent diatoms do not rule out drowning (dry drowning 10-15%).",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#ForensicMedicine", "#TrueFalse", "#Diatoms"],
+    },
+
+    # ── 10. One-liner Recall ────────────────────────────────────────────
+    {
+        "title": "One-liner Recall: Insect Succession on Decomposing Body",
+        "subject": Subject.forensic_medicine,
+        "content_format": ContentFormat.one_liner_recall,
+        "poster_text": "Forensic entomology: blowflies arrive first (within hours) — their larval stage helps estimate PMI",
+        "caption": (
+            "Fill in the blank: \"The first insects to arrive on a decomposing body within hours of death are ___ flies, specifically the genus ___.\" Answer: \"Blowflies (Calliphora vicina in India).\" Then explain: Calliphora arrives first (within hours), followed by flesh flies (Sarcophaga), beetles (Dermestes), and finally cheese flies (Piophila). Larval stage (1st, 2nd, 3rd instar) and pupal stage help estimate post-mortem interval (PMI)."
+        ),
+        "question": "The first insects to arrive on a decomposing body within hours of death are ___ flies, specifically the genus ___.",
+        "correct_answer": "Blowflies, Calliphora vicina",
+        "high_yield_takeaway": "Blowflies (Calliphora) = first arrivals. Larval stage helps estimate PMI. Accumulated Degree Hours (ADH) used for precise estimation.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#ForensicMedicine", "#OneLiner", "#Entomology"],
+    },
 ]

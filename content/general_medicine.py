@@ -264,4 +264,149 @@ TOPICS = [
         ),
         "hashtags": ["#MedicoHelp", "#GeneralMedicine", "#MBBS", "#NEETPG", "#AcidBase"],
     },
+
+    # ── 7. Mnemonic ──────────────────────────────────────────────────────
+    {
+        "title": "Mnemonic: CREST Syndrome — Limited Systemic Sclerosis",
+        "subject": Subject.general_medicine,
+        "content_format": ContentFormat.mnemonic,
+        "poster_text": "Mnemonic: CREST — Calcinosis, Raynaud's, Esophageal dysmotility, Sclerodactyly, Telangiectasia",
+        "caption": (
+            "CREST (Limited Cutaneous Systemic Sclerosis) Mnemonic:\n\n"
+            "C — Calcinosis cutis: calcium deposits in skin (subcutaneous nodules over joints).\n"
+            "R — Raynaud's phenomenon: often the first manifestation (vasospasm of digits triggered by cold).\n"
+            "E — Esophageal dysmotility: dysphagia, GERD (most common visceral involvement).\n"
+            "S — Sclerodactyly: tight, thickened skin on fingers (sausage-like digits).\n"
+            "T — Telangiectasia: dilated capillaries on face, hands, oral mucosa.\n\n"
+            "KEY SEROLOGY:\n"
+            "• Anti-centromere antibody (ACA): strongly associated with CREST / limited systemic sclerosis.\n"
+            "• Anti-Scl-70 (anti-topoisomerase I): associated with diffuse systemic sclerosis.\n\n"
+            "PROGNOSIS:\n"
+            "• Limited (CREST): better prognosis, slow progression, pulmonary hypertension > fibrosis.\n"
+            "• Diffuse: worse prognosis, early internal organ involvement (renal crisis, pulmonary fibrosis).\n"
+            "• Renal crisis (diffuse): treat with ACE inhibitors (ACEi are first-line)."
+        ),
+        "high_yield_takeaway": (
+            "CREST = limited systemic sclerosis. Anti-centromere antibody. "
+            "Better prognosis than diffuse. Diffuse = anti-Scl-70, renal crisis (ACEi indicated), pulmonary fibrosis."
+        ),
+        "hashtags": ["#MedicoHelp", "#GeneralMedicine", "#MBBS", "#NEETPG", "#Mnemonic", "#Scleroderma"],
+    },
+
+    # ── 8. Flashcard ─────────────────────────────────────────────────────
+    {
+        "title": "Flashcard: Pleural Effusion — Transudate vs Exudate (Light's Criteria)",
+        "subject": Subject.general_medicine,
+        "content_format": ContentFormat.flashcard,
+        "poster_text": "Light's criteria: exudate if any ONE of 3 criteria met — know them all",
+        "caption": (
+            "LIGHT'S CRITERIA FOR PLEURAL FLUID CLASSIFICATION\n\n"
+            "An exudative effusion meets ONE OR MORE of the following:\n\n"
+            "1. Pleural fluid protein / serum protein >0.5\n"
+            "2. Pleural fluid LDH / serum LDH >0.6\n"
+            "3. Pleural fluid LDH > 2/3 × upper limit of normal serum LDH\n\n"
+            "TRANSUDATE (none of the above met):\n"
+            "CHF, cirrhosis, nephrotic syndrome, hypoalbuminemia, peritoneal dialysis, myxoedema\n\n"
+            "EXUDATE (≥1 criteria met):\n"
+            "Pneumonia (parapneumonic effusion), TB, malignancy, pulmonary embolism, pancreatitis, empyema\n\n"
+            "ADDITIONAL KEY TESTS:\n"
+            "• ADA (adenosine deaminase) >40 U/L: highly suggestive of TB pleural effusion (India context)\n"
+            "• Cytology: sensitivity ~60% for malignant effusion\n"
+            "• pH <7.2: complicated parapneumonic effusion → needs chest tube drainage\n"
+            "• Glucose <60 mg/dL: often rheumatoid or TB effusion"
+        ),
+        "question": (
+            "A patient with pleural effusion has pleural fluid protein 4.2 g/dL (serum protein 6.5 g/dL), "
+            "pleural fluid LDH 180 U/L (serum LDH 200 U/L, normal ULN 200 U/L). Is this a transudate or exudate?"
+        ),
+        "correct_answer": (
+            "Exudate. Light's criteria:\n"
+            "Criteria 1: 4.2/6.5 = 0.65 (>0.5) → met.\n"
+            "Criteria 2: 180/200 = 0.9 (>0.6) → met.\n"
+            "Criteria 3: 180 > 133 (2/3 × 200) → met.\n"
+            "All 3 criteria met → exudate."
+        ),
+        "high_yield_takeaway": (
+            "Light's criteria: exudate if any 1 of 3 positive. "
+            "ADA >40 U/L = TB pleural effusion. pH <7.2 = complicated parapneumonic → chest tube drainage."
+        ),
+        "hashtags": ["#MedicoHelp", "#GeneralMedicine", "#MBBS", "#NEETPG", "#Flashcard", "#PleuralEffusion"],
+    },
+
+    # ── 9. True/False ────────────────────────────────────────────────────
+    {
+        "title": "True or False: Aspirin is recommended for primary prevention of cardiovascular disease in all adults over 50",
+        "subject": Subject.general_medicine,
+        "content_format": ContentFormat.true_false,
+        "poster_text": "Aspirin for primary prevention: only in selected high-risk patients — bleeding risk often outweighs benefit",
+        "caption": (
+            "CURRENT GUIDELINES ON ASPIRIN FOR PRIMARY PREVENTION (ACC/AHA/ESC):\n\n"
+            "• Aspirin for primary prevention is NOT routinely recommended.\n"
+            "• Consider only in adults 40–70 years with ASCVD risk ≥10% AND not at increased bleeding risk.\n"
+            "• Do NOT give for primary prevention in adults >70 years or those with increased bleeding risk.\n"
+            "• For SECONDARY prevention (known ASCVD), aspirin is clearly indicated (75–100 mg/day).\n"
+            "• Alternative: clopidogrel if aspirin intolerant.\n\n"
+            "KEY TRIALS:\n"
+            "• ASCEND (diabetics): modest CVD reduction but significant bleeding increase.\n"
+            "• ARRIVE (moderate risk): no CVD benefit, more GI bleeding.\n"
+            "• ASPREE (>70 years): no benefit, increased mortality from bleeding/cancer.\n\n"
+            "BLEEDING RISK: Prior GI bleed, PUD, liver disease, thrombocytopenia, NSAID use, age >70."
+        ),
+        "question": "Aspirin is recommended for primary prevention of cardiovascular disease in all adults over 50 years of age.",
+        "correct_answer": "FALSE",
+        "explanation": (
+            "Recent trials (ASCEND, ARRIVE, ASPREE) showed modest risk reduction but significant bleeding risk. "
+            "Current guidelines: shared decision-making only for select high-risk patients (40–70 years, ASCVD risk ≥10%, "
+            "low bleeding risk). Not recommended for primary prevention in adults >70 years or those at increased bleeding risk."
+        ),
+        "high_yield_takeaway": (
+            "Aspirin for primary prevention: not routine. "
+            "Consider only if ASCVD risk ≥10% AND age 40–70 AND low bleeding risk. "
+            "Secondary prevention = aspirin is mandatory."
+        ),
+        "hashtags": ["#MedicoHelp", "#GeneralMedicine", "#MBBS", "#NEETPG", "#TrueFalse", "#Aspirin"],
+    },
+
+    # ── 10. One-liner Recall ──────────────────────────────────────────────
+    {
+        "title": "One-liner Recall: Glasgow Coma Scale (GCS)",
+        "subject": Subject.general_medicine,
+        "content_format": ContentFormat.one_liner_recall,
+        "poster_text": "GCS: Eye 4, Verbal 5, Motor 6 — total 15. Severe ≤8, Moderate 9-12, Mild 13-15",
+        "caption": (
+            "GLASGOW COMA SCALE (GCS) — Complete Breakdown\n\n"
+            "EYE OPENING (E):\n"
+            "4 — Spontaneous\n"
+            "3 — To speech\n"
+            "2 — To pain\n"
+            "1 — None\n\n"
+            "VERBAL RESPONSE (V):\n"
+            "5 — Oriented\n"
+            "4 — Confused conversation\n"
+            "3 — Inappropriate words\n"
+            "2 — Incomprehensible sounds\n"
+            "1 — None\n\n"
+            "BEST MOTOR RESPONSE (M):\n"
+            "6 — Obeys commands\n"
+            "5 — Localises pain\n"
+            "4 — Withdraws from pain\n"
+            "3 — Flexor (decorticate)\n"
+            "2 — Extensor (decerebrate)\n"
+            "1 — None\n\n"
+            "SEVERITY CLASSIFICATION:\n"
+            "• Mild: 13–15\n"
+            "• Moderate: 9–12\n"
+            "• Severe: ≤8 (intubation indicated — airway protection)"
+        ),
+        "question": "A patient opens eyes to painful stimulus (E2), utters incomprehensible sounds (V2), and withdraws from pain (M4). What is the GCS total?",
+        "correct_answer": (
+            "8 (E2 + V2 + M4 = 8). This indicates severe brain injury (GCS ≤8 — "
+            "consider airway protection/intubation)."
+        ),
+        "high_yield_takeaway": (
+            "GCS: E4 V5 M6 = 15. ≤8 = severe (intubate). 9–12 = moderate. 13–15 = mild. "
+            "Best motor response is the most important component."
+        ),
+        "hashtags": ["#MedicoHelp", "#GeneralMedicine", "#MBBS", "#NEETPG", "#OneLiner", "#GCS"],
+    },
 ]

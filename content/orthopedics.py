@@ -214,4 +214,82 @@ TOPICS = [
         "high_yield_takeaway": "SCF complications: AIN = most common nerve; cubitus varus = most common late complication; brachial artery injury → Volkmann's contracture.",
         "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Orthopedics", "#PYQ"],
     },
+    # ── Mnemonic ─────────────────────────────────────────────────────────────
+    {
+        "title": "Mnemonic: Lower Limb Nerve Roots — '2,3,4 goes to the floor; 4,5,1 outside is fun'",
+        "subject": Subject.orthopedics,
+        "content_format": ContentFormat.mnemonic,
+        "poster_text": "Lumbar plexus nerve roots: '2,3,4 goes to the floor (femoral); 4,5,1 (lumbosacral) outside is fun (common peroneal)'",
+        "caption": (
+            "Explain lower limb nerve root mnemonics for NEET-PG: '2,3,4 goes to the floor' = Femoral nerve (L2, L3, L4) — innervates quadriceps, hip flexors. "
+            "'4,5,1 outside is fun (or 4,5,1 outside the knee)' = Common peroneal/fibular nerve (L4, L5, S1) — foot drop, lateral leg. "
+            "'4,5,1 inside the thigh' = Tibial nerve (L4, L5, S1-S3). "
+            "'3,4,5 keeps you alive' = Phrenic nerve (C3, C4, C5). "
+            "Obturator nerve = L2-L4 (hip adductors). "
+            "Superior gluteal nerve = L4-S1 (gluteus medius/minimus — Trendelenburg gait). "
+            "Inferior gluteal nerve = L5-S2 (gluteus maximus — difficulty climbing stairs). "
+            "Sciatic nerve = L4-S3."
+        ),
+        "high_yield_takeaway": "Femoral: L2-4 (floor). Obturator: L2-4 (adductors). Sciatic: L4-S3. Peroneal: L4-S1 (foot drop). Tibial: L4-S3 (plantar flexion). Phrenic: C3-5.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Orthopedics", "#Mnemonic", "#NerveRoots"],
+    },
+    # ── Flashcard ────────────────────────────────────────────────────────────
+    {
+        "title": "Flashcard: Fracture Healing Stages and Times",
+        "subject": Subject.orthopedics,
+        "content_format": ContentFormat.flashcard,
+        "poster_text": "Fracture healing: Inflammation (wk1) → Soft callus (wk2-3) → Hard callus (wk4-16) → Remodelling (months-years)",
+        "caption": (
+            "Stages of fracture healing. Stage 1: Haematoma formation + inflammation (hours-days) — PMN, macrophage infiltration. "
+            "Stage 2: Soft callus (2-3 weeks) — cartilage + fibrocartilage, granulation tissue. "
+            "Stage 3: Hard callus (4-16 weeks) — woven bone replaced by lamellar bone via endochondral ossification. "
+            "Stage 4: Remodelling (months-years) — Wolff's law, bone reshaped by osteoclast/osteoblast activity. "
+            "Primary (direct) healing: with compression plating, no callus. Secondary (indirect) healing: with callus, cast/brace. "
+            "Factors delaying healing: smoking (major), diabetes, steroids, infection, poor vascularity (scaphoid, femoral neck, talus), malnutrition, NSAIDs (COX-2 inhibitors). "
+            "Non-union vs Malunion vs Delayed union."
+        ),
+        "question": "A 40-year-old smoker with a mid-shaft tibia fracture treated with a cast. X-ray at 6 weeks shows no visible callus. X-ray at 12 weeks shows minimal bridging callus. What stage of healing is this, and what risk factor is most likely delaying healing?",
+        "correct_answer": "Soft callus phase at 6 weeks (delayed). At 12 weeks, transitioning to hard callus. Smoking is the major risk factor — nicotine causes vasoconstriction and impairs osteoblast function.",
+        "high_yield_takeaway": "Fracture healing: inflammation → soft callus (2-3 wks) → hard callus (4-16 wks) → remodelling. Smoking = #1 modifiable risk factor for non-union. Scaphoid, femoral neck, talus = high non-union risk.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Orthopedics", "#Flashcard", "#FractureHealing"],
+    },
+    # ── True/False ───────────────────────────────────────────────────────────
+    {
+        "title": "True or False: All open (compound) fractures require antibiotics for 24-48 hours only",
+        "subject": Subject.orthopedics,
+        "content_format": ContentFormat.true_false,
+        "poster_text": "Open fractures: Gustilo-Anderson classification determines antibiotic duration and urgency of debridement",
+        "caption": (
+            "Gustilo-Anderson classification: Type I (clean wound <1 cm, low energy) — 1st gen cephalosporin, 24 hrs. "
+            "Type II (wound 1-10 cm, moderate contamination) — cephalosporin, 24-48 hrs. "
+            "Type IIIA (wound >10 cm, adequate soft tissue coverage) — cephalosporin + aminoglycoside, 72 hrs. "
+            "Type IIIB (requires flap coverage) — same, 72+ hrs. Type IIIC (vascular repair needed) — 72+ hrs. "
+            "Add penicillin for farm injuries (Clostridium). Principles: Emergency IV antibiotics (within 1 hour), tetanus prophylaxis, "
+            "urgent surgical debridement (<6 hrs for Type III), stabilisation, serial debridement. Antibiotic duration depends on grade."
+        ),
+        "question": "All open (compound) fractures require prophylactic antibiotics for only 24-48 hours regardless of the severity of contamination.",
+        "correct_answer": "FALSE",
+        "explanation": "Antibiotic duration depends on the Gustilo-Anderson grade. Type I: 24 hrs. Type II: 24-48 hrs. Type III: 72+ hrs. More contaminated wounds require longer courses. All need cefazolin; Type III adds aminoglycoside; farm injuries add penicillin.",
+        "high_yield_takeaway": "Open fracture: antibiotics within 1 hr. Type I = cephalosporin 24 hrs. Type III = cephalosporin + aminoglycoside 72+ hrs. Farm/Clostridium risk = add penicillin. Tetanus prophylaxis always.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Orthopedics", "#TrueFalse", "#OpenFractures"],
+    },
+    # ── One-liner Recall ─────────────────────────────────────────────────────
+    {
+        "title": "One-liner Recall: Thomas Test for Fixed Flexion Deformity of Hip",
+        "subject": Subject.orthopedics,
+        "content_format": ContentFormat.one_liner_recall,
+        "poster_text": "Thomas test: flex both hips to lumbar spine flat — affected hip cannot extend = fixed flexion deformity",
+        "caption": (
+            "Fill in the blank: 'In the Thomas test for fixed flexion deformity of the hip, the examiner flexes both hips until the lumbar lordosis is flattened, "
+            "then asks the patient to extend the ___ hip.' Answer: 'Affected (the one being tested). If the thigh cannot lie flat on the table = positive "
+            "fixed flexion deformity. Angle between thigh and table = degree of deformity.' Then explain: Thomas test is used to detect fixed flexion "
+            "deformity in hip pathology (OA, AVN, TB hip, septic arthritis). Normal: 0° extension (Schober: 15° hyperextension). In the test, the opposite "
+            "hip is maximally flexed to flatten lumbar lordosis (pelvis fixed). If the affected hip cannot extend to 0° (neutral), measure the angle = "
+            "fixed flexion deformity."
+        ),
+        "question": "In the Thomas test for fixed flexion deformity of the hip, the examiner flexes both hips to flatten the lumbar lordosis, then asks the patient to extend the ___ hip.",
+        "correct_answer": "affected (tested) hip",
+        "high_yield_takeaway": "Thomas test = fixed flexion deformity of hip. Flex both hips to flatten lordosis → extend tested hip. Angle = deformity. Positive in OA, AVN, TB hip. Trendelenburg test = gluteus medius weakness.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Orthopedics", "#OneLiner", "#ThomasTest"],
+    },
 ]

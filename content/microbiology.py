@@ -213,4 +213,51 @@ TOPICS = [
         "high_yield_takeaway": "ZN stain = red AFB. Culture on LJ medium = gold standard (6–8 weeks). GeneXpert = rapid diagnosis + rifampicin resistance detection. IGRA preferred over Mantoux in BCG-vaccinated individuals.",
         "hashtags": ["#MedicoHelp", "#Microbiology", "#MBBS", "#NEETPG", "#PYQ"],
     },
+    # ── Mnemonic ──────────────────────────────────────────────────────────────
+    {
+        "title": "Mnemonic: SPACE — Encapsulated Bacteria (Polysaccharide Capsule)",
+        "subject": Subject.microbiology,
+        "content_format": ContentFormat.mnemonic,
+        "poster_text": "Encapsulated bacteria: S. pneumoniae, H. influenzae b, N. meningitidis, K. pneumoniae, Group B Strep, E. coli K1. Mnemonic: 'SHiNK' — anti-phagocytic virulence factor.",
+        "caption": "Explain the high-yield encapsulated bacteria for NEET-PG: Streptococcus pneumoniae (polysaccharide vaccine), Haemophilus influenzae type b (Hib vaccine), Neisseria meningitidis (ACWY + B vaccines), Klebsiella pneumoniae, Escherichia coli (K1 capsule — neonatal meningitis), Group B Streptococcus (S. agalactiae — neonatal sepsis), Cryptococcus neoformans (polysaccharide capsule — India ink stain), Pseudomonas aeruginosa (alginate capsule in CF). Capsule = virulence factor (anti-phagocytic). Vaccines target capsule polysaccharides.",
+        "high_yield_takeaway": "Encapsulated bacteria: S. pneumoniae, H. influenzae b, N. meningitidis, K. pneumoniae, Group B Strep, E. coli K1. Capsule = anti-phagocytic. Splenectomy patients most vulnerable to these.",
+        "hashtags": ["#MedicoHelp", "#Microbiology", "#MBBS", "#NEETPG", "#Mnemonic", "#EncapsulatedBacteria"],
+    },
+    # ── Flashcard ─────────────────────────────────────────────────────────────
+    {
+        "title": "Flashcard: Chlamydia trachomatis Life Cycle — Elementary vs Reticulate Bodies",
+        "subject": Subject.microbiology,
+        "content_format": ContentFormat.flashcard,
+        "poster_text": "Chlamydia: Elementary body (infectious, spore-like) → Reticulate body (replicative, intracellular)",
+        "caption": "Chlamydia trachomatis life cycle. Elementary body (EB) — 0.3 μm, infectious, metabolically inert, survives extracellularly, attaches to host cell. EB → endocytosis → conversion to Reticulate body (RB) — 0.5-1 μm, non-infectious, metabolically active, replicates by binary fission inside vacuole (inclusion body). RB → reorganises back to EB → released by cell lysis. Cycle: 48-72 hours. Detection: Intracytoplasmic inclusion bodies on Giemsa stain (large, perinuclear). Serovars: A-C (trachoma), D-K (STI, inclusion conjunctivitis, neonatal pneumonia), L1-L3 (LGV). Treatment: Doxycycline or Azithromycin. NOT penicillin sensitive (no cell wall).",
+        "question": "In the Chlamydia trachomatis life cycle, which form is infectious but metabolically inert, and which form replicates intracellularly?",
+        "correct_answer": "Elementary body (EB) = infectious, spore-like, survives extracellularly. Reticulate body (RB) = non-infectious, replicates by binary fission inside the host cell.",
+        "high_yield_takeaway": "EB = infectious, RB = replicative. Cycle 48-72 hrs. Intracytoplasmic inclusions on Giemsa. Doxycycline/azithromycin = treatment.",
+        "hashtags": ["#MedicoHelp", "#Microbiology", "#MBBS", "#NEETPG", "#Flashcard", "#Chlamydia"],
+    },
+    # ── True/False ────────────────────────────────────────────────────────────
+    {
+        "title": "True or False: All Clostridium species are Gram-positive, spore-forming, and obligate anaerobes",
+        "subject": Subject.microbiology,
+        "content_format": ContentFormat.true_false,
+        "poster_text": "Clostridium: Gram +ve, spore-forming, obligate anaerobes — but C. perfringens is aerotolerant",
+        "caption": "Clostridium genus: Gram-positive rods, spore-forming (terminal/subterminal), obligate anaerobes (except C. perfringens is aerotolerant). Key species: C. tetani (drum-stick spore, tetanus, tetanospasmin toxin — blocks inhibitory neurotransmitters), C. botulinum (spores in honey, botulinum toxin — blocks ACh release, flaccid paralysis), C. perfringens (most common gas gangrene, α-toxin = lecithinase/phospholipase C, double zone haemolysis, Nagler's reaction reversed by antitoxin), C. difficile (pseudomembranous colitis, toxin A enterotoxin + toxin B cytotoxin, following antibiotic use).",
+        "question": "All Clostridium species are Gram-positive, spore-forming, and obligate anaerobes.",
+        "correct_answer": "FALSE",
+        "explanation": "While most Clostridium species are obligate anaerobes, Clostridium perfringens is aerotolerant (can grow in the presence of small amounts of oxygen). All are Gram-positive rods and spore-forming. C. perfringens is the most common cause of gas gangrene and shows double zone haemolysis on blood agar.",
+        "high_yield_takeaway": "Clostridium: Gram+ spore-forming rods. C. perfringens = aerotolerant. C. tetani = drum-stick spore. C. botulinum = honey in infants. C. difficile = pseudomembranous colitis.",
+        "hashtags": ["#MedicoHelp", "#Microbiology", "#MBBS", "#NEETPG", "#TrueFalse", "#Clostridium"],
+    },
+    # ── One-liner Recall ──────────────────────────────────────────────────────
+    {
+        "title": "One-liner Recall: Mode of Action of Major Antibiotic Classes",
+        "subject": Subject.microbiology,
+        "content_format": ContentFormat.one_liner_recall,
+        "poster_text": "Antibiotic MOA: cell wall, protein synthesis, DNA/RNA, cell membrane, folate — know which drug does what",
+        "caption": "Fill in the blank: \"Tetracyclines act by binding to the ___ ribosomal subunit and inhibiting ___.\" Answer: \"30S ribosomal subunit, inhibiting aminoacyl-tRNA binding.\" Then list major classes: Cell wall (β-lactams, vancomycin, daptomycin). Protein synthesis — 30S (aminoglycosides, tetracyclines). Protein synthesis — 50S (macrolides, chloramphenicol, linezolid, clindamycin). DNA gyrase (fluoroquinolones). RNA polymerase (rifampicin). Cell membrane (polymyxins). Folate synthesis (sulfonamides, trimethoprim).",
+        "question": "Tetracyclines act by binding to the ___ ribosomal subunit and inhibiting ___.",
+        "correct_answer": "30S, aminoacyl-tRNA binding",
+        "high_yield_takeaway": "30S: aminoglycosides + tetracyclines. 50S: macrolides + chloramphenicol + linezolid + clindamycin. Cell wall: β-lactams + vancomycin. DNA gyrase: fluoroquinolones.",
+        "hashtags": ["#MedicoHelp", "#Microbiology", "#MBBS", "#NEETPG", "#OneLiner", "#Antibiotics"],
+    },
 ]

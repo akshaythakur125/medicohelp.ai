@@ -283,4 +283,107 @@ TOPICS = [
         ),
         "hashtags": ["#MedicoHelp", "#GeneralSurgery", "#MBBS", "#NEETPG", "#Pneumoperitoneum"],
     },
+
+    # ── 7. Mnemonic ──────────────────────────────────────────────────────────
+    {
+        "title": "Mnemonic: SIGNS OF CHOLELITHIASIS — 'Female, Forty, Fertile, Fair, Fat'",
+        "subject": Subject.general_surgery,
+        "content_format": ContentFormat.mnemonic,
+        "poster_text": "Mnemonic: '5 F's of Gallstones' — Female, Forty, Fertile, Fair, Fat",
+        "caption": (
+            "Explain the 5 F's mnemonic for gallstone risk: Female (oestrogen increases cholesterol saturation), "
+            "Forty (age >40), Fertile (multiparity — more oestrogen), Fair (Caucasian ethnicity — Pima Indians "
+            "highest), Fat (obesity — ↑ cholesterol secretion). Also discuss: rapid weight loss (bariatric surgery), "
+            "total parenteral nutrition, cirrhosis, haemolytic anaemias (pigment stones), Crohn's disease. "
+            "Types: cholesterol (80%, radiolucent, mixed), pigment (black = sterile bile, brown = infected bile). "
+            "Most gallstones are asymptomatic; indication for surgery = symptomatic stones."
+        ),
+        "high_yield_takeaway": (
+            "5 F's: Female, Forty, Fertile, Fair, Fat. Cholesterol stones = radiolucent, most common. "
+            "Pigment stones = radiopaque, haemolysis. Symptomatic stones = cholecystectomy."
+        ),
+        "hashtags": ["#MedicoHelp", "#GeneralSurgery", "#MBBS", "#NEETPG", "#Mnemonic", "#Gallstones"],
+    },
+
+    # ── 8. Flashcard ────────────────────────────────────────────────────────
+    {
+        "title": "Flashcard: Acute Pancreatitis — Ranson's Criteria",
+        "subject": Subject.general_surgery,
+        "content_format": ContentFormat.flashcard,
+        "poster_text": "Ranson's criteria: ≥3 = severe pancreatitis. Signs at admission (5) + at 48 hours (6) = 11 total",
+        "caption": (
+            "Ranson's criteria for acute pancreatitis severity. At admission (age >55, WBC >16,000, glucose >200, "
+            "LDH >350, AST >250). At 48 hours (Hct drop >10%, BUN rise >5, Ca <8, PaO2 <60, base deficit >4, "
+            "fluid sequestration >6L). Mortality: 0-2 = <1%, 3-5 = 10-20%, ≥6 = >50%. Alternative scores: "
+            "APACHE II, BISAP, CTSI (CT severity index). Gallstones vs alcohol as cause. Treatment: aggressive "
+            "IV fluids (LR preferred), NOT prophylactic antibiotics. Indications for ICU: ≥3 Ranson's, organ "
+            "failure, pancreatic necrosis."
+        ),
+        "question": (
+            "A 50-year-old alcoholic presents with acute pancreatitis. At admission: Age 50, WBC 18,000, "
+            "Glucose 180, LDH 400, AST 280. At 48 hours: Hct drop 12%, BUN rise 6 mg/dL, Ca 7.5, PaO2 55, "
+            "BD 5, fluid seq 6.5L. How many Ranson's criteria are met and what is the mortality estimate?"
+        ),
+        "correct_answer": "At admission: WBC, LDH, AST = 3. At 48 hrs: Hct drop, BUN rise, Ca, PaO2, BD, fluid seq = 6. Total = 9/11. Mortality >50%.",
+        "high_yield_takeaway": (
+            "Ranson's: 5 at admit + 6 at 48 hrs = 11 total. ≥3 = severe. LR for fluids (not NS). "
+            "No prophylactic antibiotics. Necrosis = ICU + consider necrosectomy."
+        ),
+        "hashtags": ["#MedicoHelp", "#GeneralSurgery", "#MBBS", "#NEETPG", "#Flashcard", "#Pancreatitis"],
+    },
+
+    # ── 9. True/False ────────────────────────────────────────────────────────
+    {
+        "title": "True or False: All acute appendicitis patients require emergency appendicectomy",
+        "subject": Subject.general_surgery,
+        "content_format": ContentFormat.true_false,
+        "poster_text": "Appendicitis: not all need emergency surgery — antibiotics alone can be an option in selected patients",
+        "caption": (
+            "Current evidence (APPAC, CODA trials) shows that uncomplicated acute appendicitis can be managed "
+            "with antibiotics alone in selected patients. Criteria: uncomplicated (no perforation, no abscess, "
+            "no fecolith on CT), clinically stable, early presentation. Success rate ~70% at 1 year. However, "
+            "appendicectomy remains gold standard and definitive treatment. Emergency surgery is indicated for: "
+            "perforation, generalized peritonitis, fecolith, suspected tumour, failed medical therapy, children, "
+            "elderly, immunocompromised. Complicated appendicitis (gangrenous/perforated) always requires surgery."
+        ),
+        "question": "All patients with acute appendicitis require emergency appendicectomy.",
+        "correct_answer": "FALSE",
+        "explanation": (
+            "Selected patients with uncomplicated acute appendicitis (CT-confirmed, no fecolith, no perforation, "
+            "no peritonitis) can be treated with antibiotics alone as primary therapy, with appendicectomy "
+            "reserved for non-responders or recurrence. However, appendicectomy is still the gold standard."
+        ),
+        "high_yield_takeaway": (
+            "Uncomplicated appendicitis: antibiotics alone possible (70% success). "
+            "Complicated: surgery mandatory. Fecolith = always operate."
+        ),
+        "hashtags": ["#MedicoHelp", "#GeneralSurgery", "#MBBS", "#NEETPG", "#TrueFalse", "#Appendicitis"],
+    },
+
+    # ── 10. One-liner Recall ──────────────────────────────────────────────────
+    {
+        "title": "One-liner Recall: Duodenal vs Gastric Ulcer Comparison",
+        "subject": Subject.general_surgery,
+        "content_format": ContentFormat.one_liner_recall,
+        "poster_text": "DU = pain on empty stomach, relieved by food. GU = pain aggravated by food, weight loss.",
+        "caption": (
+            "Fill in the blank: \"In peptic ulcer disease, a patient with pain 2-3 hours after meals that is "
+            "relieved by eating likely has a ___ ulcer.\" Answer: \"Duodenal ulcer (DU).\" Then compare: "
+            "DU (young adults, epigastric pain 2-3 hr post-meal/night, relieved by food/antacids, H. pylori 95%, "
+            "normal/high acid). Gastric ulcer (older, pain immediately after meals, aggravated by food, weight loss, "
+            "H. pylori 70%, normal/low acid, malignancy risk → always biopsy). DU complications: perforation "
+            "(anterior wall), bleeding (posterior wall → gastroduodenal artery). GU complications: bleeding, "
+            "perforation, gastric outlet obstruction, malignant transformation."
+        ),
+        "question": (
+            "A patient who experiences epigastric pain 2-3 hours after meals that is relieved by eating "
+            "likely has a ___ ulcer."
+        ),
+        "correct_answer": "Duodenal ulcer (DU)",
+        "high_yield_takeaway": (
+            "DU: pain on empty stomach, relieved by food, high acid, young. "
+            "GU: pain aggravated by food, weight loss, low acid, old, malignant risk. Always biopsy GU."
+        ),
+        "hashtags": ["#MedicoHelp", "#GeneralSurgery", "#MBBS", "#NEETPG", "#OneLiner", "#PUD"],
+    },
 ]

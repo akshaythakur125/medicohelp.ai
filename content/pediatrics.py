@@ -268,4 +268,104 @@ TOPICS = [
         "correct_answer": None,
         "explanation": None,
     },
+    # ── Mnemonic ───────────────────────────────────────────────────────────────
+    {
+        "title": "Mnemonic: VACTERL Association — Congenital Anomalies",
+        "subject": Subject.pediatrics,
+        "content_format": ContentFormat.mnemonic,
+        "poster_text": "Mnemonic: VACTERL — Vertebral, Anal, Cardiac, Tracheo-Esophageal, Renal, Limb anomalies",
+        "caption": (
+            "Explain VACTERL association (non-random co-occurrence of congenital anomalies, diagnosis requires ≥3). "
+            "V = Vertebral defects (hemivertebrae, scoliosis). "
+            "A = Anal atresia/imperforate anus. "
+            "C = Cardiac defects (VSD most common). "
+            "TE = Tracheo-Esophageal fistula (most commonly type C — proximal esophageal atresia + distal TEF). "
+            "R = Renal anomalies (horseshoe kidney, renal agenesis). "
+            "L = Limb defects (radial ray defects — preaxial polydactyly/thumbs). "
+            "Also remember: rule out CHARGE, 22q11 deletion. "
+            "Treatment is multi-specialty surgical correction. Normal intelligence usually."
+        ),
+        "high_yield_takeaway": "VACTERL: 3+ anomalies = diagnosis. TEF type C = most common (proximal atresia + distal fistula). VSD most common cardiac defect. Radial ray defects.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Pediatrics", "#Mnemonic", "#VACTERL"],
+        "question": None,
+        "options": [],
+        "correct_answer": None,
+        "explanation": None,
+    },
+    # ── Flashcard ──────────────────────────────────────────────────────────────
+    {
+        "title": "Flashcard: Childhood Leukemia — ALL vs AML Comparison",
+        "subject": Subject.pediatrics,
+        "content_format": ContentFormat.flashcard,
+        "poster_text": "ALL = most common childhood cancer (80% of leukemias). AML = 15-20%. Know the difference.",
+        "caption": (
+            "Compare ALL vs AML in children. ALL: peak 2-5 years, B-cell precursor (CD19+, CD10+ CALLA), "
+            "L1/L2 morphology, Auer rods ABSENT, t(12;21) TEL-AML1 best prognosis, t(9;22) BCR-ABL worst. "
+            "Treatment: induction (vincristine + steroid + L-asparaginase) → consolidation → maintenance (2 years). "
+            "AML: any age, Auer rods PRESENT (pathognomonic), myeloperoxidase +ve, CD13/33+; t(15;17) PML-RARA = APML "
+            "(treat with ATRA + arsenic trioxide). Common presenting features: pallor, fever, bone pain, bruising, "
+            "hepatosplenomegaly. CNS prophylaxis (intrathecal methotrexate) in ALL. Cure rate: ALL 85-90%, AML 60-70%."
+        ),
+        "question": "A 3-year-old presents with pallor, fever, bone pain, and hepatosplenomegaly. PBS shows lymphoblasts. What immunophenotype and prognostic markers would you expect in the MOST common childhood leukemia?",
+        "options": [],
+        "correct_answer": "B-cell precursor ALL: CD19+, CD10+ (CALLA), TdT+. t(12;21) TEL-AML1 = good prognosis. Hyperdiploidy >50 = good. t(9;22) = poor. L-asparaginase based regimen.",
+        "explanation": None,
+        "high_yield_takeaway": "ALL = most common childhood cancer, peak 2-5 yrs. CD10+, TdT+. Auer rods = AML. t(12;21) = good prognosis. t(9;22) = poor. ATRA for APML (t(15;17)).",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Pediatrics", "#Flashcard", "#Leukemia"],
+    },
+    # ── True/False ─────────────────────────────────────────────────────────────
+    {
+        "title": "True or False: The APGAR score at 5 minutes predicts long-term neurological outcome",
+        "subject": Subject.pediatrics,
+        "content_format": ContentFormat.true_false,
+        "poster_text": "APGAR: assesses transition at birth (1 & 5 min). Does NOT predict long-term neuro outcome alone.",
+        "caption": (
+            "APGAR score (Appearance, Pulse, Grimace, Activity, Respiration). Each scored 0-2, total 0-10. "
+            "Scored at 1 minute and 5 minutes. If <7 at 5 min, repeat q5min up to 20 min. "
+            "Components: Appearance (pink all = 2, body pink/blue extremities = 1, blue/pale = 0). "
+            "Pulse (>100 = 2, <100 = 1, absent = 0). "
+            "Grimace (cough/sneeze = 2, grimace = 1, no response = 0). "
+            "Activity (active = 2, some flexion = 1, limp = 0). "
+            "Respiration (good cry = 2, slow/irregular = 1, absent = 0). "
+            "Interpretation: ≥7 normal, 4-6 moderately depressed, <3 severely depressed. "
+            "LIMITATION: APGAR is NOT a predictor of long-term neurological outcome when used alone. "
+            "Abnormal APGAR + neonatal encephalopathy + seizures + abnormal EEG = better predictor. "
+            "Cord blood pH (umbilical artery) is better for predicting HIE risk."
+        ),
+        "question": "The APGAR score at 5 minutes is a reliable predictor of long-term neurological outcome in newborns.",
+        "options": [],
+        "correct_answer": "FALSE",
+        "explanation": (
+            "APGAR score assesses current physiologic state and response to resuscitation at birth. "
+            "It does NOT predict long-term neurological outcome when used alone. A low APGAR score may "
+            "result from many factors (prematurity, drugs, infection, trauma). For predicting "
+            "neurodevelopmental outcome, combine: APGAR at 10 min + cord blood pH + evidence of neonatal "
+            "encephalopathy (Sarnat staging) + EEG/seizures."
+        ),
+        "high_yield_takeaway": "APGAR: 5 components. ≥7 = normal. Does NOT predict long-term neuro outcome alone. Cord pH + encephalopathy + EEG = better predictors. 10-min APGAR more predictive than 5-min.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Pediatrics", "#TrueFalse", "#APGAR"],
+    },
+    # ── One-liner Recall ────────────────────────────────────────────────────────
+    {
+        "title": "One-liner Recall: Normal Body Temperature in Children — Fever Definitions",
+        "subject": Subject.pediatrics,
+        "content_format": ContentFormat.one_liner_recall,
+        "poster_text": "Fever: axillary ≥37.5°C, oral ≥38°C, rectal/tympanic ≥38°C. Hyperpyrexia = >41°C.",
+        "caption": (
+            'Fill in the blank: "In children, fever is defined as a body temperature of ___°C or higher when measured rectally." '
+            'Answer: "38°C (100.4°F)." '
+            "Then explain: Temperature measurement methods: Rectal (gold standard, core temp +0.5°C) — most accurate in <5 years. "
+            "Axillary — least accurate, +0.5°C lower than core. Tympanic/infra-red — good for >3 months. "
+            "Oral — reliable >5 years, wait 30 min after eating/drinking. "
+            "Hyperpyrexia >41°C (105.8°F) — concern for CNS infection, heat stroke, malignant hyperthermia. "
+            "Fever without focus in 3-36 months: risk of serious bacterial infection (UTI, bacteremia, pneumonia, meningitis). "
+            "WBC, CRP, urinalysis, blood culture, CXR as indicated. Vaccination status important."
+        ),
+        "question": "In children, fever is defined as a body temperature of ___°C or higher when measured rectally.",
+        "options": [],
+        "correct_answer": "38°C (100.4°F)",
+        "explanation": None,
+        "high_yield_takeaway": "Fever: rectal ≥38°C. Axillary = core -0.5°C (least accurate). Hyperpyrexia >41°C = emergency. Fever without focus: risk SBI in <36 months.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Pediatrics", "#OneLiner", "#Fever"],
+    },
 ]

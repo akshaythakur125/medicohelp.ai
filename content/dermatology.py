@@ -241,4 +241,51 @@ TOPICS = [
         "high_yield_takeaway": "SLE malar rash spares nasolabial folds. Anti-Sm = most specific. SCLE = anti-Ro. Oral ulcers = painless. DLE → only 5% progress to systemic SLE.",
         "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Dermatology", "#PYQ"],
     },
+    # ── Mnemonic ────────────────────────────────────────────────────────────────
+    {
+        "title": "Mnemonic: Psoriasis Histology — MUNRO's Microabscesses",
+        "subject": Subject.dermatology,
+        "content_format": ContentFormat.mnemonic,
+        "poster_text": "Mnemonic: 'MUNRO' — Microabscess in stratum corneum = psoriasis",
+        "caption": "Explain psoriasis histology mnemonic: Munro's microabscesses (neutrophils in stratum corneum), spongiform pustules of Kogoj (neutrophils in stratum spinosum), acanthosis, parakeratosis, suprapapillary thinning. Also remember: \"Psoriasis = Pink Plaques with Parakeratosis + Pustules of Kogoj\"",
+        "high_yield_takeaway": "Munro's microabscess = neutrophils in stratum corneum. Kogoj = neutrophils in stratum spinosum. Parakeratosis = retained nuclei in stratum corneum.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Dermatology", "#Mnemonic", "#Psoriasis"],
+    },
+    # ── Flashcard ───────────────────────────────────────────────────────────────
+    {
+        "title": "Flashcard: Scabies — Clinical Features and Treatment",
+        "subject": Subject.dermatology,
+        "content_format": ContentFormat.flashcard,
+        "poster_text": "Scabies: Sarcoptes scabiei burrows in interdigital spaces — treat with permethrin 5%",
+        "caption": "Compare scabies presentation: burrows in web spaces, flexor wrists; intense nocturnal pruritus; crusted (Norwegian) scabies in immunocompromised. Treatment: permethrin 5% cream (first-line), ivermectin (oral), treat all contacts simultaneously",
+        "question": "A 25-year-old presents with intense itching at night and burrows in interdigital spaces. What is the diagnosis and first-line treatment?",
+        "correct_answer": "Scabies (Sarcoptes scabiei). First-line: Permethrin 5% cream applied from neck to toes overnight, repeated after 1 week. Treat all household contacts.",
+        "high_yield_takeaway": "Scabies = nocturnal pruritus + interdigital burrows. Permethrin 5% = first-line. Treat contacts simultaneously. Crusted scabies = ivermectin + permethrin.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Dermatology", "#Flashcard", "#Scabies"],
+    },
+    # ── True/False ──────────────────────────────────────────────────────────────
+    {
+        "title": "True or False: Topical corticosteroids are safe for long-term use in atopic dermatitis",
+        "subject": Subject.dermatology,
+        "content_format": ContentFormat.true_false,
+        "poster_text": "Topical steroids: use the lowest potency for shortest duration — side effects include skin atrophy, striae, and systemic absorption",
+        "caption": "Atopic dermatitis management: emollients first, topical steroids for flares (short-term use only), calcineurin inhibitors (tacrolimus) for sensitive areas. Side effects of prolonged steroids: skin atrophy, striae, telangiectasia, HPA axis suppression, tachyphylaxis. Use fingertip unit (FTU) to guide amount.",
+        "question": "Topical corticosteroids are safe for continuous long-term maintenance therapy in atopic dermatitis.",
+        "correct_answer": "FALSE",
+        "explanation": "Long-term continuous topical steroid use causes skin atrophy, striae, telangiectasias, HPA axis suppression. Use lowest potency for shortest duration. Intermittent use for flares with emollients as baseline. Calcineurin inhibitors for sensitive areas (face, flexures).",
+        "high_yield_takeaway": "Topical steroids: use flares only, lowest potency, shortest duration. FTU = amount from fingertip to distal crease = 0.5 g covers 2 adult palm areas. Calcineurin inhibitors for face/flexures.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Dermatology", "#TrueFalse", "#TopicalSteroids"],
+    },
+    # ── One-liner Recall ───────────────────────────────────────────────────────
+    {
+        "title": "One-liner Recall: Fitzpatrick Skin Types",
+        "subject": Subject.dermatology,
+        "content_format": ContentFormat.one_liner_recall,
+        "poster_text": "Fitzpatrick skin types I–VI based on sunburn/tan history — remember the mnemonic 'ICCIBP'",
+        "caption": "Fill in the blank: \"Fitzpatrick skin type ___ has the highest risk of sunburn and does not tan at all (always burns). Answer: Type I (Celtic/very fair skin).\" Then list all 6 types with brief characteristics.",
+        "question": "Fitzpatrick skin type ___ has the highest risk of sunburn and does not tan at all.",
+        "correct_answer": "Type I",
+        "high_yield_takeaway": "Type I: always burns, never tans (Celtic). Type VI: never burns, deeply pigmented (African). Skin types I-II: highest skin cancer risk. Types V-VI: risk of post-inflammatory hyperpigmentation.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Dermatology", "#OneLiner", "#Fitzpatrick"],
+    },
 ]
