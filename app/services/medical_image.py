@@ -234,38 +234,48 @@ class MedicalImageGenerator:
     # ── Gemini / Imagen 3 ──────────────────────────────────────────────────────
 
     async def _generate_with_gemini(self, content: GeneratedContent, prompt: str) -> Path | None:
+        import base64
+
         from google import genai
         from google.genai import types
 
         client = genai.Client(api_key=self.settings.gemini_api_key)
-        model = self.settings.gemini_image_model  # imagen-3.0-generate-002
 
+        # Use Gemini Flash native image generation — works with the free API key.
+        # Imagen 3 (imagen-3.0-generate-002) requires paid billing so we avoid it.
         try:
-            response = await client.aio.models.generate_images(
-                model=model,
-                prompt=prompt,
-                config=types.GenerateImagesConfig(
-                    number_of_images=1,
-                    aspect_ratio="1:1",
+            response = await client.aio.models.generate_content(
+                model="gemini-2.0-flash-preview-image-generation",
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    response_modalities=["IMAGE", "TEXT"],
                 ),
             )
         except Exception as exc:
-            logger.error("Imagen 3 API call failed: %s", exc, exc_info=True)
+            logger.error("Gemini image generation failed: %s", exc, exc_info=True)
             return None
 
-        if not response.generated_images:
-            logger.warning("Imagen 3 returned no images for subject=%s", _subject_key(content))
+        # Extract the first image part from the response
+        try:
+            parts = response.candidates[0].content.parts
+        except (AttributeError, IndexError):
+            logger.warning("Gemini image response has no candidates/parts.")
             return None
 
-        image_bytes = response.generated_images[0].image.image_bytes
-        if not image_bytes:
-            logger.warning("Imagen 3 image has no bytes.")
-            return None
+        for part in parts:
+            inline = getattr(part, "inline_data", None)
+            if inline and inline.data:
+                try:
+                    image_bytes = base64.b64decode(inline.data)
+                except Exception:
+                    image_bytes = inline.data  # already bytes in some SDK versions
+                path = self.settings.generated_dir / f"visual_{_subject_key(content)}_{uuid4().hex[:8]}.png"
+                path.write_bytes(image_bytes)
+                logger.info("Gemini visual saved: %s (%d bytes)", path, len(image_bytes))
+                return path
 
-        path = self.settings.generated_dir / f"visual_{_subject_key(content)}_{uuid4().hex[:8]}.png"
-        path.write_bytes(image_bytes)
-        logger.info("Imagen 3 visual saved: %s (%d bytes)", path, len(image_bytes))
-        return path
+        logger.warning("Gemini image response contained no image parts for subject=%s", _subject_key(content))
+        return None
 
     # ── OpenAI DALL-E / GPT-Image ─────────────────────────────────────────────
 
