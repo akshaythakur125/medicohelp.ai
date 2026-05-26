@@ -220,8 +220,10 @@ class MedicalImageGenerator:
         if not self.configured:
             return None
 
-        prompt = self._build_prompt(content)
-        logger.debug("Image prompt (%s): %.300s", self.settings.ai_provider, prompt)
+        # Use Gemini to write a specific visual description, then generate via Pollinations
+        visual_query = await self._get_visual_query(content)
+        prompt = self._build_prompt(content, visual_query)
+        logger.debug("Image prompt: %.300s", prompt)
 
         try:
             if self.settings.ai_provider == "gemini":
@@ -230,6 +232,34 @@ class MedicalImageGenerator:
         except Exception as exc:
             logger.warning("Image generation failed (%s): %s", self.settings.ai_provider, exc)
             return None
+
+    async def _get_visual_query(self, content: GeneratedContent) -> str:
+        """Ask Gemini to describe what the image should show for this specific topic."""
+        try:
+            from google import genai
+
+            client = genai.Client(api_key=self.settings.gemini_api_key)
+            topic = content.title or content.poster_text or ""
+            subject = _subject_key(content).replace("_", " ")
+
+            response = await client.aio.models.generate_content(
+                model=self.settings.gemini_text_model,
+                contents=(
+                    f"Write a 10-word image description for a medical education illustration about "
+                    f"'{topic}' ({subject}). Focus on the specific anatomical structure, "
+                    f"pathological finding, or clinical concept that should be visualised. "
+                    f"Example outputs: 'brachial plexus C5 C6 nerve roots shoulder anatomy' / "
+                    f"'H&E slide coagulative necrosis ghost cells eosinophilic' / "
+                    f"'Mallampati airway classification oral cavity uvula'. "
+                    f"Reply with ONLY the description, no punctuation, no explanation."
+                ),
+            )
+            query = (response.text or "").strip().split("\n")[0][:150]
+            logger.debug("Gemini visual query for '%s': %s", topic, query)
+            return query
+        except Exception as exc:
+            logger.debug("Visual query generation failed, using fallback: %s", exc)
+            return content.title or content.poster_text or _subject_key(content).replace("_", " ")
 
     # ── Gemini / Imagen 3 ──────────────────────────────────────────────────────
 
@@ -297,22 +327,16 @@ class MedicalImageGenerator:
 
     # ── Prompt builder ─────────────────────────────────────────────────────────
 
-    def _build_prompt(self, content: GeneratedContent) -> str:
-        """Build a FLUX-optimised prompt: modality first, then topic, then detail.
-
-        FLUX performs best when the image modality (microscopy slide, anatomical
-        diagram, ECG trace) leads — this anchors the visual style before the
-        subject-specific content is added.
-        """
+    def _build_prompt(self, content: GeneratedContent, visual_query: str = "") -> str:
+        """Build a FLUX-optimised prompt: modality anchors style, Gemini query provides specificity."""
         subj_key = _subject_key(content)
-        topic = content.title or content.poster_text or subj_key.replace("_", " ")
         modality = _SUBJECT_MODALITY.get(subj_key, "medical education diagram")
-        visual_desc = content.visual_description or ""
         labels = (content.visual_labels or content.image_based_data or [])[:3]
 
-        parts = [modality, f"showing {topic}"]
-        if visual_desc:
-            parts.append(visual_desc[:100])
+        # visual_query from Gemini is the most specific signal — put it right after modality
+        core = visual_query or content.title or content.poster_text or subj_key.replace("_", " ")
+
+        parts = [modality, core]
         if labels:
             parts.append("labeled: " + ", ".join(labels))
         parts.append("educational, clean white background, no text overlay, no watermark")
