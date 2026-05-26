@@ -13,9 +13,13 @@ class Settings(BaseSettings):
     ai_model: str = "gpt-4o-mini"
     anthropic_api_key: str | None = None
     generate_realistic_images: bool = False
+    # OpenAI image settings
     openai_image_model: str = "gpt-image-1"
     openai_image_size: str = "1024x1024"
     openai_image_quality: str = "medium"
+    # Gemini / Imagen image settings
+    gemini_image_model: str = "imagen-3.0-generate-002"
+    gemini_text_model: str = "gemini-2.0-flash"
 
     telegram_bot_token: str | None = None
     telegram_chat_id: str | None = None

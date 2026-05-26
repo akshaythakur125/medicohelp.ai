@@ -1,9 +1,6 @@
 import json
 import logging
 import random
-from typing import Any
-
-import httpx
 
 from app.config import Settings
 from app.models import ContentCategory, ContentFormat, GeneratedContent, PostLane, Subject
@@ -126,23 +123,27 @@ class AIContentClient:
         subject: Subject,
         content_format: ContentFormat,
     ) -> GeneratedContent:
-        model = self.settings.ai_model if self.settings.ai_model.startswith("gemini") else "gemini-1.5-flash"
-        url = (
-            "https://generativelanguage.googleapis.com/v1beta/models/"
-            f"{model}:generateContent?key={self.settings.gemini_api_key}"
+        from google import genai
+        from google.genai import types
+
+        model = self.settings.gemini_text_model  # gemini-2.0-flash by default
+        system = (
+            "You are an expert MBBS and NEET PG medical educator. "
+            "Produce accurate, concise, exam-oriented undergraduate medical teaching content. "
+            "Respond ONLY with valid JSON — no markdown fences, no extra text. "
+            "Start your response with { and end with }."
         )
-        payload: dict[str, Any] = {
-            "contents": [{"parts": [{"text": prompt}]}],
-            "generationConfig": {
-                "temperature": 0.7,
-                "responseMimeType": "application/json",
-            },
-        }
-        async with httpx.AsyncClient(timeout=45) as client:
-            response = await client.post(url, json=payload)
-            response.raise_for_status()
-        data = response.json()
-        raw = data["candidates"][0]["content"]["parts"][0]["text"]
+        client = genai.Client(api_key=self.settings.gemini_api_key)
+        response = await client.aio.models.generate_content(
+            model=model,
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                system_instruction=system,
+                temperature=0.7,
+                response_mime_type="application/json",
+            ),
+        )
+        raw = response.text or "{}"
         return self._parse_content(raw, subject, content_format)
 
     def _parse_content(self, raw: str, subject: Subject, content_format: ContentFormat) -> GeneratedContent:
