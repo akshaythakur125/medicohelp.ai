@@ -240,24 +240,21 @@ class MedicalImageGenerator:
         client = genai.Client(api_key=self.settings.gemini_api_key)
         model = self.settings.gemini_image_model  # imagen-3.0-generate-002
 
-        response = await client.aio.models.generate_images(
-            model=model,
-            prompt=prompt,
-            config=types.GenerateImagesConfig(
-                number_of_images=1,
-                aspect_ratio="3:4",        # portrait — matches 1080×1500 poster
-                guidance_scale=8.5,        # strong prompt adherence
-                add_watermark=False,
-                negative_prompt=(
-                    "blurry, low quality, watermark, logo, text overlay, "
-                    "cartoon style, anime, abstract art, impressionist, "
-                    "real patient face, copyrighted material, branded content"
+        try:
+            response = await client.aio.models.generate_images(
+                model=model,
+                prompt=prompt,
+                config=types.GenerateImagesConfig(
+                    number_of_images=1,
+                    aspect_ratio="1:1",
                 ),
-            ),
-        )
+            )
+        except Exception as exc:
+            logger.error("Imagen 3 API call failed: %s", exc, exc_info=True)
+            return None
 
         if not response.generated_images:
-            logger.warning("Imagen 3 returned no images.")
+            logger.warning("Imagen 3 returned no images for subject=%s", _subject_key(content))
             return None
 
         image_bytes = response.generated_images[0].image.image_bytes
@@ -267,7 +264,7 @@ class MedicalImageGenerator:
 
         path = self.settings.generated_dir / f"visual_{_subject_key(content)}_{uuid4().hex[:8]}.png"
         path.write_bytes(image_bytes)
-        logger.info("Imagen 3 medical visual saved: %s", path)
+        logger.info("Imagen 3 visual saved: %s (%d bytes)", path, len(image_bytes))
         return path
 
     # ── OpenAI DALL-E / GPT-Image ─────────────────────────────────────────────

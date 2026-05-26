@@ -104,24 +104,29 @@ class PostOrchestrator:
             content = enrich_for_engagement(content)
 
             poster_path: Path = Path("text-only")
-            if not self.settings.text_only_mode:
-                visual_path = None
+            visual_path: Path | None = None
+
+            if not self.settings.text_only_mode and self.medical_image_generator.configured:
                 try:
                     visual_path = await self.medical_image_generator.create_visual(content)
                 except Exception as exc:
                     await self.store.save_error(
-                        "Image generation failed; using fallback schematic", {"error": str(exc)}
+                        "Image generation failed; falling back to text", {"error": str(exc)}
                     )
-                poster_path = self.poster_generator.create(content, visual_image_path=visual_path)
+                if visual_path:
+                    poster_path = visual_path
 
             telegram_posted = False
             if publish_to_telegram:
+                text = format_for_telegram(content)
                 if self.settings.text_only_mode:
-                    text = format_for_telegram(content)
                     telegram_posted = await self.telegram.send_message(text)
+                elif visual_path:
+                    # AI image ready — send illustration + full educational text
+                    telegram_posted = await self.telegram.send_visual_post(visual_path, text)
                 else:
-                    caption = self._build_caption(content.caption, content.hashtags)
-                    telegram_posted = await self.telegram.send_photo(poster_path, caption)
+                    # No image (not configured or failed) — rich text fallback
+                    telegram_posted = await self.telegram.send_message(text)
 
             self._record_post(content, telegram_posted)
             return GenerateResponse(
@@ -224,7 +229,7 @@ class PostOrchestrator:
         self._engagement.update_streak()
 
         telegram_posted = False
-        if publish_to_telegram and self.settings.text_only_mode:
+        if publish_to_telegram:
             text = format_daily_challenge_intro(content)
             telegram_posted = await self.telegram.send_message(text)
 
@@ -238,7 +243,7 @@ class PostOrchestrator:
         if not self.settings.engagement_enabled:
             return False
         self._engagement.update_streak()
-        if not publish_to_telegram or not self.settings.text_only_mode:
+        if not publish_to_telegram:
             return False
         text = format_streak_message(
             self._engagement.stats.current_streak,
@@ -251,7 +256,7 @@ class PostOrchestrator:
         if not self.settings.engagement_enabled:
             return False
         self._engagement.start_weekly_battle()
-        if publish_to_telegram and self.settings.text_only_mode:
+        if publish_to_telegram:
             text = format_weekly_battle_intro()
             return await self.telegram.send_message(text)
         return False
@@ -261,13 +266,13 @@ class PostOrchestrator:
         if not self.settings.engagement_enabled or not self._engagement.stats.weekly_battle_active:
             return False
         leaderboard = self._engagement.end_battle()
-        if leaderboard and publish_to_telegram and self.settings.text_only_mode:
+        if leaderboard and publish_to_telegram:
             return await self.telegram.send_message(leaderboard)
         return False
 
     async def send_engagement_summary(self, publish_to_telegram: bool = True) -> bool:
         """Send an engagement summary with stats."""
-        if not self.settings.engagement_enabled or not self.settings.text_only_mode:
+        if not self.settings.engagement_enabled:
             return False
         stats = self._engagement.stats
         acc = self._engagement.accuracy_pct()
@@ -499,6 +504,7 @@ class PostOrchestrator:
                 f"Difficulty: <b>{tag.upper()}</b>\n\n"
             )
             full = header + format_for_telegram(content)
+            # Always use text for MCQ variants so the quiz layout is preserved
             telegram_posted = await self.telegram.send_message(full)
 
         self._record_post(content, telegram_posted)
@@ -590,9 +596,23 @@ class PostOrchestrator:
 
         poster_path = Path("text-only")
         telegram_posted = False
-        if publish_to_telegram and self.settings.text_only_mode:
+        if publish_to_telegram:
             text = format_for_telegram(content)
-            telegram_posted = await self.telegram.send_message(text)
+            if self.settings.text_only_mode:
+                telegram_posted = await self.telegram.send_message(text)
+            elif self.medical_image_generator.configured:
+                visual_path: Path | None = None
+                try:
+                    visual_path = await self.medical_image_generator.create_visual(content)
+                except Exception:
+                    pass
+                if visual_path:
+                    poster_path = visual_path
+                    telegram_posted = await self.telegram.send_visual_post(visual_path, text)
+                else:
+                    telegram_posted = await self.telegram.send_message(text)
+            else:
+                telegram_posted = await self.telegram.send_message(text)
 
         self._record_post(content, telegram_posted)
         return GenerateResponse(
