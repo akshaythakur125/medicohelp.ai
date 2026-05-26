@@ -298,36 +298,58 @@ class MedicalImageGenerator:
     # ── Prompt builder ─────────────────────────────────────────────────────────
 
     def _build_prompt(self, content: GeneratedContent) -> str:
+        """Build a concise, FLUX-optimised prompt focused on the specific topic.
+
+        FLUX (Pollinations) works best with short, specific prompts (~300 chars).
+        Long boilerplate dilutes the topic signal and produces generic results.
+        """
         subj_key = _subject_key(content)
-        fmt_key = content.content_format.value
 
-        subject_style = _SUBJECT_VISUAL_STYLE.get(
-            subj_key, "medical education illustration, clean schematic style"
-        )
-        format_guidance = _FORMAT_VISUAL_GUIDANCE.get(
-            fmt_key, "clear educational medical diagram, labelled structures"
-        )
-
-        topic = content.poster_text or content.title or subj_key.replace("_", " ")
-        visual_desc = content.visual_description or ""
-        labels = ", ".join((content.visual_labels or content.image_based_data or [])[:4])
+        # Lead with the specific medical concept — most important signal for FLUX
+        topic = content.title or content.poster_text or subj_key.replace("_", " ")
         subject_display = subj_key.replace("_", " ").title()
 
-        prompt = (
-            f"Medical education illustration for {subject_display}: {topic}. "
-            f"Visual style: {subject_style}. "
-            f"Purpose: {format_guidance}. "
-        )
-        if visual_desc:
-            prompt += f"Specific visual requirement: {visual_desc}. "
-        if labels:
-            prompt += (
-                f"The image must clearly show and label these features: {labels}. "
-                "Each labelled feature must be visually distinct and identifiable. "
-            )
+        # What to visually show
+        visual_desc = content.visual_description or ""
+        labels = (content.visual_labels or content.image_based_data or [])[:3]
 
-        prompt += f"{_ACCURACY_BLOCK} {_STYLE_BLOCK} {_SAFETY_BLOCK}"
-        return prompt[:4000]
+        # Concise subject-specific style keyword (not the long multi-sentence block)
+        style_hint = _SUBJECT_STYLE_SHORT.get(subj_key, "medical diagram, labeled, educational")
+
+        parts = [f"{subject_display} medical illustration: {topic}"]
+
+        if visual_desc:
+            parts.append(visual_desc[:120])
+        if labels:
+            parts.append("show and label: " + ", ".join(labels))
+
+        parts.append(style_hint)
+        parts.append("clean white background, professional, no watermark")
+
+        return ". ".join(parts)[:500]
+
+
+_SUBJECT_STYLE_SHORT: dict[str, str] = {
+    "anatomy":               "anatomical cross-section, labeled structures, Netter-style",
+    "physiology":            "physiology diagram, accurate graph or process schematic",
+    "biochemistry":          "metabolic pathway, enzyme-substrate, color-coded molecules",
+    "pathology":             "histopathology field, H&E stain colors, labeled findings",
+    "pharmacology":          "drug mechanism of action, receptor-ligand diagram, dose-response curve",
+    "microbiology":          "microbiology diagram, Gram stain, labeled organisms",
+    "forensic_medicine":     "forensic injury pattern diagram, body chart, educational",
+    "community_medicine":    "epidemiology infographic, 2x2 table or epidemic curve",
+    "general_medicine":      "clinical ECG trace or physical examination schematic, labeled",
+    "general_surgery":       "surgical anatomy diagram, operative field illustration",
+    "obstetrics_gynecology": "obstetrics schematic, fetal lie diagram or partograph",
+    "pediatrics":            "pediatric assessment chart, growth chart, friendly medical style",
+    "ophthalmology":         "fundus diagram, eye cross-section, labeled disc and vessels",
+    "ent":                   "otoscopic view, tympanic membrane labeled, ENT diagram",
+    "orthopedics":           "joint anatomy, fracture classification schematic, labeled X-ray",
+    "dermatology":           "skin layers cross-section, lesion morphology, Fitzpatrick style",
+    "psychiatry":            "brain lateral view labeled lobes, neurotransmitter pathway",
+    "radiology":             "chest X-ray with labeled findings, CT cross-section, annotated",
+    "anesthesiology":        "airway anatomy sagittal cross-section, Mallampati classification",
+}
 
 
 def _subject_key(content: GeneratedContent) -> str:
