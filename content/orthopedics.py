@@ -1,76 +1,217 @@
+"""High-yield Orthopedics content for NEET-PG / INI-CET revision."""
 from app.models import ContentFormat, Subject
 
 TOPICS = [
+    # ── Rapid Revision ───────────────────────────────────────────────────────
     {
         "title": "Nerve Injuries with Fractures — Lower Limb",
         "subject": Subject.orthopedics,
         "content_format": ContentFormat.rapid_revision,
-        "poster_text": "Nerve Injuries in Lower Limb Fractures — Know Your Anatomy Cold",
-        "caption": "NERVE INJURIES WITH LOWER LIMB FRACTURES\n\nMastering nerve-fracture associations is essential for NEET-PG/INI-CET. These are high-yield one-liners that appear almost every exam cycle.\n\nFEMUR & HIP:\n• Posterior hip dislocation → Sciatic nerve injury (especially common peroneal division)\n• Acetabular fracture → Obturator nerve injury\n• Femoral neck/shaft fracture → Femoral nerve (rare, but tested)\n\nKNEE REGION:\n• Fibular head fracture / knee dislocation → Common peroneal nerve → Foot drop (loss of dorsiflexion + eversion)\n• Knee dislocation → Popliteal artery injury (check pulses immediately)\n\nANKLE & FOOT:\n• Medial malleolus fracture → Tibial nerve injury → Loss of plantar flexion + inversion\n• Calcaneal fractures → Lateral plantar nerve\n\nCOMMON PERONEAL NERVE PALSY:\n• Foot drop = inability to dorsiflex\n• Steppage gait (high-stepping to clear the foot)\n• Loss of sensation over dorsum of foot and first web space\n• Tested with: Lateral fibular neck fracture scenario\n\nSCIATIC NERVE INJURY:\n• Combined features: foot drop + loss of plantar flexion\n• Loss of sensation below knee (all territories)\n• Always check for sciatic nerve in posterior hip dislocation\n\nHIGH-YIELD MNEMONIC: \"POP GOES THE PERONEAL\" — Posterior hip dislocation → sciatic, Fibular nOse → Peroneal",
-        "high_yield_takeaway": "Posterior hip dislocation → sciatic nerve; fibular neck fracture → common peroneal nerve (foot drop). These two are the most tested associations.",
+        "poster_text": "Which nerve gets injured in which lower-limb fracture? High-yield NEET-PG table.",
+        "caption": (
+            "Nerve Injuries with Fractures — Lower Limb\n\n"
+            "Posterior Hip Dislocation:\n"
+            "• Sciatic nerve injury — peroneal division most vulnerable\n"
+            "• Foot drop, loss of eversion, sensory loss over dorsum of foot\n\n"
+            "Neck of Fibula Fracture:\n"
+            "• Common peroneal (fibular) nerve wraps around fibular neck\n"
+            "• Foot drop + sensory loss over dorsum of foot and 1st web space\n\n"
+            "Medial Tibial Plateau / Knee Dislocation:\n"
+            "• Popliteal artery (vascular emergency) + common peroneal nerve\n"
+            "• Always check pedal pulses; vascular repair within 6 hours\n\n"
+            "Calcaneal Fracture:\n"
+            "• Lateral plantar nerve (branch of tibial nerve)\n"
+            "• Heel pain + sensory loss over lateral sole\n\n"
+            "Lisfranc Injury (Tarsometatarsal):\n"
+            "• Deep peroneal nerve — sensory loss 1st web space\n\n"
+            "Femoral Shaft Fracture:\n"
+            "• Femoral nerve (rare); profunda femoris artery injury more common\n\n"
+            "Key Mnemonic: POP — Posterior hip dislocation → Opposite division (peroneal) of sciatic nerve"
+        ),
+        "high_yield_takeaway": "Posterior hip dislocation → sciatic (peroneal division). Fibular neck fracture → common peroneal → foot drop.",
         "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Orthopedics", "#NerveInjury"],
     },
     {
         "title": "Compartment Syndrome — Diagnosis and Emergency Management",
         "subject": Subject.orthopedics,
         "content_format": ContentFormat.rapid_revision,
-        "poster_text": "Compartment Syndrome — The 6 P's That Save Limbs",
-        "caption": "COMPARTMENT SYNDROME — RAPID REVISION\n\nAcute compartment syndrome is a surgical emergency. Know it cold — both for exams and clinical practice.\n\nDEFINITION:\nRise in intracompartmental pressure (>30 mmHg or within 30 mmHg of diastolic) compromising perfusion → ischemia → necrosis if untreated.\n\nCOMMON CAUSES:\n• Fractures (especially tibia — most common site overall)\n• Tight casts / circumferential bandages\n• Crush injuries, Burns, Reperfusion injury\n• Supracondylar fracture of humerus (children — most common upper limb cause)\n\nCLINICAL FEATURES — THE 6 P's:\n1. Pain — out of proportion to injury; worsened by passive stretch (MOST IMPORTANT early sign)\n2. Pressure — tense/woody compartment on palpation\n3. Paresthesia — tingling; early nerve ischemia\n4. Paralysis — late sign; nerve/muscle necrosis\n5. Pallor — vascular compromise\n6. Pulselessness — VERY LATE sign (limb loss imminent)\n\nDIAGNOSIS:\n• Clinical diagnosis primarily\n• Compartment pressure measurement: Stryker device\n• Threshold for fasciotomy: pressure >30 mmHg OR delta pressure (diastolic − compartment pressure) <30 mmHg\n\nTREATMENT:\n• Remove all constricting bandages immediately\n• Emergency fasciotomy — do NOT delay\n• Tibia: 4-compartment fasciotomy (anteromedial + posterolateral incisions)\n• Forearm: Henry's approach + medial\n\nSEQUELAE if missed:\n• Volkmann's ischemic contracture (forearm/hand)\n• Myoglobinuria → acute renal failure\n• Permanent neurological deficit",
-        "high_yield_takeaway": "Pain on passive stretch is the earliest and most important sign. Fasciotomy is indicated when compartment pressure >30 mmHg or delta pressure <30 mmHg.",
+        "poster_text": "6 P's of compartment syndrome — recognize before it's too late!",
+        "caption": (
+            "Compartment Syndrome — Rapid Revision\n\n"
+            "Definition: Pressure within a closed fascial compartment exceeds perfusion pressure → ischemia\n\n"
+            "Common Causes:\n"
+            "• Fractures (tibial shaft — #1 cause), crush injuries, tight casts, burns, reperfusion injury\n\n"
+            "Classic 6 P's (in order of appearance):\n"
+            "1. Pain — out of proportion, worse with passive stretch (earliest and most reliable sign)\n"
+            "2. Pressure — tense, woody compartment on palpation\n"
+            "3. Paresthesia — tingling/numbness from ischemic nerve\n"
+            "4. Paresis/Paralysis — muscle weakness (late sign)\n"
+            "5. Pallor — reduced capillary refill\n"
+            "6. Pulselessness — very late; implies arterial compromise\n\n"
+            "Diagnosis:\n"
+            "• Compartment pressure measurement: Normal < 10 mmHg\n"
+            "• Fasciotomy threshold: Pressure > 30 mmHg OR delta pressure (diastolic BP − compartment pressure) < 30 mmHg\n\n"
+            "Treatment:\n"
+            "• EMERGENCY fasciotomy — do not delay\n"
+            "• Remove all circumferential dressings/casts immediately\n"
+            "• Leg: 4-compartment fasciotomy via 2 incisions\n\n"
+            "Complication if missed: Volkmann's ischemic contracture (forearm > leg)"
+        ),
+        "high_yield_takeaway": "Pain on passive stretch = earliest sign. Fasciotomy when delta pressure < 30 mmHg. Do NOT wait for pulselessness.",
         "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Orthopedics", "#CompartmentSyndrome"],
     },
+    # ── MCQ ──────────────────────────────────────────────────────────────────
     {
         "title": "Salter-Harris Fracture Classification — MCQ",
         "subject": Subject.orthopedics,
         "content_format": ContentFormat.mcq,
-        "poster_text": "Salter-Harris Fractures — Which Type Has the Worst Prognosis?",
-        "caption": "SALTER-HARRIS FRACTURE CLASSIFICATION\n\nThese physeal fractures occur in children and are frequently tested. The classification determines prognosis and management.\n\nTYPES (mnemonic: SALTR):\n• Type I — Slip: Fracture through physis only. Best prognosis. X-ray may be normal.\n• Type II — Above: Through physis + metaphysis. MOST COMMON (75%). Good prognosis.\n• Type III — Lower/Below: Through physis + epiphysis into joint. Intra-articular. Moderate prognosis.\n• Type IV — Through: Through metaphysis + physis + epiphysis. Needs ORIF. Worse prognosis.\n• Type V — Rammed/Crush: Crush injury of physis. Worst prognosis. X-ray may appear normal.\n\nHIGH-YIELD POINTS:\n• Type II is most common\n• Types I and II: generally managed conservatively\n• Types III, IV: require anatomic reduction (ORIF) due to intra-articular involvement\n• Type V: retrospective diagnosis; worst growth disturbance\n• Growth arrest / limb length discrepancy is the feared complication",
-        "question": "A 9-year-old boy falls from a bicycle and injures his right ankle. X-ray shows a fracture line passing through the growth plate and extending into the epiphysis, with an intra-articular component. There is no involvement of the metaphysis. Which Salter-Harris type is this, and what is the recommended management?",
+        "poster_text": "A 9-year-old with wrist injury and growth plate involvement — which Salter-Harris type?",
+        "caption": (
+            "Salter-Harris Fracture Classification — MCQ\n\n"
+            "Mnemonic — SALTR:\n"
+            "• Type I — S (Slip): Through physis only; best prognosis\n"
+            "• Type II — A (Above): Through physis + metaphysis; Thurstan Holland fragment; most common (75%)\n"
+            "• Type III — L (Lower epiphysis): Through physis + epiphysis; intra-articular\n"
+            "• Type IV — T (Through all): Metaphysis + physis + epiphysis; needs ORIF\n"
+            "• Type V — R (Ram/crush): Crush injury to physis; worst prognosis; often missed acutely\n\n"
+            "Prognosis rule: Higher the type number → worse the growth disturbance risk\n\n"
+            "Clinical pearl: Type II is the most common; Type V has worst prognosis and may present "
+            "only as premature growth arrest without acute fracture line on X-ray."
+        ),
+        "question": (
+            "A 9-year-old boy falls off his bicycle and presents with pain and swelling over the distal radius. "
+            "X-ray shows a fracture line passing through the physis and extending into the epiphysis only, "
+            "with no metaphyseal involvement. Which Salter-Harris type is this, and what is the most appropriate management?"
+        ),
         "options": [
-            "A. Type II — closed reduction and casting",
-            "B. Type III — open reduction and internal fixation",
-            "C. Type IV — closed reduction and casting",
-            "D. Type V — observation and non-weight bearing",
+            "A. Type II — conservative management with above-elbow cast immobilisation",
+            "B. Type III — open reduction and internal fixation to restore the articular surface",
+            "C. Type IV — closed reduction is acceptable if displacement is less than 2 mm",
+            "D. Type V — urgent MRI to assess physeal crush injury",
         ],
-        "correct_answer": "B. Type III — open reduction and internal fixation",
-        "explanation": "The fracture described involves the physis (growth plate) and extends into the epiphysis with intra-articular involvement but does NOT cross the metaphysis — this is the classic description of a Salter-Harris Type III fracture. Type III fractures are intra-articular and risk both growth disturbance and joint incongruity. Anatomic reduction is essential to restore joint surface and minimize growth arrest, making open reduction and internal fixation (ORIF) the treatment of choice. Type II involves the metaphysis (not described here). Type IV passes through metaphysis, physis, AND epiphysis. Type V is a crush injury of the physis — often diagnosed retrospectively. Remember: Types III and IV require ORIF; Types I and II are managed conservatively in most cases.",
-        "high_yield_takeaway": "Salter-Harris Type II is most common (best prognosis). Type III/IV are intra-articular → need ORIF. Type V has worst prognosis (crush of physis).",
-        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Orthopedics", "#SalterHarris"],
+        "correct_answer": "B. Type III — open reduction and internal fixation to restore the articular surface",
+        "explanation": (
+            "Salter-Harris Type III fractures extend through the physis and into the epiphysis, making them intra-articular injuries. "
+            "Accurate anatomical restoration of the articular surface is mandatory to prevent growth arrest, joint incongruity, and premature osteoarthritis; "
+            "therefore ORIF is the treatment of choice when significant displacement is present. "
+            "Type II (the most common type, ~75%) involves the physis and metaphysis and can usually be managed conservatively with cast immobilisation. "
+            "Type V is a crush injury to the physis — it is often not visible on initial X-ray and typically presents later as premature physeal arrest. "
+            "The SALTR mnemonic (Slip, Above/metaphysis, Lower/epiphysis, Through all, Ram/crush) helps recall the five types in order of increasing complexity and growth-disturbance risk."
+        ),
+        "high_yield_takeaway": "SH Type III = physis + epiphysis (intra-articular) → ORIF. Type II = most common. Type V = worst prognosis (crush, often missed acutely).",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Orthopedics", "#PediatricFractures"],
     },
     {
         "title": "Bone Tumors: Osteosarcoma vs Ewing's Sarcoma — MCQ",
         "subject": Subject.orthopedics,
         "content_format": ContentFormat.mcq,
-        "poster_text": "Bone Tumors MCQ — Osteosarcoma or Ewing's? Crack the X-Ray Clue",
-        "caption": "BONE TUMORS — OSTEOSARCOMA vs EWING'S SARCOMA\n\nOSTEOSARCOMA:\n• Age: 10–20 years (2nd peak >60 in Paget's)\n• Site: Metaphysis of long bones; distal femur > proximal tibia > proximal humerus\n• X-ray: Sunburst pattern, Codman's triangle (periosteal elevation)\n• Histology: Malignant osteoid-producing cells\n• Treatment: Neoadjuvant chemotherapy + limb-salvage surgery\n• Markers: ALP elevated\n\nEWING'S SARCOMA:\n• Age: 5–15 years (younger than osteosarcoma)\n• Site: Diaphysis of long bones; also flat bones (pelvis, ribs, scapula)\n• X-ray: Onion-peel periosteal reaction\n• Histology: Small round blue cells; PAS positive\n• Translocation: t(11;22) — EWS-FLI1 fusion\n• Treatment: Chemotherapy + radiation (radiosensitive) ± surgery\n• May mimic osteomyelitis (fever, raised ESR, WBC)\n\nOTHER HIGH-YIELD TUMORS:\n• Giant Cell Tumor: Epiphysis, soap-bubble appearance, age 20–40\n• Osteochondroma: Most common benign bone tumor\n• Chondrosarcoma: Age >40, pelvis/proximal femur",
-        "question": "A 12-year-old boy presents with 3 weeks of pain, swelling, and low-grade fever in his left thigh. Examination reveals a warm, tender swelling over the mid-shaft of the femur. His ESR is 85 mm/hr and WBC is 11,200/µL. X-ray shows a permeative lytic lesion in the diaphysis with an 'onion-peel' periosteal reaction. Biopsy reveals sheets of small round blue cells that are PAS-positive. Which of the following is the most likely diagnosis?",
+        "poster_text": "Teenager with bone pain and X-ray lesion — Osteosarcoma or Ewing's? Know the difference!",
+        "caption": (
+            "Bone Tumors: Osteosarcoma vs Ewing's Sarcoma\n\n"
+            "Feature          | Osteosarcoma          | Ewing's Sarcoma\n"
+            "Age              | 10–20 yrs             | 5–15 yrs\n"
+            "Location         | Metaphysis (distal femur #1) | Diaphysis (flat bones too)\n"
+            "X-ray sign       | Sunburst + Codman's triangle | Onion-peel periosteal reaction\n"
+            "Serum marker     | Alkaline phosphatase (↑ALP) | LDH (↑LDH)\n"
+            "Translocation    | None specific         | t(11;22) → EWS-FLI1 fusion\n"
+            "Biopsy           | Osteoid production    | Small round blue cells\n"
+            "Radiation        | Resistant             | Sensitive\n"
+            "Treatment        | Surgery + chemo       | Chemo + radiation\n\n"
+            "Remember: Codman's triangle = reactive periosteal elevation at tumour periphery (not specific to osteosarcoma — also in Ewing's)"
+        ),
+        "question": (
+            "A 14-year-old boy presents with a 6-week history of progressive pain and swelling around the right knee. "
+            "X-ray reveals a metaphyseal lesion in the distal femur with sunburst periosteal reaction and Codman's triangle. "
+            "Alkaline phosphatase is markedly elevated. Biopsy shows pleomorphic spindle cells producing osteoid. "
+            "Which of the following correctly describes this tumour's molecular characteristic and radiation sensitivity?"
+        ),
         "options": [
-            "A. Osteosarcoma",
-            "B. Ewing's sarcoma",
-            "C. Osteomyelitis",
-            "D. Giant cell tumor",
+            "A. t(11;22) translocation producing EWS-FLI1 fusion protein; highly radiation sensitive",
+            "B. No specific pathognomonic translocation; radiation resistant — treated with surgery and chemotherapy",
+            "C. t(9;22) Philadelphia chromosome translocation; responds to imatinib mesylate",
+            "D. t(8;14) translocation; treated with radiation therapy alone",
         ],
-        "correct_answer": "B. Ewing's sarcoma",
-        "explanation": "The clinical picture is classic for Ewing's sarcoma: a child (5–15 years), diaphyseal location in a long bone, onion-peel periosteal reaction on X-ray, and histology showing small round blue cells (PAS-positive due to glycogen content). The fever and elevated inflammatory markers can mimic osteomyelitis — a common exam trap. Osteosarcoma typically affects the metaphysis, produces osteoid, and shows a sunburst pattern with Codman's triangle. Giant cell tumor occurs at the epiphysis in adults (20–40 years) with a soap-bubble appearance. Ewing's sarcoma carries the translocation t(11;22) creating the EWS-FLI1 fusion product. It is radiosensitive, and treatment involves multiagent chemotherapy with radiation and/or surgery.",
-        "high_yield_takeaway": "Ewing's sarcoma: diaphysis, onion-peel, small round blue cells, t(11;22), mimics osteomyelitis. Osteosarcoma: metaphysis, sunburst, Codman's triangle, ALP elevated.",
+        "correct_answer": "B. No specific pathognomonic translocation; radiation resistant — treated with surgery and chemotherapy",
+        "explanation": (
+            "The clinical picture — metaphyseal location in distal femur, sunburst periosteal reaction, Codman's triangle, osteoid production on biopsy, and elevated ALP — is classic for osteosarcoma. "
+            "Osteosarcoma lacks a specific pathognomonic chromosomal translocation (though RB1 and TP53 mutations are associated) and is notably radiation resistant; "
+            "standard treatment is neoadjuvant chemotherapy (cisplatin, doxorubicin, high-dose methotrexate) followed by limb-salvage surgery and adjuvant chemotherapy. "
+            "Ewing's sarcoma, in contrast, carries the t(11;22)(q24;q12) translocation producing the EWS-FLI1 fusion protein and is exquisitely radiation sensitive. "
+            "t(9;22) is the Philadelphia chromosome seen in CML, and t(8;14) is associated with Burkitt's lymphoma — both unrelated to primary bone tumours."
+        ),
+        "high_yield_takeaway": "Osteosarcoma: metaphysis, sunburst, ↑ALP, no specific translocation, radiation RESISTANT. Ewing's: diaphysis, onion-peel, t(11;22), radiation SENSITIVE.",
         "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Orthopedics", "#BoneTumors"],
     },
+    # ── Concise Notes ─────────────────────────────────────────────────────────
     {
-        "title": "Osteoarthritis vs Rheumatoid Arthritis — Complete Comparison",
+        "title": "Osteoarthritis vs Rheumatoid Arthritis — Comparison",
         "subject": Subject.orthopedics,
         "content_format": ContentFormat.concise_notes,
-        "poster_text": "OA vs RA — The Ultimate NEET-PG Comparison Table",
-        "caption": "OSTEOARTHRITIS vs RHEUMATOID ARTHRITIS — CONCISE NOTES\n\nSECTION 1: PATHOGENESIS\n• OA: Degenerative, non-inflammatory. Articular cartilage breakdown → subchondral bone changes → osteophyte formation. Cytokines: IL-1β, TNF-α locally.\n• RA: Autoimmune, inflammatory. Synovial proliferation (pannus) → cartilage and bone erosion. Anti-CCP (most specific), RF positive.\n\nSECTION 2: EPIDEMIOLOGY\n• OA: Age >50, female predominance, obesity/trauma risk. Most common joint disease worldwide.\n• RA: Age 30–50, female:male = 3:1, HLA-DR4 association.\n\nSECTION 3: JOINTS INVOLVED\n• OA: DIP joints (Heberden's nodes), PIP joints (Bouchard's nodes), CMC of thumb, hip, knee, spine\n• RA: MCP + PIP joints (spares DIP), wrist, knee, C1-C2 (atlanto-axial subluxation)\n• Key: OA spares MCP; RA spares DIP\n\nSECTION 4: CLINICAL FEATURES\n• OA: Pain worsened by use, relieved by rest. Morning stiffness <30 min. No systemic features.\n• RA: Morning stiffness >1 hour. Systemic: fever, fatigue, weight loss. Symmetrical involvement.\n• RA deformities: Swan neck, Boutonniere, Z-deformity of thumb, ulnar deviation at MCP\n\nSECTION 5: INVESTIGATIONS\n• OA X-ray: LOSS — Loss of joint space, Osteophytes, Subchondral sclerosis, Subchondral cysts\n• RA X-ray: Juxta-articular osteopenia → erosions → joint space narrowing → ankylosis\n• Labs: OA — normal ESR/CRP; RA — elevated ESR, CRP, RF (70–80%), Anti-CCP (95% specific)\n\nSECTION 6: MANAGEMENT\n• OA: Weight loss, physiotherapy, NSAIDs, intra-articular steroids, joint replacement\n• RA: DMARDs (Methotrexate first-line), Hydroxychloroquine, Sulfasalazine; Biologics (anti-TNF) for refractory",
-        "high_yield_takeaway": "OA: DIP/PIP, Heberden's/Bouchard's nodes, stiffness <30 min, X-ray LOSS. RA: MCP/PIP, spares DIP, stiffness >1 hr, anti-CCP most specific, Methotrexate first-line.",
-        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Orthopedics", "#Arthritis"],
+        "poster_text": "OA vs RA — master the clinical, radiological and lab differences for NEET-PG.",
+        "caption": (
+            "Osteoarthritis vs Rheumatoid Arthritis — Concise Notes\n\n"
+            "EPIDEMIOLOGY\n"
+            "• OA: Age > 45, females > males, obesity, mechanical overuse\n"
+            "• RA: Age 30–50, females >> males (3:1), autoimmune; HLA-DR4 association\n\n"
+            "PATHOLOGY\n"
+            "• OA: Non-inflammatory; cartilage degradation → subchondral sclerosis, osteophyte formation\n"
+            "• RA: Inflammatory synovitis → pannus formation → cartilage and bone erosion\n\n"
+            "JOINTS INVOLVED\n"
+            "• OA: Weight-bearing (knee, hip, spine); DIP joints of hands (Heberden's nodes); PIP (Bouchard's nodes)\n"
+            "• RA: PIP + MCP + wrist (DIP spared); symmetric; also C1-C2 → atlantoaxial subluxation risk\n\n"
+            "CLINICAL FEATURES\n"
+            "• OA: Morning stiffness < 30 min; pain worsens with activity; no systemic features\n"
+            "• RA: Morning stiffness > 1 hour; pain worse at rest/morning; systemic (fever, fatigue, weight loss)\n"
+            "• RA deformities: Swan-neck, Boutonniere, Z-thumb, ulnar deviation at MCPs\n\n"
+            "RADIOLOGY\n"
+            "• OA: Joint space narrowing, subchondral sclerosis, osteophytes, subchondral cysts — NO erosions\n"
+            "• RA: Periarticular osteopenia, symmetric joint space narrowing, marginal erosions, subluxations\n\n"
+            "LABORATORY\n"
+            "• OA: Normal ESR/CRP; RF negative; synovial fluid non-inflammatory (< 2000 WBC/mm3)\n"
+            "• RA: Elevated ESR/CRP; RF positive (70–80%); anti-CCP (most specific); inflammatory synovial fluid\n\n"
+            "TREATMENT\n"
+            "• OA: Weight loss, physiotherapy, NSAIDs, intra-articular steroids, joint replacement (definitive)\n"
+            "• RA: MTX (first-line DMARD); biologics (anti-TNF, anti-IL-6); hydroxychloroquine; NSAIDs for symptoms"
+        ),
+        "high_yield_takeaway": "OA: DIP + Heberden's, stiffness < 30 min, osteophytes, no erosions. RA: MCP+PIP, stiffness > 1 hr, erosions, anti-CCP most specific.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Orthopedics", "#Rheumatology"],
     },
+    # ── PYQ Concept ───────────────────────────────────────────────────────────
     {
         "title": "Supracondylar Fracture Complications — PYQ Pattern",
         "subject": Subject.orthopedics,
         "content_format": ContentFormat.pyq_concept,
-        "poster_text": "Supracondylar Fracture — Every Complication NEET-PG Has Ever Asked",
-        "caption": "SUPRACONDYLAR FRACTURE — PYQ PATTERN ANALYSIS\n\nThis is one of the HIGHEST-YIELD orthopedics topics. Appears in almost every NEET-PG, INI-CET, and AIIMS exam. Master every angle.\n\nBASIC FACTS (frequently tested):\n• Most common fracture around elbow in children (5–10 years)\n• Type: Gartland classification (I, II, III) — Type III = complete displacement\n• Mechanism: FOOSH (Fall On Outstretched Hand) → hyperextension\n• Posteromedial displacement → Anterior interosseous nerve (AIN) injury\n• Posterolateral displacement → Radial nerve / PIN injury\n\nCOMPLICATION → EXAM QUESTION PATTERN:\n\n1. Vascular injury → Brachial artery (most common)\n   PYQ: \"Child with supracondylar fracture, cold pulseless hand\" → Brachial artery injury\n\n2. Nerve injury → Anterior Interosseous Nerve (most common nerve)\n   PYQ: \"Cannot pinch — OK sign test positive\" → AIN palsy (no motor loss; weakness of FPL + FDP of index)\n   Note: Radial nerve if posterolateral; Median nerve overall most common in older texts\n\n3. Volkmann's Ischemic Contracture → missed compartment syndrome\n   PYQ: \"Late presentation, flexion deformity of wrist and fingers, intrinsic plus hand\"\n   Stages: Ischemia → Infarction → Fibrosis → Contracture\n\n4. Cubitus Varus (Gunstock deformity) → most common late complication\n   PYQ: \"Child 6 months post-fracture, elbow looks abnormal\" → Cubitus varus (cosmetic, not functional)\n   Cause: Malunion (not AVN, not growth arrest of medial condyle)\n\n5. Myositis Ossificans → heterotopic ossification after repeated manipulation\n   PYQ: \"Do NOT massage the fracture site\" → to prevent myositis ossificans\n\n6. Cubitus Valgus → lateral condyle fracture (not supracondylar) → tardy ulnar nerve palsy\n\nMANAGEMENT PYQ:\n• Gartland I → Above-elbow cast\n• Gartland II → Closed reduction + cast OR percutaneous K-wires\n• Gartland III + vascular compromise → Emergency reduction + K-wire fixation",
-        "high_yield_takeaway": "Most common nerve: AIN (OK sign). Most common vascular: brachial artery. Most common late complication: cubitus varus (gunstock deformity). Volkmann's = missed compartment syndrome.",
-        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Orthopedics", "#SupracondylarFracture"],
+        "poster_text": "Supracondylar fracture complications — most frequently tested PYQ pattern in Ortho NEET-PG!",
+        "caption": (
+            "Supracondylar Fracture of Humerus — PYQ High-Yield Concept\n\n"
+            "Epidemiology: Most common fracture around elbow in children (age 5–10 years); "
+            "extension type (98%) from fall on outstretched hand.\n\n"
+            "NEUROVASCULAR INJURIES (Exam Favourite):\n"
+            "• Anterior interosseous nerve (AIN — branch of median nerve) → most common nerve injured\n"
+            "  — Test: Inability to make 'OK sign' (circle with thumb and index finger)\n"
+            "  — Pure motor branch; no sensory loss\n"
+            "• Radial nerve — rare in extension type; more common in flexion type\n"
+            "• Brachial artery — most dangerous vascular injury; leads to Volkmann's ischemia if missed\n\n"
+            "VOLKMANN'S ISCHEMIC CONTRACTURE:\n"
+            "• Results from untreated compartment syndrome or brachial artery injury\n"
+            "• Stages: Ischemia → Infarction → Fibrosis → Contracture\n"
+            "• Classic posture: Pronated forearm, flexed wrist, extended fingers (intrinsic-minus hand)\n\n"
+            "MALUNION — CUBITUS VARUS (Gunstock Deformity):\n"
+            "• Most common late complication overall\n"
+            "• Primarily cosmetic deformity; corrected by French (dome) osteotomy\n"
+            "• Cubitus valgus → tardy ulnar nerve palsy (years later)\n\n"
+            "GARTLAND CLASSIFICATION:\n"
+            "• Type I: Undisplaced — above-elbow cast in 90° flexion\n"
+            "• Type II: Displaced, posterior cortex intact — closed reduction ± K-wire pinning\n"
+            "• Type III: Completely displaced — closed reduction + percutaneous K-wire fixation\n\n"
+            "PYQ ANSWER KEY:\n"
+            "Q: Most common nerve injured in supracondylar fracture? → AIN (branch of median nerve)\n"
+            "Q: Most common late complication? → Cubitus varus (gunstock deformity)\n"
+            "Q: Vascular injury leads to? → Volkmann's ischemic contracture\n"
+            "Q: Most common fracture around elbow in children? → Supracondylar fracture of humerus\n"
+            "Q: Correction of cubitus varus by? → French (dome) osteotomy"
+        ),
+        "high_yield_takeaway": "SCF complications: AIN = most common nerve; cubitus varus = most common late complication; brachial artery injury → Volkmann's contracture.",
+        "hashtags": ["#MedicoHelp", "#MBBS", "#NEETPG", "#Orthopedics", "#PYQ"],
     },
 ]

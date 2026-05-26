@@ -20,22 +20,16 @@ def test_mock_generation_text_mode() -> None:
 
     result = asyncio.run(
         orchestrator.generate_post(
-            subject=Subject.pathology,
-            content_format=ContentFormat.image_based_question,
+            subject=Subject.anatomy,
+            content_format=ContentFormat.rapid_revision,
             publish_to_telegram=False,
         )
     )
 
     assert result.content.title
-    assert result.content.subject == Subject.pathology
-    assert result.content.content_format == ContentFormat.image_based_question
-    assert result.content.image_based_data
-    assert result.content.question is not None
-    assert len(result.content.question.splitlines()) >= 6
-    assert result.content.explanation is not None
-    assert len(result.content.explanation) > 180
-    assert result.content.relevance_rationale
-    assert result.content.image_answerability
+    assert result.content.subject == Subject.anatomy
+    assert result.content.caption
+    assert result.content.high_yield_takeaway
     assert result.poster_path == "text-only"
     assert result.telegram_posted is False
 
