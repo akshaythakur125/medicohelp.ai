@@ -4,6 +4,7 @@ from app.config import get_settings
 from app.models import ContentFormat, NewsTopic, PostLane, Subject
 from app.services.content_strategy import ContentStrategy
 from app.services.orchestrator import PostOrchestrator
+from content.loader import ContentLibrary
 
 
 def test_curriculum_has_19_subjects() -> None:
@@ -70,6 +71,29 @@ def test_residency_tip_generation_creates_post() -> None:
     assert result.content.post_lane == PostLane.residency_tip
     assert "handoff" in result.content.caption.lower()
     assert result.poster_path.endswith(".png")
+
+
+def test_content_library_loads_all_subjects() -> None:
+    lib = ContentLibrary()
+    summary = lib.summary()
+    missing = [s.value for s in Subject if summary.get(s.value, 0) == 0]
+    assert not missing, f"Subjects with no content: {missing}"
+    assert lib.total() >= 19 * 4, f"Expected ≥76 topics, got {lib.total()}"
+
+
+def test_content_library_serves_by_subject_and_format() -> None:
+    lib = ContentLibrary()
+    content = lib.get(Subject.anatomy, ContentFormat.rapid_revision)
+    assert content is not None
+    assert content.subject == Subject.anatomy
+    assert content.content_format == ContentFormat.rapid_revision
+
+
+def test_content_library_fallback_on_unknown_format() -> None:
+    """Library falls back gracefully when exact format+subject combo is missing."""
+    lib = ContentLibrary()
+    content = lib.get(Subject.anatomy, ContentFormat.image_based_question)
+    assert content is not None  # Falls back to any anatomy topic
 
 
 def test_content_strategy_rotates_premium_mix() -> None:

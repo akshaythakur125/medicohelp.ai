@@ -29,8 +29,7 @@ class AIContentClient:
             return await self._generate_with_gemini(prompt, subject, content_format)
 
         if self.settings.allow_mock_ai:
-            logger.warning("No AI API key configured. Using mock educational content.")
-            return self._mock_content(subject, content_format)
+            return self._library_or_mock(subject, content_format)
 
         raise RuntimeError("No AI provider API key configured and ALLOW_MOCK_AI=false.")
 
@@ -138,6 +137,18 @@ class AIContentClient:
         except Exception as exc:
             logger.exception("AI response parsing failed: %s", raw[:500])
             raise ValueError("AI provider returned invalid content JSON.") from exc
+
+    def _library_or_mock(self, subject: Subject, content_format: ContentFormat) -> GeneratedContent:
+        try:
+            from content.loader import get_library
+            content = get_library().get(subject, content_format)
+            if content:
+                logger.info("Serving static library content: %s / %s", subject.value, content_format.value)
+                return content
+        except Exception as exc:
+            logger.debug("Content library unavailable: %s", exc)
+        logger.warning("Falling back to procedural mock for %s / %s", subject.value, content_format.value)
+        return self._mock_content(subject, content_format)
 
     def _mock_content(self, subject: Subject, content_format: ContentFormat) -> GeneratedContent:
         display_subject = subject.value.replace("_", " ").title()
