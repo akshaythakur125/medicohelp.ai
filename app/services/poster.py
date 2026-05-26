@@ -783,23 +783,13 @@ def _render_flashcard_content(draw: ImageDraw.ImageDraw, content: GeneratedConte
                   fill=_WHITE, outline=acc_dark, width=_s(4))
     draw.text((_s(80), y + _s(16)), "QUESTION", fill=acc_dark, font=_font(13, bold=True))
     question = content.question or content.poster_text or content.title
-    for ln in _wrap(question, 56, 5):
-        draw.text((_s(80), y + _s(50)), ln, fill="#1A2B3C", font=_font(16))
-        y += _s(0)
-    # Re-draw properly
-    y_front = y0 + _s(240) + _s(20)
-
-    # Re-draw question text centred within the front card
-    draw.rectangle((_s(54), y0, _s(1026), y0 + _s(240)), fill=None)
-    _rounded_rect(draw, (_s(54), y0, _s(1026), y0 + _s(240)), 20,
-                  fill=_WHITE, outline=acc_dark, width=_s(4))
-    draw.text((_s(80), y0 + _s(16)), "QUESTION", fill=acc_dark, font=_font(13, bold=True))
     qlines = _wrap(question, 54, 5)
     text_h = len(qlines) * _s(32)
-    text_start = y0 + (_s(240) - text_h) // 2
+    text_start = y + (_s(240) - text_h) // 2
     for ln in qlines:
         draw.text((_s(80), text_start), ln, fill="#1A2B3C", font=_font(16))
         text_start += _s(32)
+    y_front = y + _s(240) + _s(20)
 
     # Flip divider
     draw.text((_s(440), y_front - _s(10)), "▼  REVEAL ANSWER  ▼", fill=acc_dark, font=_font(12, bold=True))
@@ -1080,7 +1070,6 @@ class PosterGenerator:
         draw.rectangle((0, 0, _FW * _SS, _s(10)), fill=acc_dark)
         # Navy header band
         _fill_gradient_v(canvas, _s(10), _s(150), _NAVY, "#1A3A5C")
-        draw.rectangle((0, _s(10), _FW * _SS, _s(150)), fill=None)  # no-op, gradient already drawn
 
         # Brand name
         draw.text((_s(52), _s(22)), "MedicoHelp", fill=_WHITE, font=_font(28, bold=True))

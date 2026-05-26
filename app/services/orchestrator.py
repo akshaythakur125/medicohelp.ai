@@ -83,7 +83,7 @@ class PostOrchestrator:
                 try:
                     visual_path = await self.medical_image_generator.create_visual(content)
                 except Exception as exc:
-                    self.store.save_error(
+                    await self.store.save_error(
                         "Image generation failed; using fallback schematic", {"error": str(exc)}
                     )
                 poster_path = self.poster_generator.create(content, visual_image_path=visual_path)
@@ -97,14 +97,14 @@ class PostOrchestrator:
                     caption = self._build_caption(content.caption, content.hashtags)
                     telegram_posted = await self.telegram.send_photo(poster_path, caption)
 
-            self.store.save_post(content, poster_path, telegram_posted)
+            await self.store.save_post(content, poster_path, telegram_posted)
             return GenerateResponse(
                 content=content,
                 poster_path=str(poster_path),
                 telegram_posted=telegram_posted,
             )
         except Exception as exc:
-            self.store.save_error(
+            await self.store.save_error(
                 "Post generation pipeline failed",
                 {
                     "error": str(exc),
@@ -113,7 +113,35 @@ class PostOrchestrator:
                     "category": str(category) if category else None,
                 },
             )
+            logger.warning("Primary generation failed — attempting library fallback: %s", exc)
+            fallback = self._library_fallback(selected_subject)
+            if fallback:
+                telegram_posted = False
+                if publish_to_telegram and self.settings.text_only_mode:
+                    text = format_for_telegram(fallback)
+                    telegram_posted = await self.telegram.send_message(text)
+                await self.store.save_post(fallback, Path("text-only"), telegram_posted)
+                return GenerateResponse(
+                    content=fallback,
+                    poster_path="text-only",
+                    telegram_posted=telegram_posted,
+                )
             raise
+
+    def _library_fallback(self, subject: Subject | None = None) -> GeneratedContent | None:
+        """Serve a raw library item when the full pipeline fails."""
+        try:
+            from content.loader import get_library
+            lib = get_library()
+            items = lib.pool(subject, ContentFormat.rapid_revision)
+            if items:
+                return random.choice(items)
+            items = lib.pool(None, None)
+            if items:
+                return random.choice(items)
+        except Exception as exc:
+            logger.error("Library fallback also failed: %s", exc)
+        return None
 
     def _build_caption(self, caption: str, hashtags: list[str]) -> str:
         normalized_tags = [tag if tag.startswith("#") else f"#{tag}" for tag in hashtags]
@@ -140,12 +168,12 @@ class PostOrchestrator:
                 caption = self._build_caption(content.caption, content.hashtags)
                 telegram_posted = await self.telegram.send_photo(poster_path, caption)
 
-            self.store.save_post(content, poster_path, telegram_posted)
+            await self.store.save_post(content, poster_path, telegram_posted)
             return GenerateResponse(
                 content=content, poster_path=str(poster_path), telegram_posted=telegram_posted
             )
         except Exception as exc:
-            self.store.save_error(
+            await self.store.save_error(
                 "News/residency post generation failed", {"error": str(exc), "topic": topic}
             )
             raise
@@ -270,7 +298,7 @@ class PostOrchestrator:
                 explanation=explanation,
             )
 
-        self.store.save_post(content, poster_path, telegram_posted)
+        await self.store.save_post(content, poster_path, telegram_posted)
         return GenerateResponse(
             content=content, poster_path=str(poster_path), telegram_posted=telegram_posted
         )
@@ -314,7 +342,7 @@ class PostOrchestrator:
             full = header + format_for_telegram(content)
             telegram_posted = await self.telegram.send_message(full)
 
-        self.store.save_post(content, poster_path, telegram_posted)
+        await self.store.save_post(content, poster_path, telegram_posted)
         return GenerateResponse(
             content=content, poster_path=str(poster_path), telegram_posted=telegram_posted
         )
@@ -365,7 +393,7 @@ class PostOrchestrator:
             body = header + format_for_telegram(content)
             telegram_posted = await self.telegram.send_message(body)
 
-        self.store.save_post(content, poster_path, telegram_posted)
+        await self.store.save_post(content, poster_path, telegram_posted)
         return GenerateResponse(
             content=content, poster_path=str(poster_path), telegram_posted=telegram_posted
         )
@@ -412,7 +440,7 @@ class PostOrchestrator:
             text = format_for_telegram(content)
             telegram_posted = await self.telegram.send_message(text)
 
-        self.store.save_post(content, poster_path, telegram_posted)
+        await self.store.save_post(content, poster_path, telegram_posted)
         return GenerateResponse(
             content=content, poster_path=str(poster_path), telegram_posted=telegram_posted
         )
@@ -450,7 +478,7 @@ class PostOrchestrator:
             telegram_posted = True
 
         if pack:
-            self.store.save_post(pack[0], Path("text-only"), telegram_posted)
+            await self.store.save_post(pack[0], Path("text-only"), telegram_posted)
             return GenerateResponse(
                 content=pack[0], poster_path="text-only", telegram_posted=telegram_posted
             )
@@ -465,7 +493,7 @@ class PostOrchestrator:
         if publish_to_telegram and self.settings.text_only_mode:
             text = format_for_telegram(result.content)
             telegram_posted = await self.telegram.send_message(text)
-            self.store.save_post(result.content, Path("text-only"), telegram_posted)
+            await self.store.save_post(result.content, Path("text-only"), telegram_posted)
             return GenerateResponse(
                 content=result.content,
                 poster_path="text-only",

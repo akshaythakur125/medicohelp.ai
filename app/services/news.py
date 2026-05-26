@@ -13,6 +13,8 @@ from app.models import ContentFormat, GeneratedContent, NewsItem, NewsTopic, Pos
 
 logger = logging.getLogger(__name__)
 
+_OFFICIAL_DOMAINS = ("natboard.edu.in", "nbe.edu.in", "aiimsexams.ac.in", "docs.aiimsexams.ac.in", "mcc.nic.in")
+
 
 class NewsSweeper:
     def __init__(self, settings: Settings) -> None:
@@ -129,11 +131,9 @@ class NewsSweeper:
         return items
 
     def _rank_and_limit(self, items: list[NewsItem]) -> list[NewsItem]:
-        official_domains = ("natboard.edu.in", "nbe.edu.in", "aiimsexams.ac.in", "docs.aiimsexams.ac.in", "mcc.nic.in")
-
         def score(item: NewsItem) -> tuple[int, float]:
             domain = self._domain(item.url)
-            official = 0 if any(official in domain for official in official_domains) else 1
+            official = 0 if any(d in domain for d in _OFFICIAL_DOMAINS) else 1
             return (official, -self._published_timestamp(item.published))
 
         return sorted(items, key=score)[: self.settings.news_max_items]

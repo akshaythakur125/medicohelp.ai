@@ -27,8 +27,59 @@ orchestrator = PostOrchestrator(settings)
 posting_scheduler = PostingScheduler(settings, orchestrator)
 
 
+def _startup_validation() -> None:
+    """Assert critical preconditions before the app serves requests."""
+    issues: list[str] = []
+
+    if not settings.telegram_bot_token:
+        issues.append("TELEGRAM_BOT_TOKEN is not set — bot will not post to Telegram")
+    if not settings.telegram_chat_id:
+        issues.append("TELEGRAM_CHAT_ID is not set — bot has no target channel")
+
+    if not settings.generated_dir.exists():
+        settings.generated_dir.mkdir(parents=True)
+        logger.info("Created generated/ directory")
+    if not settings.logs_dir.exists():
+        settings.logs_dir.mkdir(parents=True)
+        logger.info("Created logs/ directory")
+
+    try:
+        from content.loader import get_library
+        lib = get_library()
+        summary = lib.summary()
+        logger.info("Content library loaded: %d subjects with %d total topics", len(summary), lib.total())
+    except Exception as exc:
+        issues.append(f"Content library failed to load: {exc}")
+
+    if not settings.ai_provider or settings.ai_provider == "none":
+        logger.info("AI provider not configured — running in library-only mode")
+    elif settings.ai_provider == "anthropic" and not settings.anthropic_api_key:
+        issues.append("AI_PROVIDER=anthropic but ANTHROPIC_API_KEY is not set")
+    elif settings.ai_provider == "openai" and not settings.openai_api_key:
+        issues.append("AI_PROVIDER=openai but OPENAI_API_KEY is not set")
+    elif settings.ai_provider == "gemini" and not settings.gemini_api_key:
+        issues.append("AI_PROVIDER=gemini but GEMINI_API_KEY is not set")
+
+    if settings.run_scheduler:
+        logger.info(
+            "Scheduler enabled — times: %s | interval: %sh | tz: %s",
+            settings.post_schedule_times or "cron",
+            settings.post_interval_hours,
+            settings.timezone,
+        )
+    else:
+        logger.info("Scheduler disabled — manual posting only")
+
+    if issues:
+        for msg in issues:
+            logger.warning("Startup: %s", msg)
+    else:
+        logger.info("All startup checks passed")
+
+
 @asynccontextmanager
 async def lifespan(_: FastAPI):
+    _startup_validation()
     if settings.run_scheduler:
         posting_scheduler.start()
     yield
@@ -45,7 +96,13 @@ app = FastAPI(
 
 @app.get("/health", response_model=HealthResponse)
 async def health() -> HealthResponse:
-    return HealthResponse(status="ok", scheduler_running=posting_scheduler.scheduler.running)
+    return HealthResponse(
+        status="ok",
+        scheduler_running=posting_scheduler.scheduler.running,
+        posting_paused=orchestrator.paused,
+        ai_provider=settings.ai_provider or "none",
+        text_only_mode=settings.text_only_mode,
+    )
 
 
 @app.post("/generate", response_model=GenerateResponse)

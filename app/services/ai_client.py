@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 import random
@@ -15,7 +16,7 @@ class AIContentClient:
     async def generate(self, subject: Subject, content_format: ContentFormat) -> GeneratedContent:
         # AI path: only when a provider + key are both configured
         if self._ai_configured():
-            prompt = self._build_prompt(subject, content_format)
+            prompt = await self._build_prompt(subject, content_format)
             try:
                 return await self._dispatch_ai(prompt, subject, content_format)
             except Exception as exc:
@@ -49,12 +50,17 @@ class AIContentClient:
             return await self._generate_with_gemini(prompt, subject, content_format)
         raise RuntimeError(f"Unknown ai_provider: {p}")
 
-    def _build_prompt(self, subject: Subject, content_format: ContentFormat) -> str:
+    async def _build_prompt(self, subject: Subject, content_format: ContentFormat) -> str:
         template_path = self.settings.prompts_dir / f"{content_format.value}.md"
         base_template = self.settings.prompts_dir / "base.md"
+        loop = asyncio.get_running_loop()
 
-        base = base_template.read_text(encoding="utf-8") if base_template.exists() else ""
-        detail = template_path.read_text(encoding="utf-8") if template_path.exists() else ""
+        def _read() -> tuple[str, str]:
+            base = base_template.read_text(encoding="utf-8") if base_template.exists() else ""
+            detail = template_path.read_text(encoding="utf-8") if template_path.exists() else ""
+            return base, detail
+
+        base, detail = await loop.run_in_executor(None, _read)
         return (
             f"{base}\n\n"
             f"Subject: {subject.value}\n"

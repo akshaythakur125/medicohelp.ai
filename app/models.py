@@ -154,3 +154,6 @@ class NewsResponse(BaseModel):
 class HealthResponse(BaseModel):
     status: str
     scheduler_running: bool
+    posting_paused: bool = False
+    ai_provider: str = "none"
+    text_only_mode: bool = True

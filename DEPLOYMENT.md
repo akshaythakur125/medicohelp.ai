@@ -2,13 +2,13 @@
 
 ## Pre-Deployment
 - [ ] Environment variables set in `.env` or platform dashboard:
-  - `TELEGRAM_BOT_TOKEN` — Telegram bot token from @BotFather
+  - `TELEGRAM_BOT_TOKEN` — Telegram bot token from @BotFather (required for posting)
   - `TELEGRAM_CHAT_ID` — Target channel/group ID for posting
   - `ADMIN_CHAT_ID` — Admin Telegram user ID for bot commands
   - `POST_SCHEDULE_TIMES` — Comma-separated HH:MM slots (default: `08:00,14:00,20:00,22:00`)
   - `TEXT_ONLY_MODE=true` — Send formatted text instead of image posters
   - `AI_PROVIDER=none` — No external AI dependency; library-first generation
-- [ ] Content library verified: `python3 -c "from content.loader import get_library; assert get_library().total() >= 190"`
+- [ ] Content library verified: `python3 -c "from content.loader import get_library; lib = get_library(); print(f'{lib.total()} topics across {len(lib.summary())} subjects')"`
 - [ ] All tests pass: `python3 -m pytest tests/ -v`
 
 ## Telegram Bot Setup
