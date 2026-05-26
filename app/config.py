@@ -40,8 +40,6 @@ class Settings(BaseSettings):
 
     image_card_enabled: bool = True
     image_card_fallback_to_text: bool = True
-    assets_images_dir: Path = base_dir / "assets" / "images"
-    image_index_path: Path = base_dir / "assets" / "images" / "index.json"
     image_card_template: str = "rapid_revision"
 
     app_host: str = "0.0.0.0"
@@ -56,6 +54,8 @@ class Settings(BaseSettings):
     logs_dir: Path = base_dir / "logs"
     prompts_dir: Path = base_dir / "prompts"
     assets_dir: Path = base_dir / "assets"
+    assets_images_dir: Path = base_dir / "assets" / "images"
+    image_index_path: Path = base_dir / "assets" / "images" / "index.json"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
