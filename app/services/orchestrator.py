@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import random
 from pathlib import Path
@@ -199,10 +200,41 @@ class PostOrchestrator:
             len(slide_paths),
             spec.cover_title,
         )
+
+        # Generation 2: Story teaser + first comment for algorithm boost
+        story_path: Path | None = None
+        story_posted = False
+        first_comment_posted = False
+
+        try:
+            story_path = self._carousel_gen.generate_story_teaser(spec)
+            await self.instagram.post_story(story_path)
+            story_posted = True
+            logger.info("Story teaser posted for post %s", post_id)
+        except Exception as exc:
+            logger.warning("Story teaser failed (non-blocking): %s", exc)
+
+        try:
+            if spec.first_comment:
+                await asyncio.sleep(5)
+                await self.instagram.post_first_comment(post_id, spec.first_comment)
+                first_comment_posted = True
+                logger.info("First comment posted for post %s", post_id)
+        except Exception as exc:
+            logger.warning("First comment failed (non-blocking): %s", exc)
+
+        if story_path and story_path.exists():
+            try:
+                story_path.unlink(missing_ok=True)
+            except Exception:
+                pass
+
         return {
             "post_id": post_id,
             "slide_count": len(slide_paths),
             "topic": spec.cover_title,
+            "story_posted": story_posted,
+            "first_comment_posted": first_comment_posted,
         }
 
     # ── Helpers ──────────────────────────────────────────────────────────

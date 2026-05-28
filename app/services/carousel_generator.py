@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 # Layout constants
 # ---------------------------------------------------------------------------
 SLIDE_SIZE = 1080
+STORY_HEIGHT = 1920
 MARGIN = 72
 
 # Colour palette
@@ -73,6 +74,7 @@ class CarouselSpec:
     points: list[dict] = field(default_factory=list)
     caption: str = ""
     hashtags: list[str] = field(default_factory=list)
+    first_comment: str = ""
 
     def full_caption(self) -> str:
         tag_str = " ".join(f"#{t.lstrip('#')}" for t in self.hashtags)
@@ -188,6 +190,78 @@ class CarouselGenerator:
 
         logger.info("Generated %d slides in %s", len(paths), out_dir)
         return paths
+
+    def generate_story_teaser(self, spec: CarouselSpec) -> Path:
+        """Create a 1080x1920 Story teaser image and return its path."""
+        out_dir = self._ensure_output_dir()
+        img = Image.new("RGBA", (SLIDE_SIZE, STORY_HEIGHT), self._hex_to_rgb(C_NAVY) + (255,))
+        draw = ImageDraw.Draw(img, "RGBA")
+
+        # Thin teal top strip
+        draw.rectangle([(0, 0), (SLIDE_SIZE, 8)], fill=self._hex_to_rgb(C_TEAL))
+
+        # Decorative polygons
+        teal_semi = self._hex_to_rgb(C_TEAL) + (60,)
+        draw.polygon(
+            [(SLIDE_SIZE - 20, 0), (SLIDE_SIZE, 0), (SLIDE_SIZE, 400), (SLIDE_SIZE - 300, 100)],
+            fill=teal_semi,
+        )
+        draw.polygon(
+            [(0, STORY_HEIGHT - 300), (200, STORY_HEIGHT - 100), (100, STORY_HEIGHT), (0, STORY_HEIGHT)],
+            fill=teal_semi,
+        )
+
+        # Cover title in center
+        title_font = self._bold(80)
+        title_lines = self._wrap_text(draw, spec.cover_title, title_font, SLIDE_SIZE - MARGIN * 2)
+        line_h = 90
+        block_h = len(title_lines) * line_h
+        y = (STORY_HEIGHT - block_h) // 2 - 60
+        for line in title_lines:
+            bbox = draw.textbbox((0, 0), line, font=title_font)
+            w = bbox[2] - bbox[0]
+            x = (SLIDE_SIZE - w) // 2
+            first_word = line.split()[0] if line.split() else ""
+            if any(c.isdigit() for c in first_word):
+                first_bbox = draw.textbbox((0, 0), first_word, font=title_font)
+                fw = first_bbox[2] - first_bbox[0]
+                draw.text((x, y), first_word, font=title_font, fill=self._hex_to_rgb(C_TEAL))
+                draw.text((x + fw, y), line[len(first_word):], font=title_font, fill=self._hex_to_rgb(C_WHITE))
+            else:
+                draw.text((x, y), line, font=title_font, fill=self._hex_to_rgb(C_WHITE))
+            y += line_h
+
+        # Teal underline
+        accent_y = y + 30
+        draw.rectangle(
+            [(SLIDE_SIZE // 2 - 100, accent_y), (SLIDE_SIZE // 2 + 100, accent_y + 5)],
+            fill=self._hex_to_rgb(C_TEAL),
+        )
+
+        # "See full post on my profile →"
+        cta_font = self._bold(32)
+        cta_text = "See full post on my profile \u2192"
+        cta_bbox = draw.textbbox((0, 0), cta_text, font=cta_font)
+        ctw = cta_bbox[2] - cta_bbox[0]
+        draw.text(
+            ((SLIDE_SIZE - ctw) // 2, accent_y + 60),
+            cta_text, font=cta_font, fill=self._hex_to_rgb(C_TEAL),
+        )
+
+        # Branding at bottom
+        brand_font = self._font(FS_FOOTER)
+        brand_text = "Dr. Akshay Thakur  |  MS Ophthalmology"
+        brand_bbox = draw.textbbox((0, 0), brand_text, font=brand_font)
+        bw = brand_bbox[2] - brand_bbox[0]
+        draw.text(
+            ((SLIDE_SIZE - bw) // 2, STORY_HEIGHT - 60),
+            brand_text, font=brand_font, fill=self._hex_to_rgb(C_TEAL),
+        )
+
+        dest = out_dir / "story_teaser.jpg"
+        img.convert("RGB").save(dest, format="JPEG", quality=92)
+        logger.info("Saved story teaser -> %s", dest)
+        return dest
 
     @staticmethod
     def cleanup_slides(paths: list[Path]) -> None:

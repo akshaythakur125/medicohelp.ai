@@ -17,8 +17,8 @@ logger = logging.getLogger(__name__)
 
 _DEFAULT_SCHEDULE: list[tuple[str, SlotType]] = [
     ("08:00", SlotType.morning_revision),
-    ("14:00", SlotType.afternoon_mcq),
-    ("20:00", SlotType.evening_revision),
+    ("13:00", SlotType.afternoon_mcq),
+    ("19:30", SlotType.evening_revision),
     ("22:00", SlotType.nightly_weak_topic),
 ]
 

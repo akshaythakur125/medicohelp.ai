@@ -163,6 +163,7 @@ class InstagramContentGenerator:
             hashtags=data.get(
                 "hashtags", ["EyeHealth", "DrAkshayThakur", "MSOphthalmologist"]
             ),
+            first_comment=data.get("first_comment", ""),
         )
 
     # ------------------------------------------------------------------
@@ -200,7 +201,8 @@ Return ONLY valid JSON (no markdown, no preamble) with this exact structure:
     }}
   ],
   "caption": "First line = matches cover energy (NEVER start with Welcome or Today). 2-3 sentences explaining the topic simply. End with: Save this 💾 Then ask a comment-bait question.",
-  "hashtags": ["DrAkshayThakur", "MSOphthalmologist", "EyeHealth", "VisionCare", "IndiaEyeCare", "Ophthalmology", "EyeTips", "HealthyEyes", "EyeDoctor", "BlurryVision"]
+  "hashtags": ["DrAkshayThakur", "MSOphthalmologist", "EyeHealth", "VisionCare", "IndiaEyeCare", "Ophthalmology", "EyeTips", "HealthyEyes", "EyeDoctor", "BlurryVision"],
+  "first_comment": "Rephrased version of the caption's comment-bait question + 10 niche hashtags: EyeSpecialist, OphthalmologyEducation, DoctorOfInstagram, MedicalAdvice, EyeDisease, VisionHealth, IndianHealthcare, EyeClinic, EyeSurgeon, MedEd"
 }}
 
 RULES:
@@ -214,6 +216,7 @@ RULES:
   • If warning — start cover with "WARNING"
 - Caption must end with "Save this 💾" and a comment-bait question (e.g. "How many hours do you spend on screens? 👇")
 - hashtags must have exactly 10, always including DrAkshayThakur and MSOphthalmologist.
+- first_comment must be a rephrased version of the caption question + the exact 10 hashtags: EyeSpecialist, OphthalmologyEducation, DoctorOfInstagram, MedicalAdvice, EyeDisease, VisionHealth, IndianHealthcare, EyeClinic, EyeSurgeon, MedEd
 - Return ONLY the raw JSON object, nothing else.
 """
 
@@ -275,6 +278,12 @@ RULES:
                     "VisionCare", "IndiaEyeCare", "BlindnessPrevention", "EyeTips",
                     "HealthyEyes", "SilentThiefOfSight",
                 ],
+                first_comment=(
+                    "When was YOUR last eye check-up? Comment below and let's normalise "
+                    "annual eye exams in India! 👇\n\n"
+                    "#EyeSpecialist #OphthalmologyEducation #DoctorOfInstagram #MedicalAdvice "
+                    "#EyeDisease #VisionHealth #IndianHealthcare #EyeClinic #EyeSurgeon #MedEd"
+                ),
             ),
             "myth_buster": CarouselSpec(
                 cover_title="MYTH: CARROTS FIX YOUR VISION",
@@ -321,6 +330,12 @@ RULES:
                     "NutritionForEyes", "IndiaEyeCare", "VisionCare", "EyeTips",
                     "HealthyEyes", "Lutein",
                 ],
+                first_comment=(
+                    "My grandma also told me to eat carrots! What eye myth did YOU "
+                    "grow up believing? Spill in the comments! 👇\n\n"
+                    "#EyeSpecialist #OphthalmologyEducation #DoctorOfInstagram #MedicalAdvice "
+                    "#EyeDisease #VisionHealth #IndianHealthcare #EyeClinic #EyeSurgeon #MedEd"
+                ),
             ),
             "shocking_stat": CarouselSpec(
                 cover_title="70% OF BLINDNESS IN INDIA IS AVOIDABLE",
@@ -369,6 +384,12 @@ RULES:
                     "IndiaEyeCare", "CataractAwareness", "VisionCare", "EyeTips",
                     "HealthyEyes", "NationalBlindnessProgramme",
                 ],
+                first_comment=(
+                    "When did your parents last visit an eye doctor? Tag them below — "
+                    "it could save their sight! 👇\n\n"
+                    "#EyeSpecialist #OphthalmologyEducation #DoctorOfInstagram #MedicalAdvice "
+                    "#EyeDisease #VisionHealth #IndianHealthcare #EyeClinic #EyeSurgeon #MedEd"
+                ),
             ),
         }
 

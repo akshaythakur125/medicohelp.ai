@@ -109,6 +109,63 @@ class InstagramPoster:
         logger.info("Instagram single image published: post_id=%s", post_id)
         return post_id
 
+    async def post_first_comment(self, media_id: str, comment_text: str) -> str:
+        """Post a first comment on a published media object.
+
+        The Instagram algorithm treats an immediate comment as a strong
+        engagement signal, increasing the likelihood of pushing the post
+        to new audiences.
+
+        Returns the comment ID.
+        """
+        self._require_configured()
+
+        logger.info("Posting first comment on media %s", media_id)
+        async with httpx.AsyncClient(timeout=30) as client:
+            response = await client.post(
+                f"{GRAPH_API_BASE}/{media_id}/comments",
+                params={
+                    "message": comment_text,
+                    "access_token": self.settings.instagram_access_token,
+                },
+            )
+            self._raise_for_api_error(response, "post first comment")
+
+        result = response.json()
+        comment_id: str = result.get("id", "")
+        logger.info("First comment posted: comment_id=%s", comment_id)
+        return comment_id
+
+    async def post_story(self, image_path: Path) -> str:
+        """Upload an image to imgbb and post it as an Instagram Story.
+
+        Returns the published story media ID.
+        """
+        self._require_configured()
+
+        logger.info("Posting Instagram Story: %s", image_path.name)
+        url = await self.upload_to_imgbb(image_path)
+
+        async with httpx.AsyncClient(timeout=60) as client:
+            response = await client.post(
+                f"{GRAPH_API_BASE}/{self.settings.instagram_user_id}/media",
+                params={
+                    "media_type": "STORIES",
+                    "image_url": url,
+                    "access_token": self.settings.instagram_access_token,
+                },
+            )
+            self._raise_for_api_error(response, "create story container")
+
+        container_id: str = response.json()["id"]
+        logger.debug("Created story container: %s", container_id)
+
+        await asyncio.sleep(2)
+
+        story_id = await self._publish_media(container_id)
+        logger.info("Instagram Story published: story_id=%s", story_id)
+        return story_id
+
     async def refresh_access_token(self) -> str:
         """Refresh the long-lived Instagram access token.
 

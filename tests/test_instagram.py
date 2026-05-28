@@ -490,6 +490,119 @@ def test_doctor_photo_with_static_image():
 
 
 # ---------------------------------------------------------------------------
+# first_comment field
+# ---------------------------------------------------------------------------
+
+
+def test_carousel_spec_first_comment_default():
+    spec = CarouselSpec(cover_title="T", cover_subtitle="")
+    assert spec.first_comment == ""
+
+
+def test_mock_carousels_have_first_comment():
+    settings = get_settings()
+    gen = InstagramContentGenerator(settings)
+
+    from app.services.instagram_content import POST_FORMATS
+    for fmt in POST_FORMATS:
+        spec = gen._mock_carousel("test topic", fmt=fmt)
+        assert spec.first_comment
+        assert "EyeSpecialist" in spec.first_comment
+        assert "OphthalmologyEducation" in spec.first_comment
+        assert "DoctorOfInstagram" in spec.first_comment
+        assert len(spec.first_comment) > 50
+
+
+def test_generate_carousel_includes_first_comment():
+    settings = get_settings()
+    gen = InstagramContentGenerator(settings)
+
+    import asyncio
+    spec = asyncio.run(gen.generate_carousel(topic="test"))
+    assert hasattr(spec, "first_comment")
+    # Should be populated from mock data
+    assert spec.first_comment
+
+
+# ---------------------------------------------------------------------------
+# Story teaser
+# ---------------------------------------------------------------------------
+
+
+def test_story_teaser_generates_vertical_image():
+    gen = CarouselGenerator()
+    spec = CarouselSpec(
+        cover_title="5 WARNING SIGNS",
+        cover_subtitle="Know what to look for",
+        points=[],
+    )
+    path = gen.generate_story_teaser(spec)
+    try:
+        assert path.exists()
+        img = Image.open(path)
+        assert img.size == (1080, 1920), f"Expected 1080x1920, got {img.size}"
+        img.close()
+    finally:
+        path.unlink(missing_ok=True)
+
+
+def test_story_teaser_has_branding():
+    gen = CarouselGenerator()
+    spec = CarouselSpec(
+        cover_title="MYTH BUSTER",
+        cover_subtitle="Separating fact from fiction",
+        points=[],
+    )
+    path = gen.generate_story_teaser(spec)
+    try:
+        assert "story_teaser" in path.name
+    finally:
+        path.unlink(missing_ok=True)
+
+
+def test_story_teaser_multiple_calls_produce_consistent_output():
+    gen = CarouselGenerator()
+    spec1 = CarouselSpec(cover_title="TOPIC A", cover_subtitle="Sub A", points=[])
+    spec2 = CarouselSpec(cover_title="TOPIC B", cover_subtitle="Sub B", points=[])
+    path1 = gen.generate_story_teaser(spec1)
+    path2 = gen.generate_story_teaser(spec2)
+    try:
+        assert path1.exists()
+        assert path2.exists()
+        img1 = Image.open(path1)
+        img2 = Image.open(path2)
+        assert img1.size == img2.size == (1080, 1920)
+        img1.close()
+        img2.close()
+    finally:
+        path1.unlink(missing_ok=True)
+        path2.unlink(missing_ok=True)
+
+
+# ---------------------------------------------------------------------------
+# InstagramPoster new methods (validation only — no real API calls)
+# ---------------------------------------------------------------------------
+
+
+def test_post_first_comment_requires_config():
+    import asyncio
+    settings = get_settings()
+    poster = InstagramPoster(settings)
+    import pytest
+    with pytest.raises(RuntimeError, match="not fully configured"):
+        asyncio.run(poster.post_first_comment("123", "test comment"))
+
+
+def test_post_story_requires_config():
+    import asyncio
+    settings = get_settings()
+    poster = InstagramPoster(settings)
+    import pytest
+    with pytest.raises(RuntimeError, match="not fully configured"):
+        asyncio.run(poster.post_story(Path("/tmp/nonexistent.jpg")))
+
+
+# ---------------------------------------------------------------------------
 # /instagram/status endpoint logic
 # ---------------------------------------------------------------------------
 
