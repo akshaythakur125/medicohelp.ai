@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -24,15 +25,21 @@ C_LIGHT_BG = "#F4F9FB"
 C_DARK_TEXT = "#1A1A2E"
 C_MID_TEXT = "#4A5568"
 C_GOLD = "#F2C94C"
+# Slide-type accent colours
+C_PROBLEM = "#B03A2E"   # warning-red header for 'THE PROBLEM' slide
+C_INSIGHT = "#0D7377"   # deep teal header for 'KEY INSIGHT' slide
+C_AMBER = "#E67E22"     # amber strip accent
 
 # Font sizes
-FS_COVER_TITLE = 72
+FS_COVER_TITLE = 76
 FS_COVER_SUBTITLE = 36
-FS_CONTENT_HEADER = 40
-FS_CONTENT_BODY = 32
-FS_CTA_TITLE = 60
+FS_CONTENT_HEADER = 38
+FS_CONTENT_BODY = 31
+FS_CTA_TITLE = 58
 FS_FOOTER = 26
 FS_ICON_EMOJI = 54
+FS_BADGE = 22
+FS_SWIPE = 28
 
 # DejaVu font paths (present on Debian/Ubuntu)
 _DEJAVU_DIR = Path("/usr/share/fonts/truetype/dejavu")
@@ -75,7 +82,6 @@ class CarouselSpec:
         """Build the ordered list of SlideSpec objects."""
         slides: list[SlideSpec] = []
 
-        # Cover
         slides.append(
             SlideSpec(
                 slide_type="cover",
@@ -84,7 +90,6 @@ class CarouselSpec:
             )
         )
 
-        # Content slides
         total_content = len(self.points)
         for idx, point in enumerate(self.points, start=1):
             slides.append(
@@ -98,7 +103,6 @@ class CarouselSpec:
                 )
             )
 
-        # CTA
         slides.append(SlideSpec(slide_type="cta", title="Follow for more\nEye Health Tips"))
 
         return slides
@@ -136,7 +140,7 @@ class CarouselGenerator:
 
             filename = f"slide_{i:02d}_{ss.slide_type}.jpg"
             dest = out_dir / filename
-            img.convert("RGB").save(dest, format="JPEG", quality=92)
+            img.convert("RGB").save(dest, format="JPEG", quality=95)
             logger.debug("Saved slide %d -> %s", i, dest)
             paths.append(dest)
 
@@ -158,108 +162,135 @@ class CarouselGenerator:
     # ------------------------------------------------------------------
 
     def _draw_cover(self, spec: SlideSpec) -> Image.Image:
-        """Dark navy cover slide with teal polygon decorations."""
+        """Dark navy cover — scroll-stopping layout with accent polygons."""
         img = Image.new("RGBA", (SLIDE_SIZE, SLIDE_SIZE), self._hex_to_rgb(C_NAVY) + (255,))
         draw = ImageDraw.Draw(img, "RGBA")
 
         teal_semi = self._hex_to_rgb(C_TEAL) + (90,)
+        teal_faint = self._hex_to_rgb(C_TEAL) + (45,)
 
-        # Large triangle in top-right corner
+        # Large triangle top-right
         draw.polygon(
-            [
-                (SLIDE_SIZE - 20, 0),
-                (SLIDE_SIZE, 0),
-                (SLIDE_SIZE, 320),
-                (SLIDE_SIZE - 260, 80),
-            ],
+            [(SLIDE_SIZE - 20, 0), (SLIDE_SIZE, 0), (SLIDE_SIZE, 340), (SLIDE_SIZE - 280, 80)],
             fill=teal_semi,
         )
-        # Smaller accent triangle top-right
         draw.polygon(
-            [
-                (SLIDE_SIZE - 160, 0),
-                (SLIDE_SIZE - 20, 0),
-                (SLIDE_SIZE - 260, 180),
-            ],
-            fill=self._hex_to_rgb(C_TEAL) + (50,),
+            [(SLIDE_SIZE - 170, 0), (SLIDE_SIZE - 20, 0), (SLIDE_SIZE - 280, 190)],
+            fill=teal_faint,
         )
-        # Medium diamond in bottom-left corner
+        # Diamond bottom-left
         draw.polygon(
-            [
-                (0, SLIDE_SIZE - 260),
-                (180, SLIDE_SIZE - 80),
-                (80, SLIDE_SIZE),
-                (0, SLIDE_SIZE),
-            ],
+            [(0, SLIDE_SIZE - 280), (190, SLIDE_SIZE - 80), (80, SLIDE_SIZE), (0, SLIDE_SIZE)],
             fill=teal_semi,
         )
-        # Tiny accent near bottom-left
         draw.polygon(
-            [
-                (0, SLIDE_SIZE - 120),
-                (100, SLIDE_SIZE - 40),
-                (0, SLIDE_SIZE - 20),
-            ],
-            fill=self._hex_to_rgb(C_TEAL) + (50,),
+            [(0, SLIDE_SIZE - 130), (110, SLIDE_SIZE - 40), (0, SLIDE_SIZE - 20)],
+            fill=teal_faint,
         )
 
-        # --- Title ---
+        # --- Teal top accent strip ---
+        draw.rectangle([(0, 0), (SLIDE_SIZE, 8)], fill=self._hex_to_rgb(C_TEAL))
+
+        # --- Title with number accent ---
         title_font = self._bold(FS_COVER_TITLE)
-        title_lines = self._wrap_text(draw, spec.title.upper(), title_font, SLIDE_SIZE - MARGIN * 2)
+        title_text = spec.title.upper()
+        title_lines = self._wrap_text(draw, title_text, title_font, SLIDE_SIZE - MARGIN * 2)
 
-        line_h = FS_COVER_TITLE + 12
+        line_h = FS_COVER_TITLE + 14
         block_h = len(title_lines) * line_h
-        sub_h = FS_COVER_SUBTITLE + 20 if spec.subtitle else 0
-        total_h = block_h + sub_h
-        y = (SLIDE_SIZE - total_h) // 2 - 20
+        sub_h = FS_COVER_SUBTITLE + 24 if spec.subtitle else 0
+        total_h = block_h + sub_h + 30
+        y = (SLIDE_SIZE - total_h) // 2 - 30
 
         for line in title_lines:
-            bbox = draw.textbbox((0, 0), line, font=title_font)
-            w = bbox[2] - bbox[0]
-            x = (SLIDE_SIZE - w) // 2
-            draw.text((x, y), line, font=title_font, fill=self._hex_to_rgb(C_WHITE))
+            self._draw_line_with_number_accent(draw, line, title_font, y)
             y += line_h
 
         # --- Subtitle ---
         if spec.subtitle:
-            y += 10
+            y += 14
             sub_font = self._font(FS_COVER_SUBTITLE)
-            sub_lines = self._wrap_text(draw, spec.subtitle, sub_font, SLIDE_SIZE - MARGIN * 2)
+            sub_lines = self._wrap_text(draw, spec.subtitle, sub_font, SLIDE_SIZE - MARGIN * 3)
             for line in sub_lines:
                 bbox = draw.textbbox((0, 0), line, font=sub_font)
                 w = bbox[2] - bbox[0]
                 x = (SLIDE_SIZE - w) // 2
-                draw.text((x, y), line, font=sub_font, fill=self._hex_to_rgb(C_WHITE))
-                y += FS_COVER_SUBTITLE + 8
+                draw.text((x, y), line, font=sub_font, fill=(*self._hex_to_rgb(C_WHITE), 210))
+                y += FS_COVER_SUBTITLE + 10
 
         # --- Teal underline accent ---
-        accent_y = min(y + 20, SLIDE_SIZE - 80)
-        accent_w = 160
+        accent_y = min(y + 18, SLIDE_SIZE - 100)
+        accent_w = 180
         draw.rectangle(
-            [
-                (SLIDE_SIZE // 2 - accent_w // 2, accent_y),
-                (SLIDE_SIZE // 2 + accent_w // 2, accent_y + 5),
-            ],
+            [(SLIDE_SIZE // 2 - accent_w // 2, accent_y),
+             (SLIDE_SIZE // 2 + accent_w // 2, accent_y + 5)],
+            fill=self._hex_to_rgb(C_TEAL),
+        )
+
+        # --- Branding bottom-left ---
+        brand_font = self._font(FS_FOOTER)
+        brand_text = "Dr. Akshay Thakur  |  MS Ophthalmology"
+        draw.text(
+            (MARGIN, SLIDE_SIZE - 52),
+            brand_text,
+            font=brand_font,
+            fill=(*self._hex_to_rgb(C_WHITE), 180),
+        )
+
+        # --- SWIPE indicator bottom-right ---
+        swipe_font = self._bold(FS_SWIPE)
+        swipe_text = "SWIPE →"
+        bbox = draw.textbbox((0, 0), swipe_text, font=swipe_font)
+        sw = bbox[2] - bbox[0]
+        draw.text(
+            (SLIDE_SIZE - sw - MARGIN, SLIDE_SIZE - 52),
+            swipe_text,
+            font=swipe_font,
             fill=self._hex_to_rgb(C_TEAL),
         )
 
         return img
 
     def _draw_content(self, spec: SlideSpec) -> Image.Image:
-        """Light background content slide with header bar and branding footer."""
+        """Content slide — visual treatment varies by slide position."""
         img = Image.new("RGBA", (SLIDE_SIZE, SLIDE_SIZE), self._hex_to_rgb(C_LIGHT_BG) + (255,))
         draw = ImageDraw.Draw(img, "RGBA")
 
-        HEADER_H = 120
-        FOOTER_H = 55
-        ICON_RADIUS = 60
+        HEADER_H = 128
+        FOOTER_H = 56
+        ICON_RADIUS = 58
+        STRIP_H = 8  # coloured top strip
+
+        is_problem = spec.slide_num == 1
+        is_insight = spec.slide_num == 2
+
+        # --- Coloured top strip ---
+        if is_problem:
+            strip_color = C_AMBER
+        elif is_insight:
+            strip_color = C_GOLD
+        else:
+            strip_color = C_TEAL
+        draw.rectangle([(0, 0), (SLIDE_SIZE, STRIP_H)], fill=self._hex_to_rgb(strip_color))
 
         # --- Header bar ---
-        draw.rectangle([(0, 0), (SLIDE_SIZE, HEADER_H)], fill=self._hex_to_rgb(C_NAVY))
+        if is_problem:
+            header_bg = C_PROBLEM
+        elif is_insight:
+            header_bg = C_INSIGHT
+        else:
+            header_bg = C_NAVY
+        draw.rectangle(
+            [(0, STRIP_H), (SLIDE_SIZE, STRIP_H + HEADER_H)],
+            fill=self._hex_to_rgb(header_bg),
+        )
+
         header_font = self._bold(FS_CONTENT_HEADER)
-        header_text = f"Sign {spec.slide_num}: {spec.title}" if spec.slide_num else spec.title
-        header_lines = self._wrap_text(draw, header_text, header_font, SLIDE_SIZE - MARGIN * 2)
-        hy = (HEADER_H - len(header_lines) * (FS_CONTENT_HEADER + 4)) // 2
+        header_text = spec.title
+        header_lines = self._wrap_text(
+            draw, header_text, header_font, SLIDE_SIZE - MARGIN * 2
+        )
+        hy = STRIP_H + (HEADER_H - len(header_lines) * (FS_CONTENT_HEADER + 4)) // 2
         for line in header_lines:
             bbox = draw.textbbox((0, 0), line, font=header_font)
             lw = bbox[2] - bbox[0]
@@ -270,6 +301,29 @@ class CarouselGenerator:
                 fill=self._hex_to_rgb(C_WHITE),
             )
             hy += FS_CONTENT_HEADER + 4
+
+        # --- "SAVE \U0001f4be" badge on key insight slide ---
+        if is_insight:
+            badge_text = "SAVE \U0001f4be"
+            badge_font = self._bold(FS_BADGE)
+            bb = draw.textbbox((0, 0), badge_text, font=badge_font)
+            bw, bh = bb[2] - bb[0], bb[3] - bb[1]
+            pad_x, pad_y = 16, 8
+            badge_x = SLIDE_SIZE - bw - pad_x * 2 - 12
+            badge_y = STRIP_H + HEADER_H + 14
+            draw.rounded_rectangle(
+                [(badge_x - pad_x, badge_y - pad_y),
+                 (badge_x + bw + pad_x, badge_y + bh + pad_y)],
+                radius=12,
+                fill=self._hex_to_rgb(C_GOLD),
+            )
+            draw.text(
+                (badge_x, badge_y),
+                badge_text,
+                font=badge_font,
+                fill=self._hex_to_rgb(C_DARK_TEXT),
+                embedded_color=True,
+            )
 
         # --- Branding footer ---
         draw.rectangle(
@@ -288,22 +342,25 @@ class CarouselGenerator:
         )
 
         # --- Body layout bounds ---
-        body_top = HEADER_H + MARGIN
-        dot_area_top = SLIDE_SIZE - FOOTER_H - 40
+        body_top = STRIP_H + HEADER_H + MARGIN
+        dot_area_top = SLIDE_SIZE - FOOTER_H - 44
         body_bottom = dot_area_top - 10
         body_h = body_bottom - body_top
 
-        # --- Icon circle (teal) ---
+        # --- Icon circle (colour matches slide type) ---
+        if is_problem:
+            icon_color = C_PROBLEM
+        elif is_insight:
+            icon_color = C_GOLD
+        else:
+            icon_color = C_TEAL
         icon_cx = MARGIN + ICON_RADIUS
         icon_cy = body_top + body_h // 2
         draw.ellipse(
-            [
-                (icon_cx - ICON_RADIUS, icon_cy - ICON_RADIUS),
-                (icon_cx + ICON_RADIUS, icon_cy + ICON_RADIUS),
-            ],
-            fill=self._hex_to_rgb(C_TEAL),
+            [(icon_cx - ICON_RADIUS, icon_cy - ICON_RADIUS),
+             (icon_cx + ICON_RADIUS, icon_cy + ICON_RADIUS)],
+            fill=self._hex_to_rgb(icon_color),
         )
-        # Emoji inside circle
         emoji_font = self._bold(FS_ICON_EMOJI)
         try:
             ebbox = draw.textbbox((0, 0), spec.icon_emoji, font=emoji_font)
@@ -317,10 +374,8 @@ class CarouselGenerator:
             )
         except Exception:
             draw.text(
-                (icon_cx - 10, icon_cy - 14),
-                "+",
-                font=self._bold(36),
-                fill=self._hex_to_rgb(C_WHITE),
+                (icon_cx - 10, icon_cy - 14), "+",
+                font=self._bold(36), fill=self._hex_to_rgb(C_WHITE),
             )
 
         # --- Body text ---
@@ -328,7 +383,7 @@ class CarouselGenerator:
         text_max_w = SLIDE_SIZE - text_x - MARGIN
         body_font = self._font(FS_CONTENT_BODY)
         body_lines = self._wrap_text(draw, spec.body_text, body_font, text_max_w)
-        line_h = FS_CONTENT_BODY + 10
+        line_h = FS_CONTENT_BODY + 12
         total_text_h = len(body_lines) * line_h
         ty = icon_cy - total_text_h // 2
         for line in body_lines:
@@ -342,22 +397,24 @@ class CarouselGenerator:
         return img
 
     def _draw_cta(self, spec: SlideSpec) -> Image.Image:
-        """Dark CTA/outro slide."""
+        """Dark CTA/outro slide — follow + save prompt."""
         img = Image.new("RGBA", (SLIDE_SIZE, SLIDE_SIZE), self._hex_to_rgb(C_NAVY) + (255,))
         draw = ImageDraw.Draw(img, "RGBA")
 
         teal_semi = self._hex_to_rgb(C_TEAL) + (60,)
-        draw.polygon([(SLIDE_SIZE - 180, 0), (SLIDE_SIZE, 0), (SLIDE_SIZE, 180)], fill=teal_semi)
-        draw.polygon([(0, SLIDE_SIZE - 180), (180, SLIDE_SIZE), (0, SLIDE_SIZE)], fill=teal_semi)
+        draw.polygon([(SLIDE_SIZE - 200, 0), (SLIDE_SIZE, 0), (SLIDE_SIZE, 200)], fill=teal_semi)
+        draw.polygon([(0, SLIDE_SIZE - 200), (200, SLIDE_SIZE), (0, SLIDE_SIZE)], fill=teal_semi)
+        # Gold top strip
+        draw.rectangle([(0, 0), (SLIDE_SIZE, 8)], fill=self._hex_to_rgb(C_GOLD))
 
         center_x = SLIDE_SIZE // 2
-        eye_font = self._bold(120)
+        eye_font = self._bold(110)
         eye_emoji = "\U0001f441"
         text_start_y = SLIDE_SIZE // 2 - 200
         try:
             ebbox = draw.textbbox((0, 0), eye_emoji, font=eye_font)
             ew, eh = ebbox[2] - ebbox[0], ebbox[3] - ebbox[1]
-            eye_y = SLIDE_SIZE // 2 - 280
+            eye_y = SLIDE_SIZE // 2 - 270
             draw.text(
                 (center_x - ew // 2, eye_y),
                 eye_emoji,
@@ -365,41 +422,36 @@ class CarouselGenerator:
                 fill=self._hex_to_rgb(C_WHITE),
                 embedded_color=True,
             )
-            text_start_y = eye_y + eh + 30
+            text_start_y = eye_y + eh + 28
         except Exception:
             pass
 
-        # CTA text lines
+        # CTA text
         cta_font = self._bold(FS_CTA_TITLE)
         cta_lines = spec.title.split("\n") if "\n" in spec.title else [spec.title]
         ty = text_start_y
         for line in cta_lines:
             bbox = draw.textbbox((0, 0), line, font=cta_font)
             lw = bbox[2] - bbox[0]
-            draw.text(
-                (center_x - lw // 2, ty),
-                line,
-                font=cta_font,
-                fill=self._hex_to_rgb(C_WHITE),
-            )
+            draw.text((center_x - lw // 2, ty), line, font=cta_font,
+                      fill=self._hex_to_rgb(C_WHITE))
             ty += FS_CTA_TITLE + 14
 
         # Teal divider
-        ty += 20
+        ty += 18
         div_w = 200
         draw.rectangle(
             [(center_x - div_w // 2, ty), (center_x + div_w // 2, ty + 4)],
             fill=self._hex_to_rgb(C_TEAL),
         )
-        ty += 32
+        ty += 30
 
         # Doctor name in gold
         doc_font = self._font(FS_CONTENT_HEADER)
         doc_text = "Dr. Akshay Thakur"
         bbox = draw.textbbox((0, 0), doc_text, font=doc_font)
-        dw = bbox[2] - bbox[0]
         draw.text(
-            (center_x - dw // 2, ty),
+            (center_x - (bbox[2] - bbox[0]) // 2, ty),
             doc_text,
             font=doc_font,
             fill=self._hex_to_rgb(C_GOLD),
@@ -410,12 +462,24 @@ class CarouselGenerator:
         desig_font = self._font(FS_FOOTER)
         desig_text = "MS Ophthalmologist"
         bbox = draw.textbbox((0, 0), desig_text, font=desig_font)
-        desw = bbox[2] - bbox[0]
         draw.text(
-            (center_x - desw // 2, ty),
+            (center_x - (bbox[2] - bbox[0]) // 2, ty),
             desig_text,
             font=desig_font,
             fill=self._hex_to_rgb(C_WHITE),
+        )
+        ty += FS_FOOTER + 28
+
+        # Save + follow nudge
+        nudge_font = self._font(FS_BADGE + 2)
+        nudge_text = "\U0001f4be Save  •  \U0001f501 Share  •  \U0001f4ac Comment"
+        bbox = draw.textbbox((0, 0), nudge_text, font=nudge_font)
+        draw.text(
+            (center_x - (bbox[2] - bbox[0]) // 2, ty),
+            nudge_text,
+            font=nudge_font,
+            fill=(*self._hex_to_rgb(C_WHITE), 160),
+            embedded_color=True,
         )
 
         return img
@@ -424,15 +488,37 @@ class CarouselGenerator:
     # Drawing helpers
     # ------------------------------------------------------------------
 
+    def _draw_line_with_number_accent(self,
+                                      draw: ImageDraw.ImageDraw,
+                                      line: str,
+                                      font: ImageFont.FreeTypeFont,
+                                      y: int) -> None:
+        """Draw a title line, colouring any leading digit/number in teal."""
+        bbox = draw.textbbox((0, 0), line, font=font)
+        total_w = bbox[2] - bbox[0]
+        x = (SLIDE_SIZE - total_w) // 2
+
+        # Check if line starts with a number
+        match = re.match(r"^(\d+)(.*)", line)
+        if match:
+            num_part = match.group(1)
+            rest_part = match.group(2)
+            num_bbox = draw.textbbox((0, 0), num_part, font=font)
+            num_w = num_bbox[2] - num_bbox[0]
+            draw.text((x, y), num_part, font=font, fill=self._hex_to_rgb(C_TEAL))
+            draw.text((x + num_w, y), rest_part, font=font, fill=self._hex_to_rgb(C_WHITE))
+        else:
+            draw.text((x, y), line, font=font, fill=self._hex_to_rgb(C_WHITE))
+
     def _draw_progress_dots(
         self, draw: ImageDraw.ImageDraw, current: int, total: int
     ) -> None:
-        """Draw small progress indicator dots near the bottom of the slide."""
+        """Small progress indicator dots near the slide bottom."""
         DOT_R = 7
         DOT_GAP = 22
         total_w = total * (DOT_R * 2) + (total - 1) * (DOT_GAP - DOT_R * 2)
         start_x = (SLIDE_SIZE - total_w) // 2
-        cy = 1040
+        cy = 1038
         teal_rgb = self._hex_to_rgb(C_TEAL)
         navy_rgb = self._hex_to_rgb(C_NAVY)
         white_rgb = self._hex_to_rgb(C_WHITE)
