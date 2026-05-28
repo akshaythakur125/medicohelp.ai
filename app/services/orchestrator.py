@@ -44,6 +44,9 @@ from app.services.quality import ContentQualityGate
 from app.services.retry_queue import RetryQueue
 from app.services.storage import PostLogStore
 from app.services.telegram import TelegramPoster
+from app.services.instagram import InstagramPoster
+from app.services.carousel_generator import CarouselGenerator
+from app.services.instagram_content import InstagramContentGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +61,9 @@ class PostOrchestrator:
         self.quality_gate = ContentQualityGate()
         self.content_strategy = ContentStrategy()
         self.telegram = TelegramPoster(settings)
+        self.instagram = InstagramPoster(settings)
+        self._carousel_gen = CarouselGenerator()
+        self._instagram_content = InstagramContentGenerator(settings)
         self.store = PostLogStore(settings)
         self._engine = SmartContentEngine(settings)
         self._analytics = ContentAnalytics(settings.logs_dir)
@@ -162,6 +168,40 @@ class PostOrchestrator:
             subject=content.subject,
         )
         self._analytics.record_post(content)
+
+    # ── Instagram ────────────────────────────────────────────────────────
+
+    async def generate_instagram_post(self, topic: str | None = None) -> dict:
+        """Generate and post an Instagram educational carousel (or single image).
+
+        Returns a dict with keys: post_id, slide_count, topic
+        — or skipped=True with a reason if Instagram is not enabled/configured.
+        """
+        if not self.settings.instagram_enabled:
+            return {"skipped": True, "reason": "Instagram not enabled"}
+        if not self.instagram.is_configured:
+            return {"skipped": True, "reason": "Instagram credentials not set"}
+
+        spec = await self._instagram_content.generate_carousel(topic)
+        slide_paths = self._carousel_gen.generate_slides(spec)
+        caption = spec.full_caption()
+
+        if len(slide_paths) >= 2:
+            post_id = await self.instagram.post_carousel(slide_paths, caption)
+        else:
+            post_id = await self.instagram.post_single_image(slide_paths[0], caption)
+
+        logger.info(
+            "Instagram posted: %s (%d slides, topic=%s)",
+            post_id,
+            len(slide_paths),
+            spec.cover_title,
+        )
+        return {
+            "post_id": post_id,
+            "slide_count": len(slide_paths),
+            "topic": spec.cover_title,
+        }
 
     # ── Helpers ──────────────────────────────────────────────────────────
 
