@@ -76,7 +76,7 @@ class PostOrchestrator:
 
         self.content_strategy.set_weak_provider(self._get_weak_list)
 
-    # ── Public API ───────────────────────────────────────────────────────
+    # ── Public API ──────────────────────────────────────────────────────────────────
 
     @property
     def paused(self) -> bool:
@@ -172,7 +172,7 @@ class PostOrchestrator:
         )
         self._analytics.record_post(content)
 
-    # ── Instagram ────────────────────────────────────────────────────────
+    # ── Instagram ────────────────────────────────────────────────────────────────
 
     async def generate_instagram_post(self, topic: str | None = None) -> dict:
         """Generate and post an Instagram educational carousel (or single image).
@@ -186,13 +186,18 @@ class PostOrchestrator:
             return {"skipped": True, "reason": "Instagram credentials not set"}
 
         spec = await self._instagram_content.generate_carousel(topic)
-        slide_paths = self._carousel_gen.generate_slides(spec)
-        caption = spec.full_caption()
+        slide_paths: list[Path] = []
 
-        if len(slide_paths) >= 2:
-            post_id = await self.instagram.post_carousel(slide_paths, caption)
-        else:
-            post_id = await self.instagram.post_single_image(slide_paths[0], caption)
+        try:
+            slide_paths = self._carousel_gen.generate_slides(spec)
+            caption = spec.full_caption()
+
+            if len(slide_paths) >= 2:
+                post_id = await self.instagram.post_carousel(slide_paths, caption)
+            else:
+                post_id = await self.instagram.post_single_image(slide_paths[0], caption)
+        finally:
+            self._carousel_gen.cleanup_slides(slide_paths)
 
         logger.info(
             "Instagram posted: %s (%d slides, topic=%s)",
@@ -201,7 +206,7 @@ class PostOrchestrator:
             spec.cover_title,
         )
 
-        # Generation 2: Story teaser + first comment for algorithm boost
+        # Algorithm boost: story teaser + immediate first comment
         story_path: Path | None = None
         story_posted = False
         first_comment_posted = False
@@ -237,7 +242,7 @@ class PostOrchestrator:
             "first_comment_posted": first_comment_posted,
         }
 
-    # ── Helpers ──────────────────────────────────────────────────────────
+    # ── Helpers ──────────────────────────────────────────────────────────────
 
     def _library_fallback(self, subject: Subject | None = None) -> GeneratedContent | None:
         try:
@@ -256,7 +261,7 @@ class PostOrchestrator:
     def _get_weak_list(self) -> list[dict]:
         return self._engine.weak_topics(threshold=0.6, min_attempts=1)
 
-    # ── Education Mode ──────────────────────────────────────────────────
+    # ── Education Mode ────────────────────────────────────────────────────────
 
     def _get_active_education_mode(self) -> EducationMode:
         mode_name = self.settings.education_mode
@@ -274,7 +279,7 @@ class PostOrchestrator:
                 return desc
         return f"Unknown mode: {mode_name}. Available: comprehensive, first_year_mbbs, final_year_revision, neet_pg_revision, inicet_high_yield, emergency_5_min"
 
-    # ── Engagement ──────────────────────────────────────────────────────
+    # ── Engagement ──────────────────────────────────────────────────────────────
 
     async def generate_daily_challenge(self, publish_to_telegram: bool = True) -> GenerateResponse | None:
         """Generate and optionally publish the daily challenge MCQ."""
@@ -346,19 +351,19 @@ class PostOrchestrator:
         stats = self._engagement.stats
         acc = self._engagement.accuracy_pct()
         lines = [
-            "📊 <b>Your Engagement Summary</b>\n",
-            f"🔥 Current streak: <b>{stats.current_streak} days</b>",
-            f"🏆 Longest streak: <b>{stats.longest_streak} days</b>",
-            f"📝 Total answered: <b>{stats.total_attempted}</b>",
+            "\U0001f4ca <b>Your Engagement Summary</b>\n",
+            f"\U0001f525 Current streak: <b>{stats.current_streak} days</b>",
+            f"\U0001f3c6 Longest streak: <b>{stats.longest_streak} days</b>",
+            f"\U0001f4dd Total answered: <b>{stats.total_attempted}</b>",
             f"✅ Correct: <b>{stats.total_correct}</b>",
-            f"🎯 Accuracy: <b>{acc:.1f}%</b>",
+            f"\U0001f3af Accuracy: <b>{acc:.1f}%</b>",
         ]
         if stats.weekly_battle_active:
             lines.append(f"⚔️ Battle score: <b>{stats.weekly_battle_score} pts</b>")
         text = "\n".join(lines)
         return await self.telegram.send_message(text)
 
-    # ── Education Mode Filtering ───────────────────────────────────────
+    # ── Education Mode Filtering ───────────────────────────────────────────────
 
     def _filter_subject_by_mode(self, subject: Subject) -> Subject | None:
         """Return None if the subject is excluded by current education mode."""
@@ -372,7 +377,7 @@ class PostOrchestrator:
         normalized_tags = [tag if tag.startswith("#") else f"#{tag}" for tag in hashtags]
         return f"{caption.strip()}\n\n{' '.join(normalized_tags)}".strip()
 
-    # ── News ─────────────────────────────────────────────────────────────
+    # ── News ───────────────────────────────────────────────────────────────────
 
     async def fetch_latest_news(self, topic: NewsTopic) -> list[NewsItem]:
         if topic == NewsTopic.residency:
@@ -405,7 +410,7 @@ class PostOrchestrator:
             )
             raise
 
-    # ── Planned post (called by scheduler) ───────────────────────────────
+    # ── Planned post (called by scheduler) ─────────────────────────────────────
 
     async def generate_planned_post(
         self,
@@ -502,7 +507,7 @@ class PostOrchestrator:
             publish_to_telegram=publish_to_telegram,
         )
 
-    # ── Lane generators ──────────────────────────────────────────────────
+    # ── Lane generators ──────────────────────────────────────────────────────────
 
     async def generate_poll_post(
         self,
@@ -569,7 +574,7 @@ class PostOrchestrator:
         if publish_to_telegram:
             tag = content.difficulty or "medium"
             header = (
-                f"🎯 <b>MCQ Variant</b> | {_subj_name(content)} | "
+                f"\U0001f3af <b>MCQ Variant</b> | {_subj_name(content)} | "
                 f"Difficulty: <b>{tag.upper()}</b>\n\n"
             )
             full = header + format_for_telegram(content)
@@ -610,7 +615,7 @@ class PostOrchestrator:
         accuracy = weakest.get("accuracy", 0.5)
         attempts = weakest.get("total_attempts", 1)
         header = (
-            f"🔁 <b>Weak Topic Recall</b>\n"
+            f"\U0001f501 <b>Weak Topic Recall</b>\n"
             f"Accuracy: {accuracy:.0%} ({attempts} attempts)\n"
             f"Topic: <b>{weakest['title']}</b>\n\n"
         )
@@ -680,7 +685,7 @@ class PostOrchestrator:
 
         telegram_posted = False
         if publish_to_telegram and pack:
-            header = "📦 <b>Daily Revision Pack</b>\n5 quick questions — one per subject!\n"
+            header = "\U0001f4e6 <b>Daily Revision Pack</b>\n5 quick questions — one per subject!\n"
             await self.telegram.send_message(header)
             for i, item in enumerate(pack, 1):
                 self._record_post(item, telegram_posted=True)
@@ -723,7 +728,7 @@ class PostOrchestrator:
             )
         return result
 
-    # ── Stats ────────────────────────────────────────────────────────────
+    # ── Stats ───────────────────────────────────────────────────────────────────
 
     def get_engine_stats(self) -> dict:
         from app.services.content_engine import SmartContentEngine
@@ -750,7 +755,7 @@ class PostOrchestrator:
         )
 
 
-# ── Module-level helpers ──────────────────────────────────────────────────────
+# ── Module-level helpers ───────────────────────────────────────────────────────────────────
 
 
 def _strip_option_letters(options: list[str]) -> list[str]:
