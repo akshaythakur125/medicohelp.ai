@@ -4,6 +4,8 @@ from pathlib import Path
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+_base_dir = Path(__file__).resolve().parent.parent
+
 
 class Settings(BaseSettings):
     project_name: str = "MedicoHelp AI Auto Poster"
@@ -25,6 +27,12 @@ class Settings(BaseSettings):
     telegram_chat_id: str | None = None
     admin_chat_id: str | None = None
 
+    # Instagram
+    instagram_user_id: str | None = None
+    instagram_access_token: str | None = None
+    imgbb_api_key: str | None = None
+    instagram_enabled: bool = False
+
     post_interval_hours: int = Field(default=6, ge=1)
     post_schedule_times: str = ""  # Comma-separated HH:MM slots, e.g. "08:00,14:00,20:00"
     timezone: str = "Asia/Kolkata"
@@ -40,8 +48,8 @@ class Settings(BaseSettings):
 
     image_card_enabled: bool = True
     image_card_fallback_to_text: bool = True
-    assets_images_dir: Path = base_dir / "assets" / "images"
-    image_index_path: Path = base_dir / "assets" / "images" / "index.json"
+    assets_images_dir: Path = _base_dir / "assets" / "images"
+    image_index_path: Path = _base_dir / "assets" / "images" / "index.json"
     image_card_template: str = "rapid_revision"
 
     app_host: str = "0.0.0.0"
@@ -51,11 +59,11 @@ class Settings(BaseSettings):
     news_lookback_days: int = Field(default=14, ge=1)
     news_max_items: int = Field(default=6, ge=1, le=20)
 
-    base_dir: Path = Path(__file__).resolve().parent.parent
-    generated_dir: Path = base_dir / "generated"
-    logs_dir: Path = base_dir / "logs"
-    prompts_dir: Path = base_dir / "prompts"
-    assets_dir: Path = base_dir / "assets"
+    base_dir: Path = _base_dir
+    generated_dir: Path = _base_dir / "generated"
+    logs_dir: Path = _base_dir / "logs"
+    prompts_dir: Path = _base_dir / "prompts"
+    assets_dir: Path = _base_dir / "assets"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
