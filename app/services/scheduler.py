@@ -17,8 +17,8 @@ logger = logging.getLogger(__name__)
 
 _DEFAULT_SCHEDULE: list[tuple[str, SlotType]] = [
     ("08:00", SlotType.morning_revision),
-    ("14:00", SlotType.afternoon_mcq),
-    ("20:00", SlotType.evening_revision),
+    ("13:00", SlotType.afternoon_mcq),
+    ("19:30", SlotType.evening_revision),
     ("22:00", SlotType.nightly_weak_topic),
 ]
 
@@ -37,6 +37,7 @@ class PostingScheduler:
         )
         self._register_post_jobs()
         self._register_engagement_jobs()
+        self._register_token_refresh_job()
 
     def start(self) -> None:
         if self.scheduler.running:
@@ -193,6 +194,19 @@ class PostingScheduler:
         )
         logger.info("Retry queue processor registered (every 15 min).")
 
+    def _register_token_refresh_job(self) -> None:
+        if not (self.settings.instagram_enabled and self.settings.facebook_app_id):
+            return
+        self.scheduler.add_job(
+            self._refresh_instagram_token,
+            trigger=IntervalTrigger(days=50),
+            id="instagram_token_refresh",
+            replace_existing=True,
+            max_instances=1,
+            coalesce=True,
+        )
+        logger.info("Instagram token auto-refresh scheduled every 50 days.")
+
     async def _run_job(self, slot_type: SlotType | None = None) -> None:
         logger.info("Scheduled post job triggered (slot=%s).", slot_type)
         try:
@@ -208,6 +222,21 @@ class PostingScheduler:
         except Exception as exc:
             logger.exception("Scheduled post failed: %s", exc)
 
+        # Instagram runs independently — failure never blocks Telegram
+        if self.settings.instagram_enabled:
+            try:
+                result = await self.orchestrator.generate_instagram_post()
+                if result.get("skipped"):
+                    logger.info("Instagram skipped: %s", result.get("reason"))
+                else:
+                    logger.info(
+                        "Instagram posted: %d slides, topic='%s'",
+                        result.get("slide_count", 0),
+                        result.get("topic", ""),
+                    )
+            except Exception as exc:
+                logger.error("Instagram post failed (non-blocking): %s", exc)
+
     async def _poll_commands(self) -> None:
         try:
             await self._cmd_handler.poll()
@@ -220,10 +249,16 @@ class PostingScheduler:
         except Exception as exc:
             logger.error("Retry queue processing error: %s", exc)
 
-    # ── Engagement jobs ──────────────────────────────────────────────────
+    async def _refresh_instagram_token(self) -> None:
+        try:
+            await self.orchestrator.instagram.refresh_access_token()
+            logger.info("Instagram access token refreshed successfully.")
+        except Exception as exc:
+            logger.error("Instagram token refresh failed: %s", exc)
+
+    # ── Engagement jobs ─────────────────────────────────────────────────────────────────────────
 
     async def _run_daily_challenge(self) -> None:
-        """Post the daily challenge MCQ."""
         logger.info("Daily challenge job triggered.")
         try:
             await self.orchestrator.generate_daily_challenge(publish_to_telegram=True)
@@ -231,7 +266,6 @@ class PostingScheduler:
             logger.exception("Daily challenge failed: %s", exc)
 
     async def _run_weekly_battle_start(self) -> None:
-        """Start the weekly revision battle."""
         logger.info("Weekly battle start job triggered.")
         try:
             await self.orchestrator.start_weekly_battle(publish_to_telegram=True)
@@ -239,14 +273,13 @@ class PostingScheduler:
             logger.exception("Weekly battle start failed: %s", exc)
 
     async def _run_weekly_battle_end(self) -> None:
-        """End the weekly revision battle and announce results."""
         logger.info("Weekly battle end job triggered.")
         try:
             await self.orchestrator.end_weekly_battle(publish_to_telegram=True)
         except Exception as exc:
             logger.exception("Weekly battle end failed: %s", exc)
 
-    # ── Restart safety ───────────────────────────────────────────────────
+    # ── Restart safety ────────────────────────────────────────────────────────────────────────────
 
     def _save_state(self) -> None:
         try:

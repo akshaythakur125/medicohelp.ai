@@ -2,6 +2,7 @@ import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 
 from app.config import get_settings
 from app.logging_config import configure_logging
@@ -25,6 +26,10 @@ logger = logging.getLogger(__name__)
 
 orchestrator = PostOrchestrator(settings)
 posting_scheduler = PostingScheduler(settings, orchestrator)
+
+
+class InstagramPostRequest(BaseModel):
+    topic: str | None = None
 
 
 def _startup_validation() -> None:
@@ -69,6 +74,12 @@ def _startup_validation() -> None:
         )
     else:
         logger.info("Scheduler disabled — manual posting only")
+
+    if settings.instagram_enabled:
+        logger.info(
+            "Instagram auto-posting enabled (configured=%s)",
+            orchestrator.instagram.is_configured,
+        )
 
     if issues:
         for msg in issues:
@@ -214,3 +225,24 @@ async def generate_news(request: NewsRequest) -> NewsResponse:
         publish_to_telegram=request.publish_to_telegram,
     )
     return NewsResponse(items=items, generated_post=generated_post)
+
+
+@app.post("/instagram/post")
+async def instagram_post(request: InstagramPostRequest) -> dict:
+    try:
+        result = await orchestrator.generate_instagram_post(topic=request.topic)
+        return result
+    except Exception as exc:
+        logger.exception("Instagram post failed.")
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.get("/instagram/status")
+async def instagram_status() -> dict:
+    return {
+        "enabled": settings.instagram_enabled,
+        "configured": orchestrator.instagram.is_configured,
+        "user_id_set": bool(settings.instagram_user_id),
+        "token_set": bool(settings.instagram_access_token),
+        "imgbb_set": bool(settings.imgbb_api_key),
+    }
