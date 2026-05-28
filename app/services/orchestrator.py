@@ -62,7 +62,9 @@ class PostOrchestrator:
         self.content_strategy = ContentStrategy()
         self.telegram = TelegramPoster(settings)
         self.instagram = InstagramPoster(settings)
-        self._carousel_gen = CarouselGenerator()
+        self._carousel_gen = CarouselGenerator(
+            doctor_photo_path=settings.instagram_doctor_photo,
+        )
         self._instagram_content = InstagramContentGenerator(settings)
         self.store = PostLogStore(settings)
         self._engine = SmartContentEngine(settings)

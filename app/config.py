@@ -35,6 +35,7 @@ class Settings(BaseSettings):
     # Facebook App credentials (needed for auto-refreshing the 60-day access token)
     facebook_app_id: str | None = None
     facebook_app_secret: str | None = None
+    instagram_doctor_photo: str | None = None
 
     post_interval_hours: int = Field(default=6, ge=1)
     post_schedule_times: str = ""  # Comma-separated HH:MM slots, e.g. "08:00,14:00,20:00"
