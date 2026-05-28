@@ -143,6 +143,16 @@ class CarouselGenerator:
         logger.info("Generated %d slides in %s", len(paths), out_dir)
         return paths
 
+    @staticmethod
+    def cleanup_slides(paths: list[Path]) -> None:
+        """Delete slide JPEG files after they have been posted to Instagram."""
+        for path in paths:
+            try:
+                path.unlink(missing_ok=True)
+                logger.debug("Deleted slide file: %s", path.name)
+            except Exception as exc:
+                logger.warning("Failed to delete slide %s: %s", path.name, exc)
+
     # ------------------------------------------------------------------
     # Slide drawers
     # ------------------------------------------------------------------

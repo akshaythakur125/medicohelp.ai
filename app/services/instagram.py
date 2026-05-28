@@ -109,6 +109,46 @@ class InstagramPoster:
         logger.info("Instagram single image published: post_id=%s", post_id)
         return post_id
 
+    async def refresh_access_token(self) -> str:
+        """Refresh the long-lived Instagram access token.
+
+        Uses the Facebook Graph API oauth endpoint to exchange the current
+        token for a new one valid for another 60 days.
+        Requires FACEBOOK_APP_ID and FACEBOOK_APP_SECRET to be set.
+        Updates settings.instagram_access_token in place.
+        """
+        app_id = getattr(self.settings, "facebook_app_id", None)
+        app_secret = getattr(self.settings, "facebook_app_secret", None)
+        if not app_id or not app_secret:
+            raise RuntimeError(
+                "FACEBOOK_APP_ID and FACEBOOK_APP_SECRET must be set to refresh the access token."
+            )
+        if not self.settings.instagram_access_token:
+            raise RuntimeError("INSTAGRAM_ACCESS_TOKEN is not set — nothing to refresh.")
+
+        async with httpx.AsyncClient(timeout=30) as client:
+            response = await client.get(
+                "https://graph.facebook.com/oauth/access_token",
+                params={
+                    "grant_type": "fb_exchange_token",
+                    "client_id": app_id,
+                    "client_secret": app_secret,
+                    "fb_exchange_token": self.settings.instagram_access_token,
+                },
+            )
+            self._raise_for_api_error(response, "refresh access token")
+
+        data = response.json()
+        new_token: str = data.get("access_token", "")
+        if not new_token:
+            raise RuntimeError(f"Token refresh response missing access_token field: {data}")
+
+        self.settings.instagram_access_token = new_token
+        logger.info(
+            "Instagram access token refreshed successfully (length=%d).", len(new_token)
+        )
+        return new_token
+
     # ------------------------------------------------------------------
     # Private helpers
     # ------------------------------------------------------------------
