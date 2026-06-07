@@ -273,6 +273,57 @@ class AIContentClient:
                 f"PYQ-style concept: recognize the recurring exam pattern for {topic}.",
                 f"Previous-year pattern: This concept is repeatedly tested through one key clue, one close mimic, and one management or mechanism trap.",
             ),
+            # Tier 1
+            ContentFormat.clinical_correlation: (
+                f"Clinical Correlation: {topic} — from basic science to bedside.",
+                f"• Basic Science: the underlying mechanism\n• Clinical Link: how it manifests\n• Exam Hook: the tested pearl",
+            ),
+            ContentFormat.comparison_table: (
+                f"Compare: {topic} vs its closest differential.",
+                f"Compare key features: pathophysiology, presentation, investigation, treatment, and the exam trap.",
+            ),
+            ContentFormat.management_algorithm: (
+                f"Algorithm: {topic} — step-by-step management.",
+                f"Step 1: Immediate assessment | Step 2: Investigation | Step 3: First-line treatment | Step 4: Definitive management",
+            ),
+            ContentFormat.drug_of_day: (
+                f"Drug of the Day: the key drug for {topic}.",
+                f"CLASS | MECHANISM | USES | SIDE EFFECTS | CONTRAINDICATIONS | EXAM PEARL",
+            ),
+            # Tier 2
+            ContentFormat.pimp_question: (
+                f"Ward Round: The attending asks you about {topic}.",
+                f"Q: What is the key clinical fact about {topic}? A: [Answer with teaching point]",
+            ),
+            ContentFormat.spot_diagnosis: (
+                f"Spot the Diagnosis: Classic presentation of {topic}.",
+                f"Look for the pathognomonic clue — the single finding that clinches the diagnosis.",
+            ),
+            ContentFormat.ward_tip: (
+                f"Ward Tip: Practical advice about {topic} for clinical postings.",
+                f"The Situation | What to Do | Common Mistake | Pro Tip",
+            ),
+            ContentFormat.case_unfolding: (
+                f"Unfolding Case — Part 1: Patient presents with features suggesting {topic}.",
+                f"Case: [Presentation] | What is your initial differential and first investigation? | Part 2 follows soon!",
+            ),
+            # Tier 3
+            ContentFormat.osce_station: (
+                f"OSCE Station: {display_subject} examination — {topic}.",
+                f"Candidate Instructions | Expected Approach | Examiner's Viva Questions | Common Mistakes",
+            ),
+            ContentFormat.weekly_theme_intro: (
+                f"This Week's Theme: {display_subject} — Deep Dive.",
+                f"Focus areas | NEET PG weight | Must-know concepts | What to expect this week",
+            ),
+            ContentFormat.common_mistake: (
+                f"Common Mistake: The error 80% of students make about {topic}.",
+                f"❌ THE MISTAKE | ✅ CORRECT APPROACH | 🧠 HOW TO REMEMBER | 📚 EXAM TRAP",
+            ),
+            ContentFormat.study_schedule: (
+                f"Study Plan: {display_subject} — Today's revision targets.",
+                f"Must-Cover Topics | Morning: theory | Afternoon: MCQs | Evening: flashcards",
+            ),
         }
         poster_text, caption_tail = stems.get(content_format, random.choice(list(stems.values())))
         long_question = (

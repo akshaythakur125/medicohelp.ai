@@ -38,8 +38,8 @@ class BotCommandHandler:
 
     async def poll(self) -> None:
         """Called periodically by the scheduler to process pending commands."""
-        if not self.settings.admin_chat_id or not self.settings.telegram_bot_token:
-            return
+        if not self.settings.telegram_bot_token:
+            return  # Need at minimum a bot token to poll
 
         updates = await self.telegram.get_updates(self._offset)
         for update in updates:

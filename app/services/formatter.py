@@ -578,16 +578,44 @@ def _body_study_schedule(content: GeneratedContent) -> str:
     return "\n".join(parts)
 
 
+_DEFAULT_STUDY_TOPICS: dict[str, list[str]] = {
+    "Anatomy": ["Nerve lesions & brachial plexus", "Clinically tested surface markings", "Developmental anomalies"],
+    "Physiology": ["Oxygen dissociation curve shifts", "Cardiac output & Starling's law", "Renal clearance & GFR"],
+    "Biochemistry": ["Enzyme kinetics — Km & Vmax", "Urea cycle defects", "Vitamins: deficiency & toxicity"],
+    "Pathology": ["Granuloma types — TB vs sarcoid", "Neoplasia hallmarks", "Inflammation mediators"],
+    "Pharmacology": ["Autonomic drugs", "Antibiotics — MOA & resistance", "Cardiac drugs & antidotes"],
+    "Microbiology": ["Gram stain patterns & culture", "Zoonoses & vectors", "Antifungals & antivirals"],
+    "Forensic Medicine": ["Postmortem changes timeline", "Wound classification", "Medico-legal terms"],
+    "Community Medicine": ["Vaccines & cold chain", "Screening test statistics", "Nutritional indices"],
+    "General Medicine": ["ECG — arrhythmias & MI", "Endocrinology pearls", "Autoantibody panel"],
+    "General Surgery": ["Abdominal X-ray signs", "Hernia types & repair", "Thyroid & breast anatomy"],
+    "Obstetrics & Gynecology": ["Partograph interpretation", "APH causes", "PCOS diagnostic criteria"],
+    "Pediatrics": ["Vaccine schedule", "Nutritional disorders", "Developmental milestones"],
+    "Ophthalmology": ["Glaucoma types", "Cataract surgery complications", "Retinal signs"],
+    "Ent": ["Tuning fork tests", "Cholesteatoma features", "CSF rhinorrhoea"],
+    "Orthopedics": ["Fracture healing & complications", "Nerve injuries at fracture sites", "Spine syndromes"],
+    "Dermatology": ["Bullous disorders", "Tinea & leprosy", "Psoriasis pathology"],
+    "Psychiatry": ["Schizophrenia first-rank symptoms", "Drug of choice per disorder", "ICD vs DSM differences"],
+    "Radiology": ["Chest X-ray systematic reading", "CT density patterns", "Barium swallow findings"],
+    "Anesthesiology": ["Airway assessment — Mallampati", "MAC values & depth", "Muscle relaxants & reversal"],
+    "High-Yield Revision": ["PYQ pattern analysis", "Rapid one-liner revision", "Weak topic final sweep"],
+}
+
+
 def format_study_schedule_post(days_remaining: int, subject: str, topics: list[str]) -> str:
     """Format a study schedule post with day counter."""
-    topic_lines = "\n".join(f"  {i+1}. {t}" for i, t in enumerate(topics[:3]))
-    header = f"📅 <b>Day {days_remaining} to Go — Today: {subject}</b>\n" if days_remaining > 0 else f"📅 <b>Today: {subject}</b>\n"
+    effective_topics = topics[:3] if topics else _DEFAULT_STUDY_TOPICS.get(subject, ["Core concepts", "High-yield MCQs", "Flashcard revision"])
+    topic_lines = "\n".join(f"  {i+1}. {t}" for i, t in enumerate(effective_topics))
+    if days_remaining > 0:
+        header = f"📅 <b>Day {days_remaining} to Go — Today: {subject}</b>\n"
+    else:
+        header = f"📅 <b>Today's Focus: {subject}</b>\n"
     return (
         f"{header}\n"
         f"🎯 <b>Must-Cover Today:</b>\n{topic_lines}\n\n"
         f"📖 <b>Strategy:</b>\n"
         f"  • Morning: Read concepts + notes\n"
-        f"  • Afternoon: Solve 20-30 MCQs\n"
+        f"  • Afternoon: Solve 20–30 MCQs\n"
         f"  • Evening: Flashcard revision\n\n"
         f"<i>Stay consistent — one good day compounds into success.</i>"
     )

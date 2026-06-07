@@ -416,16 +416,19 @@ class PostOrchestrator:
     def get_todays_study_subjects(self) -> tuple[str, list[str]]:
         """Return (subject, topics) for today based on days remaining to exam."""
         days = self.get_exam_days_remaining()
-        if days is None or days > 30:
-            # No exam set or >30 days: use weekly theme
-            subj = self.get_weekly_theme_subject()
-            return subj.value.replace("_", " ").title(), []
 
-        for start, end, subject, topics in self._STUDY_PLAN:
-            if end >= days >= start:
-                return subject, topics
+        # Within 30-day countdown: use structured study plan
+        if days is not None and 0 <= days <= 30:
+            for start, end, subject, topics in self._STUDY_PLAN:
+                if end >= days >= start:
+                    return subject, topics
+            return "General Revision", ["Review weak topics", "MCQ practice", "Flashcard run"]
 
-        return "General Revision", ["Review weak topics", "MCQ practice", "Flashcard run"]
+        # Outside countdown (>30 days or no exam date): use weekly theme with default topics
+        subj = self.get_weekly_theme_subject()
+        subject_name = subj.value.replace("_", " ").title()
+        # Return empty list — formatter._DEFAULT_STUDY_TOPICS will fill in the right topics
+        return subject_name, []
 
     async def generate_study_schedule_post(self, publish_to_telegram: bool = True) -> bool:
         """Post today's structured study plan."""
