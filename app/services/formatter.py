@@ -39,6 +39,19 @@ _FORMAT_LABEL: dict[str, str] = {
     "true_false": "TRUE OR FALSE",
     "one_liner_recall": "ONE-LINER RECALL",
     "mnemonic": "MNEMONIC",
+    # Tier 1
+    "clinical_correlation": "CLINICAL CORRELATION",
+    "comparison_table": "COMPARE & CONTRAST",
+    "management_algorithm": "MANAGEMENT ALGORITHM",
+    "drug_of_day": "DRUG OF THE DAY",
+    # Tier 2
+    "pimp_question": "WARD ROUND PIMP",
+    "spot_diagnosis": "SPOT THE DIAGNOSIS",
+    "ward_tip": "WARD SURVIVAL TIP",
+    "case_unfolding": "UNFOLDING CASE",
+    # Tier 3
+    "osce_station": "OSCE STATION",
+    "weekly_theme_intro": "WEEKLY THEME",
 }
 
 _MAX_LEN = 4096
@@ -112,6 +125,26 @@ def format_for_telegram(content: GeneratedContent) -> str:
         body = _body_one_liner(content)
     elif fmt == ContentFormat.mnemonic:
         body = _body_mnemonic(content)
+    elif fmt == ContentFormat.clinical_correlation:
+        body = _body_clinical_correlation(content)
+    elif fmt == ContentFormat.comparison_table:
+        body = _body_comparison_table(content)
+    elif fmt == ContentFormat.management_algorithm:
+        body = _body_management_algorithm(content)
+    elif fmt == ContentFormat.drug_of_day:
+        body = _body_drug_of_day(content)
+    elif fmt == ContentFormat.pimp_question:
+        body = _body_pimp_question(content)
+    elif fmt == ContentFormat.spot_diagnosis:
+        body = _body_spot_diagnosis(content)
+    elif fmt == ContentFormat.ward_tip:
+        body = _body_ward_tip(content)
+    elif fmt == ContentFormat.case_unfolding:
+        body = _body_case_unfolding(content)
+    elif fmt == ContentFormat.osce_station:
+        body = _body_osce_station(content)
+    elif fmt == ContentFormat.weekly_theme_intro:
+        body = _body_weekly_theme_intro(content)
     else:
         body = _body_notes(content)
 
@@ -279,6 +312,176 @@ def _body_news(content: GeneratedContent) -> str:
     return "\n".join(parts)
 
 
+def _body_clinical_correlation(content: GeneratedContent) -> str:
+    """Basic science → clinical bridge format."""
+    parts: list[str] = []
+    if content.poster_text:
+        parts.append(f"<b>🔗 {_esc(content.poster_text)}</b>\n")
+    parts.append(_esc(content.caption))
+    if content.question:
+        parts.append(f"\n<b>Apply it:</b> <i>{_esc(content.question)}</i>")
+    if content.correct_answer:
+        inner = f"<b>{_esc(content.correct_answer)}</b>"
+        if content.explanation:
+            inner += f"\n\n{_esc(content.explanation)}"
+        parts.append(f"<tg-spoiler>{inner}</tg-spoiler>")
+        parts.append("<i>👆 Tap to reveal</i>")
+    return "\n".join(parts)
+
+
+def _body_comparison_table(content: GeneratedContent) -> str:
+    """Differential comparison table format."""
+    parts: list[str] = []
+    if content.poster_text:
+        parts.append(f"<b>⚖️ {_esc(content.poster_text)}</b>\n")
+    parts.append(f"<pre>{_esc(content.caption)}</pre>")
+    if content.question:
+        parts.append(f"\n<b>Key Distinguisher:</b> <i>{_esc(content.question)}</i>")
+    if content.correct_answer:
+        inner = f"✅ <b>{_esc(content.correct_answer)}</b>"
+        if content.explanation:
+            inner += f"\n\n{_esc(content.explanation)}"
+        parts.append(f"<tg-spoiler>{inner}</tg-spoiler>")
+        parts.append("<i>👆 Tap to reveal</i>")
+    return "\n".join(parts)
+
+
+def _body_management_algorithm(content: GeneratedContent) -> str:
+    """Step-by-step management algorithm format."""
+    parts: list[str] = []
+    if content.poster_text:
+        parts.append(f"<b>📋 {_esc(content.poster_text)}</b>\n")
+    parts.append(_esc(content.caption))
+    if content.question:
+        parts.append(f"\n<b>Critical Step:</b> <i>{_esc(content.question)}</i>")
+    if content.correct_answer:
+        inner = f"✅ <b>{_esc(content.correct_answer)}</b>"
+        if content.explanation:
+            inner += f"\n\n{_esc(content.explanation)}"
+        parts.append(f"<tg-spoiler>{inner}</tg-spoiler>")
+        parts.append("<i>👆 Tap to reveal</i>")
+    return "\n".join(parts)
+
+
+def _body_drug_of_day(content: GeneratedContent) -> str:
+    """Drug of the Day spotlight format."""
+    parts: list[str] = []
+    if content.poster_text:
+        parts.append(f"<b>💊 {_esc(content.poster_text)}</b>\n")
+    parts.append(_esc(content.caption))
+    if content.question:
+        parts.append(f"\n<b>Quick Test:</b> <i>{_esc(content.question)}</i>")
+    if content.correct_answer:
+        inner = f"✅ <b>{_esc(content.correct_answer)}</b>"
+        if content.explanation:
+            inner += f"\n{_esc(content.explanation)}"
+        parts.append(f"<tg-spoiler>{inner}</tg-spoiler>")
+        parts.append("<i>👆 Tap to reveal</i>")
+    return "\n".join(parts)
+
+
+def _body_pimp_question(content: GeneratedContent) -> str:
+    """Ward round pimp question format."""
+    parts: list[str] = []
+    parts.append("<b>🩺 The attending turns to you...</b>\n")
+    if content.question:
+        parts.append(f"<b>❓ {_esc(content.question)}</b>\n")
+    if content.caption:
+        parts.append(_esc(content.caption))
+    if content.correct_answer:
+        inner = f"✅ <b>Model Answer:</b>\n{_esc(content.correct_answer)}"
+        if content.explanation:
+            inner += f"\n\n<b>Teaching Point:</b>\n{_esc(content.explanation)}"
+        parts.append(f"\n<tg-spoiler>{inner}</tg-spoiler>")
+        parts.append("<i>👆 Tap to reveal — say it out loud first!</i>")
+    return "\n".join(parts)
+
+
+def _body_spot_diagnosis(content: GeneratedContent) -> str:
+    """Spot the diagnosis challenge format."""
+    parts: list[str] = []
+    parts.append("<b>👀 Look carefully — what's the diagnosis?</b>\n")
+    if content.visual_description:
+        parts.append(f"<i>🖼 {_esc(content.visual_description)}</i>\n")
+    if content.question:
+        parts.append(f"<b>Clue:</b> <i>{_esc(content.question)}</i>\n")
+    for opt in content.options:
+        parts.append(f"  {_esc(opt)}")
+    if content.correct_answer or content.explanation:
+        inner = ""
+        if content.correct_answer:
+            inner += f"✅ <b>{_esc(content.correct_answer)}</b>"
+        if content.explanation:
+            inner += f"\n\n{_esc(content.explanation)}"
+        parts.append(f"\n<tg-spoiler>{inner}</tg-spoiler>")
+        parts.append("<i>👆 Tap to reveal</i>")
+    return "\n".join(parts)
+
+
+def _body_ward_tip(content: GeneratedContent) -> str:
+    """Ward survival tip format."""
+    parts: list[str] = []
+    if content.poster_text:
+        parts.append(f"<b>🏥 {_esc(content.poster_text)}</b>\n")
+    parts.append(_esc(content.caption))
+    return "\n".join(parts)
+
+
+def _body_case_unfolding(content: GeneratedContent) -> str:
+    """Multi-part unfolding clinical case format."""
+    parts: list[str] = []
+    parts.append("<b>🩺 Unfolding Case — Part 1: The Presentation</b>\n")
+    if content.question:
+        parts.append(f"<b>Case:</b>\n<i>{_esc(content.question)}</i>\n")
+    for opt in content.options:
+        parts.append(f"  {_esc(opt)}")
+    if content.caption:
+        parts.append(f"\n{_esc(content.caption)}")
+    if content.correct_answer or content.explanation:
+        inner = ""
+        if content.correct_answer:
+            inner += f"✅ <b>Initial Approach:</b> {_esc(content.correct_answer)}"
+        if content.explanation:
+            inner += f"\n\n{_esc(content.explanation)}"
+        parts.append(f"\n<tg-spoiler>{inner}</tg-spoiler>")
+        parts.append("<i>👆 Tap to reveal Part 1 answer — Part 2 follows soon!</i>")
+    return "\n".join(parts)
+
+
+def _body_osce_station(content: GeneratedContent) -> str:
+    """OSCE station preparation format."""
+    parts: list[str] = []
+    parts.append("<b>🏥 OSCE Station of the Week</b>\n")
+    if content.poster_text:
+        parts.append(f"<b>Station:</b> {_esc(content.poster_text)}\n")
+    parts.append(_esc(content.caption))
+    if content.question:
+        parts.append(f"\n<b>Examiner's Key Question:</b>\n<i>{_esc(content.question)}</i>")
+    if content.correct_answer:
+        inner = f"✅ <b>Expected Answer:</b>\n{_esc(content.correct_answer)}"
+        if content.explanation:
+            inner += f"\n\n{_esc(content.explanation)}"
+        parts.append(f"<tg-spoiler>{inner}</tg-spoiler>")
+        parts.append("<i>👆 Tap to reveal</i>")
+    return "\n".join(parts)
+
+
+def _body_weekly_theme_intro(content: GeneratedContent) -> str:
+    """Weekly theme launch post format."""
+    parts: list[str] = []
+    parts.append("<b>📅 Weekly Theme Launch!</b>\n")
+    if content.poster_text:
+        parts.append(f"<b>🎯 {_esc(content.poster_text)}</b>\n")
+    parts.append(_esc(content.caption))
+    if content.question:
+        parts.append(f"\n<b>Baseline Check:</b> <i>{_esc(content.question)}</i>")
+    if content.correct_answer:
+        inner = f"🔑 <b>Key Concept:</b> {_esc(content.correct_answer)}"
+        parts.append(f"<tg-spoiler>{inner}</tg-spoiler>")
+        parts.append("<i>👆 Tap to see the most important concept this week</i>")
+    return "\n".join(parts)
+
+
 # ── Engagement Formatters ────────────────────────────────────────────────────
 
 
@@ -340,6 +543,25 @@ def format_battle_winner(scores: dict[str, int]) -> str:
         f"🥇 <b>Winner: User {winner}</b> — {scores[winner]} pts\n\n"
         f"{format_battle_leaderboard(scores)}\n\n"
         f"<i>Next battle starts Sunday! Stay sharp!</i>"
+    )
+
+
+def format_exam_countdown(days_remaining: int, subject: str = "") -> str:
+    if days_remaining <= 0:
+        return "🎯 <b>Exam Day — Best of Luck!</b>\nYou've prepared well. Trust your revision!"
+    if days_remaining == 1:
+        urgency = "Tomorrow is the day! Final review mode — only the highest-yield points now."
+    elif days_remaining <= 7:
+        urgency = f"Only <b>{days_remaining} days left!</b> Focus on weak areas and revise mnemonics."
+    elif days_remaining <= 14:
+        urgency = f"<b>{days_remaining} days to go.</b> Speed up revision — one subject per day!"
+    else:
+        urgency = f"<b>{days_remaining} days remaining.</b> Stay consistent — every session counts!"
+    subject_line = f"\n📚 Today's Focus: <b>{subject}</b>" if subject else ""
+    return (
+        f"⏳ <b>NEET PG Countdown</b>{subject_line}\n\n"
+        f"{urgency}\n\n"
+        f"<i>Keep your revision strategy tight. You've got this!</i>"
     )
 
 

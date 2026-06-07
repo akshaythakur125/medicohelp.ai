@@ -33,6 +33,7 @@ from app.services.formatter import (
     format_challenge_result,
     format_daily_challenge_intro,
     format_education_mode_announcement,
+    format_exam_countdown,
     format_for_telegram,
     format_streak_message,
     format_weekly_battle_intro,
@@ -289,6 +290,103 @@ class PostOrchestrator:
         text = "\n".join(lines)
         return await self.telegram.send_message(text)
 
+    # ── Weekly Theme ────────────────────────────────────────────────────
+
+    def get_weekly_theme_subject(self) -> Subject:
+        """Return this week's themed subject (config override or auto-rotate by ISO week)."""
+        override = self.settings.weekly_theme_subject
+        if override:
+            for s in Subject:
+                if s.value == override:
+                    return s
+
+        from datetime import date
+        week_number = date.today().isocalendar()[1]
+        subjects = list(Subject)
+        return subjects[week_number % len(subjects)]
+
+    async def generate_weekly_theme_post(self, publish_to_telegram: bool = True) -> GenerateResponse:
+        """Post the weekly theme launch announcement."""
+        theme_subject = self.get_weekly_theme_subject()
+        content = await self.ai_client.generate(theme_subject, ContentFormat.weekly_theme_intro)
+        self.quality_gate.validate(content)
+        content = enrich_for_engagement(content)
+
+        poster_path = Path("text-only")
+        visual_path: Path | None = None
+        telegram_posted = False
+
+        if not self.settings.text_only_mode and self.medical_image_generator.configured:
+            try:
+                visual_path = await self.medical_image_generator.create_visual(content)
+            except Exception:
+                pass
+
+        if publish_to_telegram:
+            text = format_for_telegram(content)
+            if visual_path:
+                poster_path = visual_path
+                telegram_posted = await self.telegram.send_visual_post(visual_path, text)
+            else:
+                telegram_posted = await self.telegram.send_message(text)
+
+        self._record_post(content, telegram_posted)
+        return GenerateResponse(
+            content=content, poster_path=str(poster_path), telegram_posted=telegram_posted
+        )
+
+    # ── OSCE Station ─────────────────────────────────────────────────────
+
+    async def generate_osce_post(self, publish_to_telegram: bool = True) -> GenerateResponse:
+        """Generate and post the OSCE Station of the Week."""
+        subject = self.get_weekly_theme_subject()
+        content = await self.ai_client.generate(subject, ContentFormat.osce_station)
+        self.quality_gate.validate(content)
+        content = enrich_for_engagement(content)
+
+        poster_path = Path("text-only")
+        telegram_posted = False
+
+        if publish_to_telegram:
+            text = format_for_telegram(content)
+            telegram_posted = await self.telegram.send_message(text)
+
+        self._record_post(content, telegram_posted)
+        return GenerateResponse(
+            content=content, poster_path=str(poster_path), telegram_posted=telegram_posted
+        )
+
+    # ── Exam Countdown ────────────────────────────────────────────────────
+
+    def get_exam_days_remaining(self) -> int | None:
+        """Return days until NEET PG exam, or None if exam_date not configured."""
+        if not self.settings.exam_date:
+            return None
+        try:
+            from datetime import date
+            exam = date.fromisoformat(self.settings.exam_date)
+            delta = (exam - date.today()).days
+            return max(0, delta)
+        except ValueError:
+            return None
+
+    def is_exam_countdown_active(self) -> bool:
+        days = self.get_exam_days_remaining()
+        return days is not None and 0 <= days <= self.settings.exam_countdown_days
+
+    async def send_exam_countdown(self, publish_to_telegram: bool = True) -> bool:
+        """Send daily exam countdown message if within countdown window."""
+        days = self.get_exam_days_remaining()
+        if days is None:
+            return False
+
+        theme_subject = self.get_weekly_theme_subject()
+        subject_name = theme_subject.value.replace("_", " ").title()
+        text = format_exam_countdown(days, subject_name)
+        if publish_to_telegram:
+            return await self.telegram.send_message(text)
+        return False
+
     # ── Education Mode Filtering ───────────────────────────────────────
 
     def _filter_subject_by_mode(self, subject: Subject) -> Subject | None:
@@ -426,6 +524,84 @@ class PostOrchestrator:
                 publish_to_telegram=publish_to_telegram,
                 difficulty=planned.difficulty,
             )
+
+        # Tier 1 lanes
+        if planned.lane == PostLane.clinical_correlation and not subject_override:
+            return await self.generate_smart_format_post(
+                subject=planned.subject,
+                smart_format="clinical_correlation",
+                publish_to_telegram=publish_to_telegram,
+                difficulty=planned.difficulty,
+            )
+
+        if planned.lane == PostLane.comparison and not subject_override:
+            return await self.generate_smart_format_post(
+                subject=planned.subject,
+                smart_format="comparison_table",
+                publish_to_telegram=publish_to_telegram,
+                difficulty=planned.difficulty,
+            )
+
+        if planned.lane == PostLane.management_algo and not subject_override:
+            return await self.generate_smart_format_post(
+                subject=planned.subject,
+                smart_format="management_algorithm",
+                publish_to_telegram=publish_to_telegram,
+                difficulty=planned.difficulty,
+            )
+
+        if planned.lane == PostLane.drug_spotlight and not subject_override:
+            return await self.generate_smart_format_post(
+                subject=planned.subject,
+                smart_format="drug_of_day",
+                publish_to_telegram=publish_to_telegram,
+                difficulty=planned.difficulty,
+            )
+
+        # Tier 2 lanes
+        if planned.lane == PostLane.pimp_round and not subject_override:
+            return await self.generate_smart_format_post(
+                subject=planned.subject,
+                smart_format="pimp_question",
+                publish_to_telegram=publish_to_telegram,
+                difficulty=planned.difficulty,
+            )
+
+        if planned.lane == PostLane.spot_diagnosis and not subject_override:
+            return await self.generate_smart_format_post(
+                subject=planned.subject,
+                smart_format="spot_diagnosis",
+                publish_to_telegram=publish_to_telegram,
+                difficulty=planned.difficulty,
+            )
+
+        if planned.lane == PostLane.ward_tip and not subject_override:
+            return await self.generate_smart_format_post(
+                subject=planned.subject,
+                smart_format="ward_tip",
+                publish_to_telegram=publish_to_telegram,
+                difficulty=planned.difficulty,
+            )
+
+        if planned.lane == PostLane.case_series and not subject_override:
+            return await self.generate_smart_format_post(
+                subject=planned.subject,
+                smart_format="case_unfolding",
+                publish_to_telegram=publish_to_telegram,
+                difficulty=planned.difficulty,
+            )
+
+        # Tier 3 lanes
+        if planned.lane == PostLane.osce_prep and not subject_override:
+            return await self.generate_smart_format_post(
+                subject=planned.subject,
+                smart_format="osce_station",
+                publish_to_telegram=publish_to_telegram,
+                difficulty=planned.difficulty,
+            )
+
+        if planned.lane == PostLane.weekly_theme and not subject_override:
+            return await self.generate_weekly_theme_post(publish_to_telegram=publish_to_telegram)
 
         return await self.generate_post(
             subject=subject_override or planned.subject,
@@ -574,6 +750,23 @@ class PostOrchestrator:
     ) -> GenerateResponse:
         selected_subject = subject or random.choice(list(Subject))
 
+        _FORMAT_ENUM_MAP = {
+            "flashcard": ContentFormat.flashcard,
+            "mnemonic": ContentFormat.mnemonic,
+            "true_false": ContentFormat.true_false,
+            "one_liner": ContentFormat.one_liner_recall,
+            "clinical_correlation": ContentFormat.clinical_correlation,
+            "comparison_table": ContentFormat.comparison_table,
+            "management_algorithm": ContentFormat.management_algorithm,
+            "drug_of_day": ContentFormat.drug_of_day,
+            "pimp_question": ContentFormat.pimp_question,
+            "spot_diagnosis": ContentFormat.spot_diagnosis,
+            "ward_tip": ContentFormat.ward_tip,
+            "case_unfolding": ContentFormat.case_unfolding,
+            "osce_station": ContentFormat.osce_station,
+            "weekly_theme_intro": ContentFormat.weekly_theme_intro,
+        }
+
         content: GeneratedContent | None = None
         if smart_format == "flashcard":
             content = self._engine.generate_flashcard(selected_subject)
@@ -584,10 +777,10 @@ class PostOrchestrator:
         elif smart_format == "one_liner":
             content = self._engine.generate_one_liner(selected_subject)
 
+        target_format = _FORMAT_ENUM_MAP.get(smart_format, ContentFormat.rapid_revision)
+
         if not content:
-            content = await self.ai_client.generate(
-                selected_subject, ContentFormat.rapid_revision
-            )
+            content = await self.ai_client.generate(selected_subject, target_format)
 
         if difficulty:
             content.difficulty = difficulty.value

@@ -118,6 +118,53 @@ class PostingScheduler:
             self.settings.timezone,
         )
 
+        # Weekly theme launch — every Monday at 07:00
+        self.scheduler.add_job(
+            self._run_weekly_theme,
+            trigger=CronTrigger(
+                day_of_week=0,  # Monday
+                hour=7,
+                minute=0,
+                timezone=self.settings.timezone,
+            ),
+            id="weekly_theme_launch",
+            replace_existing=True,
+            max_instances=1,
+            coalesce=True,
+        )
+        logger.info("Weekly theme launch scheduled every Monday at 07:00 %s", self.settings.timezone)
+
+        # OSCE Station of the Week — every Saturday at 10:00
+        self.scheduler.add_job(
+            self._run_osce_station,
+            trigger=CronTrigger(
+                day_of_week=5,  # Saturday
+                hour=10,
+                minute=0,
+                timezone=self.settings.timezone,
+            ),
+            id="osce_station_weekly",
+            replace_existing=True,
+            max_instances=1,
+            coalesce=True,
+        )
+        logger.info("OSCE station scheduled every Saturday at 10:00 %s", self.settings.timezone)
+
+        # Exam countdown — daily at 06:30 (only fires if exam_date configured)
+        self.scheduler.add_job(
+            self._run_exam_countdown,
+            trigger=CronTrigger(
+                hour=6,
+                minute=30,
+                timezone=self.settings.timezone,
+            ),
+            id="exam_countdown_daily",
+            replace_existing=True,
+            max_instances=1,
+            coalesce=True,
+        )
+        logger.info("Exam countdown job scheduled daily at 06:30 %s", self.settings.timezone)
+
     def _register_post_jobs(self) -> None:
         schedule_times = [
             t.strip()
@@ -245,6 +292,32 @@ class PostingScheduler:
             await self.orchestrator.end_weekly_battle(publish_to_telegram=True)
         except Exception as exc:
             logger.exception("Weekly battle end failed: %s", exc)
+
+    async def _run_weekly_theme(self) -> None:
+        """Launch the weekly themed study focus every Monday."""
+        logger.info("Weekly theme launch job triggered.")
+        try:
+            await self.orchestrator.generate_weekly_theme_post(publish_to_telegram=True)
+        except Exception as exc:
+            logger.exception("Weekly theme launch failed: %s", exc)
+
+    async def _run_osce_station(self) -> None:
+        """Post OSCE Station of the Week every Saturday."""
+        logger.info("OSCE station job triggered.")
+        try:
+            await self.orchestrator.generate_osce_post(publish_to_telegram=True)
+        except Exception as exc:
+            logger.exception("OSCE station post failed: %s", exc)
+
+    async def _run_exam_countdown(self) -> None:
+        """Send daily exam countdown if exam_date is configured and within window."""
+        if not self.orchestrator.is_exam_countdown_active():
+            return
+        logger.info("Exam countdown job triggered.")
+        try:
+            await self.orchestrator.send_exam_countdown(publish_to_telegram=True)
+        except Exception as exc:
+            logger.exception("Exam countdown failed: %s", exc)
 
     # ── Restart safety ───────────────────────────────────────────────────
 

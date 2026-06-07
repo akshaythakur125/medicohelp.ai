@@ -38,6 +38,12 @@ class Settings(BaseSettings):
     challenge_hour: int = Field(default=9, ge=0, le=23)  # Hour for daily challenge post
     engagement_enabled: bool = True
 
+    # Exam countdown (NEET PG date as YYYY-MM-DD, leave blank to disable)
+    exam_date: str | None = None
+    exam_countdown_days: int = Field(default=30, ge=1)
+    # Weekly theme (auto-rotates through subjects each week; set to override)
+    weekly_theme_subject: str | None = None
+
     image_card_enabled: bool = True
     image_card_fallback_to_text: bool = True
     image_card_template: str = "rapid_revision"

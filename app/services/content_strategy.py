@@ -153,6 +153,7 @@ class ContentStrategy:
     # ── Slot definitions ─────────────────────────────────────────────────
 
     _WEIGHTED_LANES = [
+        # Core rotation (existing)
         PostLane.mcq_variant,
         PostLane.poll_quiz,
         PostLane.pyq_concept,
@@ -165,6 +166,20 @@ class ContentStrategy:
         PostLane.pyq_concept,
         PostLane.residency_tip,
         PostLane.exam_news,
+        # Tier 1 — knowledge-building
+        PostLane.clinical_correlation,
+        PostLane.comparison,
+        PostLane.management_algo,
+        PostLane.drug_spotlight,
+        PostLane.mcq_variant,
+        PostLane.poll_quiz,
+        # Tier 2 — clinical skills
+        PostLane.pimp_round,
+        PostLane.spot_diagnosis,
+        PostLane.ward_tip,
+        PostLane.case_series,
+        PostLane.flashcard,
+        PostLane.quick_revision,
     ]
 
     _FORMAT_MAP = {
@@ -179,6 +194,19 @@ class ContentStrategy:
         PostLane.true_false: ContentFormat.true_false,
         PostLane.one_liner_recall: ContentFormat.one_liner_recall,
         PostLane.weak_topic_recall: ContentFormat.rapid_revision,
+        # Tier 1
+        PostLane.clinical_correlation: ContentFormat.clinical_correlation,
+        PostLane.comparison: ContentFormat.comparison_table,
+        PostLane.management_algo: ContentFormat.management_algorithm,
+        PostLane.drug_spotlight: ContentFormat.drug_of_day,
+        # Tier 2
+        PostLane.pimp_round: ContentFormat.pimp_question,
+        PostLane.spot_diagnosis: ContentFormat.spot_diagnosis,
+        PostLane.ward_tip: ContentFormat.ward_tip,
+        PostLane.case_series: ContentFormat.case_unfolding,
+        # Tier 3
+        PostLane.osce_prep: ContentFormat.osce_station,
+        PostLane.weekly_theme: ContentFormat.weekly_theme_intro,
     }
 
     _DIFFICULTY_WEIGHTS = [Difficulty.easy] * 3 + [Difficulty.moderate] * 4 + [Difficulty.exam_level] * 3
