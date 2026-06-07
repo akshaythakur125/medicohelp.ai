@@ -33,6 +33,7 @@ from app.services.formatter import (
     format_challenge_result,
     format_daily_challenge_intro,
     format_education_mode_announcement,
+    format_exam_countdown,
     format_for_telegram,
     format_streak_message,
     format_weekly_battle_intro,
@@ -104,24 +105,29 @@ class PostOrchestrator:
             content = enrich_for_engagement(content)
 
             poster_path: Path = Path("text-only")
-            if not self.settings.text_only_mode:
-                visual_path = None
+            visual_path: Path | None = None
+
+            if not self.settings.text_only_mode and self.medical_image_generator.configured:
                 try:
                     visual_path = await self.medical_image_generator.create_visual(content)
                 except Exception as exc:
                     await self.store.save_error(
-                        "Image generation failed; using fallback schematic", {"error": str(exc)}
+                        "Image generation failed; falling back to text", {"error": str(exc)}
                     )
-                poster_path = self.poster_generator.create(content, visual_image_path=visual_path)
+                if visual_path:
+                    poster_path = visual_path
 
             telegram_posted = False
             if publish_to_telegram:
+                text = format_for_telegram(content)
                 if self.settings.text_only_mode:
-                    text = format_for_telegram(content)
                     telegram_posted = await self.telegram.send_message(text)
+                elif visual_path:
+                    # AI image ready — send illustration + full educational text
+                    telegram_posted = await self.telegram.send_visual_post(visual_path, text)
                 else:
-                    caption = self._build_caption(content.caption, content.hashtags)
-                    telegram_posted = await self.telegram.send_photo(poster_path, caption)
+                    # No image (not configured or failed) — rich text fallback
+                    telegram_posted = await self.telegram.send_message(text)
 
             self._record_post(content, telegram_posted)
             return GenerateResponse(
@@ -224,7 +230,7 @@ class PostOrchestrator:
         self._engagement.update_streak()
 
         telegram_posted = False
-        if publish_to_telegram and self.settings.text_only_mode:
+        if publish_to_telegram:
             text = format_daily_challenge_intro(content)
             telegram_posted = await self.telegram.send_message(text)
 
@@ -238,7 +244,7 @@ class PostOrchestrator:
         if not self.settings.engagement_enabled:
             return False
         self._engagement.update_streak()
-        if not publish_to_telegram or not self.settings.text_only_mode:
+        if not publish_to_telegram:
             return False
         text = format_streak_message(
             self._engagement.stats.current_streak,
@@ -251,7 +257,7 @@ class PostOrchestrator:
         if not self.settings.engagement_enabled:
             return False
         self._engagement.start_weekly_battle()
-        if publish_to_telegram and self.settings.text_only_mode:
+        if publish_to_telegram:
             text = format_weekly_battle_intro()
             return await self.telegram.send_message(text)
         return False
@@ -261,13 +267,13 @@ class PostOrchestrator:
         if not self.settings.engagement_enabled or not self._engagement.stats.weekly_battle_active:
             return False
         leaderboard = self._engagement.end_battle()
-        if leaderboard and publish_to_telegram and self.settings.text_only_mode:
+        if leaderboard and publish_to_telegram:
             return await self.telegram.send_message(leaderboard)
         return False
 
     async def send_engagement_summary(self, publish_to_telegram: bool = True) -> bool:
         """Send an engagement summary with stats."""
-        if not self.settings.engagement_enabled or not self.settings.text_only_mode:
+        if not self.settings.engagement_enabled:
             return False
         stats = self._engagement.stats
         acc = self._engagement.accuracy_pct()
@@ -283,6 +289,194 @@ class PostOrchestrator:
             lines.append(f"⚔️ Battle score: <b>{stats.weekly_battle_score} pts</b>")
         text = "\n".join(lines)
         return await self.telegram.send_message(text)
+
+    # ── Weekly Theme ────────────────────────────────────────────────────
+
+    def get_weekly_theme_subject(self) -> Subject:
+        """Return this week's themed subject (config override or auto-rotate by ISO week)."""
+        override = self.settings.weekly_theme_subject
+        if override:
+            for s in Subject:
+                if s.value == override:
+                    return s
+
+        from datetime import date
+        week_number = date.today().isocalendar()[1]
+        subjects = list(Subject)
+        return subjects[week_number % len(subjects)]
+
+    async def generate_weekly_theme_post(self, publish_to_telegram: bool = True) -> GenerateResponse:
+        """Post the weekly theme launch announcement."""
+        theme_subject = self.get_weekly_theme_subject()
+        content = await self.ai_client.generate(theme_subject, ContentFormat.weekly_theme_intro)
+        self.quality_gate.validate(content)
+        content = enrich_for_engagement(content)
+
+        poster_path = Path("text-only")
+        visual_path: Path | None = None
+        telegram_posted = False
+
+        if not self.settings.text_only_mode and self.medical_image_generator.configured:
+            try:
+                visual_path = await self.medical_image_generator.create_visual(content)
+            except Exception:
+                pass
+
+        if publish_to_telegram:
+            text = format_for_telegram(content)
+            if visual_path:
+                poster_path = visual_path
+                telegram_posted = await self.telegram.send_visual_post(visual_path, text)
+            else:
+                telegram_posted = await self.telegram.send_message(text)
+
+        self._record_post(content, telegram_posted)
+        return GenerateResponse(
+            content=content, poster_path=str(poster_path), telegram_posted=telegram_posted
+        )
+
+    # ── OSCE Station ─────────────────────────────────────────────────────
+
+    async def generate_osce_post(self, publish_to_telegram: bool = True) -> GenerateResponse:
+        """Generate and post the OSCE Station of the Week."""
+        subject = self.get_weekly_theme_subject()
+        content = await self.ai_client.generate(subject, ContentFormat.osce_station)
+        self.quality_gate.validate(content)
+        content = enrich_for_engagement(content)
+
+        poster_path = Path("text-only")
+        telegram_posted = False
+
+        if publish_to_telegram:
+            text = format_for_telegram(content)
+            telegram_posted = await self.telegram.send_message(text)
+
+        self._record_post(content, telegram_posted)
+        return GenerateResponse(
+            content=content, poster_path=str(poster_path), telegram_posted=telegram_posted
+        )
+
+    # ── Exam Countdown ────────────────────────────────────────────────────
+
+    def get_exam_days_remaining(self) -> int | None:
+        """Return days until NEET PG exam, or None if exam_date not configured."""
+        if not self.settings.exam_date:
+            return None
+        try:
+            from datetime import date
+            exam = date.fromisoformat(self.settings.exam_date)
+            delta = (exam - date.today()).days
+            return max(0, delta)
+        except ValueError:
+            return None
+
+    def is_exam_countdown_active(self) -> bool:
+        days = self.get_exam_days_remaining()
+        return days is not None and 0 <= days <= self.settings.exam_countdown_days
+
+    async def send_exam_countdown(self, publish_to_telegram: bool = True) -> bool:
+        """Send daily exam countdown message if within countdown window."""
+        days = self.get_exam_days_remaining()
+        if days is None:
+            return False
+
+        theme_subject = self.get_weekly_theme_subject()
+        subject_name = theme_subject.value.replace("_", " ").title()
+        text = format_exam_countdown(days, subject_name)
+        if publish_to_telegram:
+            return await self.telegram.send_message(text)
+        return False
+
+    # ── Study Schedule ────────────────────────────────────────────────────
+
+    # 30-day NEET PG study schedule mapping: (start_day, end_day, subject, key_topics)
+    _STUDY_PLAN: list[tuple[int, int, str, list[str]]] = [
+        (29, 30, "Anatomy", ["Brachial plexus injuries", "Nerve lesions & deficit patterns", "Clinically tested surface markings"]),
+        (27, 28, "Physiology", ["Oxygen-haemoglobin dissociation curve", "Cardiac output & Starling's law", "Renal physiology — GFR, tubular functions"]),
+        (25, 26, "Biochemistry", ["Enzyme kinetics — Km, Vmax", "Urea cycle defects", "Vitamins: deficiency & toxicity"]),
+        (23, 24, "Pathology", ["Granuloma types — TB vs sarcoid vs fungal", "Neoplasia — benign vs malignant features", "Inflammation mediators"]),
+        (21, 22, "Pharmacology", ["Autonomic drugs — adrenergic & cholinergic", "Antibiotics — mechanism & resistance", "Cardiac drugs — antiarrhythmics, antihypertensives"]),
+        (19, 20, "Microbiology", ["Gram stain & culture patterns", "Zoonoses & vectors", "Antifungals & antivirals"]),
+        (18, 18, "Forensic Medicine", ["Postmortem changes — lividity, rigor, putrefaction", "Wounds classification", "Medico-legal autopsies"]),
+        (17, 17, "Community Medicine", ["Vaccines & cold chain", "Nutritional deficiency diseases", "Screening tests — sensitivity, specificity"]),
+        (15, 16, "General Medicine", ["ECG — arrhythmias, MI patterns", "Endocrinology — diabetes, thyroid, adrenal", "Rheumatology — autoantibodies"]),
+        (13, 14, "General Surgery", ["Abdominal X-ray findings", "Hernias — direct vs indirect", "Surgical anatomy of thyroid & breast"]),
+        (11, 12, "Obstetrics & Gynecology", ["Partograph interpretation", "APH causes — placenta praevia vs abruption", "PCOS diagnostic criteria"]),
+        (9, 10, "Pediatrics", ["Vaccine schedule — NIS & IAP", "Nutritional disorders — PEM classification", "Developmental milestones"]),
+        (8, 8, "Ophthalmology", ["Glaucoma — open vs closed angle", "Cataract surgery complications", "Retinal detachment signs"]),
+        (7, 7, "ENT", ["Tuning fork tests", "Cholesteatoma features", "CSF rhinorrhoea causes"]),
+        (6, 6, "Orthopedics", ["Fracture healing & complications", "Nerve injuries at fracture sites", "Spine anatomy & cord syndromes"]),
+        (5, 5, "Dermatology", ["Bullous disorders — pemphigus vs pemphigoid", "Infections — tinea, leprosy", "Psoriasis pathology"]),
+        (4, 4, "Psychiatry", ["Schizophrenia first-rank symptoms", "Drug of choice for each disorder", "ICD-10 vs DSM-5 key differences"]),
+        (3, 3, "Radiology", ["Chest X-ray systematic reading", "CT patterns — consolidation, ground-glass", "Barium swallow findings"]),
+        (2, 2, "Anesthesiology", ["Airway assessment — Mallampati", "MAC values & anaesthetic depth", "Muscle relaxants & reversal"]),
+        (1, 1, "High-Yield Revision", ["PYQ pattern analysis — last 5 years", "Rapid revision of all one-liners", "Mock test simulation"]),
+    ]
+
+    def get_todays_study_subjects(self) -> tuple[str, list[str]]:
+        """Return (subject, topics) for today based on days remaining to exam."""
+        days = self.get_exam_days_remaining()
+
+        # Within 30-day countdown: use structured study plan
+        if days is not None and 0 <= days <= 30:
+            for start, end, subject, topics in self._STUDY_PLAN:
+                if end >= days >= start:
+                    return subject, topics
+            return "General Revision", ["Review weak topics", "MCQ practice", "Flashcard run"]
+
+        # Outside countdown (>30 days or no exam date): use weekly theme with default topics
+        subj = self.get_weekly_theme_subject()
+        subject_name = subj.value.replace("_", " ").title()
+        # Return empty list — formatter._DEFAULT_STUDY_TOPICS will fill in the right topics
+        return subject_name, []
+
+    async def generate_study_schedule_post(self, publish_to_telegram: bool = True) -> bool:
+        """Post today's structured study plan."""
+        days = self.get_exam_days_remaining()
+        subject, topics = self.get_todays_study_subjects()
+
+        from app.services.formatter import format_study_schedule_post
+        text = format_study_schedule_post(days or 0, subject, topics)
+        if publish_to_telegram:
+            return await self.telegram.send_message(text)
+        return False
+
+    # ── On-Demand AI Query (for bot commands) ────────────────────────────
+
+    async def query_on_demand(
+        self,
+        query_type: str,
+        query_args: str,
+        reply_chat_id: str,
+    ) -> None:
+        """Generate AI content on-demand for a user query and reply to their chat."""
+        FORMAT_MAP = {
+            "drug": ContentFormat.drug_of_day,
+            "compare": ContentFormat.comparison_table,
+            "algorithm": ContentFormat.management_algorithm,
+            "ddx": ContentFormat.clinical_case,
+            "mistake": ContentFormat.common_mistake,
+        }
+        target_format = FORMAT_MAP.get(query_type, ContentFormat.rapid_revision)
+
+        # Pick best subject from args or fallback to random
+        subject = random.choice(list(Subject))
+        for s in Subject:
+            if s.value.replace("_", " ") in query_args.lower() or s.value in query_args.lower():
+                subject = s
+                break
+
+        try:
+            await self.telegram.send_message_to(reply_chat_id, "⏳ Generating…")
+            content = await self.ai_client.generate(subject, target_format)
+            from app.services.formatter import format_for_telegram
+            text = format_for_telegram(content)
+            await self.telegram.send_message_to(reply_chat_id, text)
+        except Exception as exc:
+            logger.warning("On-demand query failed: %s", exc)
+            await self.telegram.send_message_to(
+                reply_chat_id, "❌ Could not generate a response. Try again shortly."
+            )
 
     # ── Education Mode Filtering ───────────────────────────────────────
 
@@ -422,6 +616,92 @@ class PostOrchestrator:
                 difficulty=planned.difficulty,
             )
 
+        # Tier 1 lanes
+        if planned.lane == PostLane.clinical_correlation and not subject_override:
+            return await self.generate_smart_format_post(
+                subject=planned.subject,
+                smart_format="clinical_correlation",
+                publish_to_telegram=publish_to_telegram,
+                difficulty=planned.difficulty,
+            )
+
+        if planned.lane == PostLane.comparison and not subject_override:
+            return await self.generate_smart_format_post(
+                subject=planned.subject,
+                smart_format="comparison_table",
+                publish_to_telegram=publish_to_telegram,
+                difficulty=planned.difficulty,
+            )
+
+        if planned.lane == PostLane.management_algo and not subject_override:
+            return await self.generate_smart_format_post(
+                subject=planned.subject,
+                smart_format="management_algorithm",
+                publish_to_telegram=publish_to_telegram,
+                difficulty=planned.difficulty,
+            )
+
+        if planned.lane == PostLane.drug_spotlight and not subject_override:
+            return await self.generate_smart_format_post(
+                subject=planned.subject,
+                smart_format="drug_of_day",
+                publish_to_telegram=publish_to_telegram,
+                difficulty=planned.difficulty,
+            )
+
+        # Tier 2 lanes
+        if planned.lane == PostLane.pimp_round and not subject_override:
+            return await self.generate_smart_format_post(
+                subject=planned.subject,
+                smart_format="pimp_question",
+                publish_to_telegram=publish_to_telegram,
+                difficulty=planned.difficulty,
+            )
+
+        if planned.lane == PostLane.spot_diagnosis and not subject_override:
+            return await self.generate_smart_format_post(
+                subject=planned.subject,
+                smart_format="spot_diagnosis",
+                publish_to_telegram=publish_to_telegram,
+                difficulty=planned.difficulty,
+            )
+
+        if planned.lane == PostLane.ward_tip and not subject_override:
+            return await self.generate_smart_format_post(
+                subject=planned.subject,
+                smart_format="ward_tip",
+                publish_to_telegram=publish_to_telegram,
+                difficulty=planned.difficulty,
+            )
+
+        if planned.lane == PostLane.case_series and not subject_override:
+            return await self.generate_smart_format_post(
+                subject=planned.subject,
+                smart_format="case_unfolding",
+                publish_to_telegram=publish_to_telegram,
+                difficulty=planned.difficulty,
+            )
+
+        # Tier 3 lanes
+        if planned.lane == PostLane.osce_prep and not subject_override:
+            return await self.generate_smart_format_post(
+                subject=planned.subject,
+                smart_format="osce_station",
+                publish_to_telegram=publish_to_telegram,
+                difficulty=planned.difficulty,
+            )
+
+        if planned.lane == PostLane.mistake_corner and not subject_override:
+            return await self.generate_smart_format_post(
+                subject=planned.subject,
+                smart_format="common_mistake",
+                publish_to_telegram=publish_to_telegram,
+                difficulty=planned.difficulty,
+            )
+
+        if planned.lane == PostLane.weekly_theme and not subject_override:
+            return await self.generate_weekly_theme_post(publish_to_telegram=publish_to_telegram)
+
         return await self.generate_post(
             subject=subject_override or planned.subject,
             content_format=planned.content_format,
@@ -499,6 +779,7 @@ class PostOrchestrator:
                 f"Difficulty: <b>{tag.upper()}</b>\n\n"
             )
             full = header + format_for_telegram(content)
+            # Always use text for MCQ variants so the quiz layout is preserved
             telegram_posted = await self.telegram.send_message(full)
 
         self._record_post(content, telegram_posted)
@@ -568,6 +849,25 @@ class PostOrchestrator:
     ) -> GenerateResponse:
         selected_subject = subject or random.choice(list(Subject))
 
+        _FORMAT_ENUM_MAP = {
+            "flashcard": ContentFormat.flashcard,
+            "mnemonic": ContentFormat.mnemonic,
+            "true_false": ContentFormat.true_false,
+            "one_liner": ContentFormat.one_liner_recall,
+            "clinical_correlation": ContentFormat.clinical_correlation,
+            "comparison_table": ContentFormat.comparison_table,
+            "management_algorithm": ContentFormat.management_algorithm,
+            "drug_of_day": ContentFormat.drug_of_day,
+            "pimp_question": ContentFormat.pimp_question,
+            "spot_diagnosis": ContentFormat.spot_diagnosis,
+            "ward_tip": ContentFormat.ward_tip,
+            "case_unfolding": ContentFormat.case_unfolding,
+            "osce_station": ContentFormat.osce_station,
+            "weekly_theme_intro": ContentFormat.weekly_theme_intro,
+            "common_mistake": ContentFormat.common_mistake,
+            "study_schedule": ContentFormat.study_schedule,
+        }
+
         content: GeneratedContent | None = None
         if smart_format == "flashcard":
             content = self._engine.generate_flashcard(selected_subject)
@@ -578,10 +878,10 @@ class PostOrchestrator:
         elif smart_format == "one_liner":
             content = self._engine.generate_one_liner(selected_subject)
 
+        target_format = _FORMAT_ENUM_MAP.get(smart_format, ContentFormat.rapid_revision)
+
         if not content:
-            content = await self.ai_client.generate(
-                selected_subject, ContentFormat.rapid_revision
-            )
+            content = await self.ai_client.generate(selected_subject, target_format)
 
         if difficulty:
             content.difficulty = difficulty.value
@@ -590,9 +890,23 @@ class PostOrchestrator:
 
         poster_path = Path("text-only")
         telegram_posted = False
-        if publish_to_telegram and self.settings.text_only_mode:
+        if publish_to_telegram:
             text = format_for_telegram(content)
-            telegram_posted = await self.telegram.send_message(text)
+            if self.settings.text_only_mode:
+                telegram_posted = await self.telegram.send_message(text)
+            elif self.medical_image_generator.configured:
+                visual_path: Path | None = None
+                try:
+                    visual_path = await self.medical_image_generator.create_visual(content)
+                except Exception:
+                    pass
+                if visual_path:
+                    poster_path = visual_path
+                    telegram_posted = await self.telegram.send_visual_post(visual_path, text)
+                else:
+                    telegram_posted = await self.telegram.send_message(text)
+            else:
+                telegram_posted = await self.telegram.send_message(text)
 
         self._record_post(content, telegram_posted)
         return GenerateResponse(

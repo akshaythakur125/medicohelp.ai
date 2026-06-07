@@ -38,10 +38,14 @@ class Settings(BaseSettings):
     challenge_hour: int = Field(default=9, ge=0, le=23)  # Hour for daily challenge post
     engagement_enabled: bool = True
 
+    # Exam countdown (NEET PG date as YYYY-MM-DD, leave blank to disable)
+    exam_date: str | None = None
+    exam_countdown_days: int = Field(default=30, ge=1)
+    # Weekly theme (auto-rotates through subjects each week; set to override)
+    weekly_theme_subject: str | None = None
+
     image_card_enabled: bool = True
     image_card_fallback_to_text: bool = True
-    assets_images_dir: Path = base_dir / "assets" / "images"
-    image_index_path: Path = base_dir / "assets" / "images" / "index.json"
     image_card_template: str = "rapid_revision"
 
     app_host: str = "0.0.0.0"
@@ -56,6 +60,8 @@ class Settings(BaseSettings):
     logs_dir: Path = base_dir / "logs"
     prompts_dir: Path = base_dir / "prompts"
     assets_dir: Path = base_dir / "assets"
+    assets_images_dir: Path = base_dir / "assets" / "images"
+    image_index_path: Path = base_dir / "assets" / "images" / "index.json"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 

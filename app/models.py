@@ -50,6 +50,22 @@ class ContentFormat(str, Enum):
     true_false = "true_false"
     one_liner_recall = "one_liner_recall"
     mnemonic = "mnemonic"
+    # Tier 1
+    clinical_correlation = "clinical_correlation"
+    comparison_table = "comparison_table"
+    management_algorithm = "management_algorithm"
+    drug_of_day = "drug_of_day"
+    # Tier 2
+    pimp_question = "pimp_question"
+    spot_diagnosis = "spot_diagnosis"
+    ward_tip = "ward_tip"
+    case_unfolding = "case_unfolding"
+    # Tier 3
+    osce_station = "osce_station"
+    weekly_theme_intro = "weekly_theme_intro"
+    # Utility
+    common_mistake = "common_mistake"
+    study_schedule = "study_schedule"
 
 
 class NewsTopic(str, Enum):
@@ -72,6 +88,21 @@ class PostLane(str, Enum):
     weak_topic_recall = "weak_topic_recall"
     true_false = "true_false"
     one_liner_recall = "one_liner_recall"
+    # Tier 1
+    clinical_correlation = "clinical_correlation"
+    comparison = "comparison"
+    management_algo = "management_algo"
+    drug_spotlight = "drug_spotlight"
+    # Tier 2
+    pimp_round = "pimp_round"
+    spot_diagnosis = "spot_diagnosis"
+    ward_tip = "ward_tip"
+    case_series = "case_series"
+    # Tier 3
+    osce_prep = "osce_prep"
+    weekly_theme = "weekly_theme"
+    # Utility
+    mistake_corner = "mistake_corner"
 
 
 class Difficulty(str, Enum):

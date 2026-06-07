@@ -220,8 +220,10 @@ class MedicalImageGenerator:
         if not self.configured:
             return None
 
-        prompt = self._build_prompt(content)
-        logger.debug("Image prompt (%s): %.300s", self.settings.ai_provider, prompt)
+        # Use Gemini to write a specific visual description, then generate via Pollinations
+        visual_query = await self._get_visual_query(content)
+        prompt = self._build_prompt(content, visual_query)
+        logger.debug("Image prompt: %.300s", prompt)
 
         try:
             if self.settings.ai_provider == "gemini":
@@ -231,43 +233,72 @@ class MedicalImageGenerator:
             logger.warning("Image generation failed (%s): %s", self.settings.ai_provider, exc)
             return None
 
+    async def _get_visual_query(self, content: GeneratedContent) -> str:
+        """Ask Gemini to describe what the image should show for this specific topic."""
+        try:
+            from google import genai
+
+            client = genai.Client(api_key=self.settings.gemini_api_key)
+            topic = content.title or content.poster_text or ""
+            subject = _subject_key(content).replace("_", " ")
+
+            response = await client.aio.models.generate_content(
+                model=self.settings.gemini_text_model,
+                contents=(
+                    f"Write a 10-word image description for a medical education illustration about "
+                    f"'{topic}' ({subject}). Focus on the specific anatomical structure, "
+                    f"pathological finding, or clinical concept that should be visualised. "
+                    f"Example outputs: 'brachial plexus C5 C6 nerve roots shoulder anatomy' / "
+                    f"'H&E slide coagulative necrosis ghost cells eosinophilic' / "
+                    f"'Mallampati airway classification oral cavity uvula'. "
+                    f"Reply with ONLY the description, no punctuation, no explanation."
+                ),
+            )
+            query = (response.text or "").strip().split("\n")[0][:150]
+            logger.debug("Gemini visual query for '%s': %s", topic, query)
+            return query
+        except Exception as exc:
+            logger.debug("Visual query generation failed, using fallback: %s", exc)
+            return content.title or content.poster_text or _subject_key(content).replace("_", " ")
+
     # ── Gemini / Imagen 3 ──────────────────────────────────────────────────────
 
     async def _generate_with_gemini(self, content: GeneratedContent, prompt: str) -> Path | None:
-        from google import genai
-        from google.genai import types
+        """Generate via Pollinations.ai (FLUX model, free, no API key required).
 
-        client = genai.Client(api_key=self.settings.gemini_api_key)
-        model = self.settings.gemini_image_model  # imagen-3.0-generate-002
+        Google's image APIs (Imagen 3 and Gemini Flash image generation) both
+        require paid billing beyond the free text tier, so we use Pollinations
+        as the image backend when the provider is set to Gemini.
+        """
+        import urllib.parse
 
-        response = await client.aio.models.generate_images(
-            model=model,
-            prompt=prompt,
-            config=types.GenerateImagesConfig(
-                number_of_images=1,
-                aspect_ratio="3:4",        # portrait — matches 1080×1500 poster
-                guidance_scale=8.5,        # strong prompt adherence
-                add_watermark=False,
-                negative_prompt=(
-                    "blurry, low quality, watermark, logo, text overlay, "
-                    "cartoon style, anime, abstract art, impressionist, "
-                    "real patient face, copyrighted material, branded content"
-                ),
-            ),
+        import httpx
+
+        short_prompt = prompt[:600]
+        encoded = urllib.parse.quote(short_prompt)
+        seed = abs(hash(short_prompt)) % 99999
+        url = (
+            f"https://image.pollinations.ai/prompt/{encoded}"
+            f"?width=1024&height=1024&model=flux-pro&nologo=true&seed={seed}"
         )
 
-        if not response.generated_images:
-            logger.warning("Imagen 3 returned no images.")
+        logger.info("Generating medical visual via Pollinations.ai (FLUX)…")
+        try:
+            async with httpx.AsyncClient(timeout=90, follow_redirects=True) as client:
+                response = await client.get(url)
+                response.raise_for_status()
+        except Exception as exc:
+            logger.error("Pollinations image generation failed: %s", exc, exc_info=True)
             return None
 
-        image_bytes = response.generated_images[0].image.image_bytes
-        if not image_bytes:
-            logger.warning("Imagen 3 image has no bytes.")
+        content_type = response.headers.get("content-type", "")
+        if not content_type.startswith("image/"):
+            logger.warning("Pollinations returned non-image content-type: %s", content_type)
             return None
 
         path = self.settings.generated_dir / f"visual_{_subject_key(content)}_{uuid4().hex[:8]}.png"
-        path.write_bytes(image_bytes)
-        logger.info("Imagen 3 medical visual saved: %s", path)
+        path.write_bytes(response.content)
+        logger.info("Pollinations visual saved: %s (%d bytes)", path, len(response.content))
         return path
 
     # ── OpenAI DALL-E / GPT-Image ─────────────────────────────────────────────
@@ -296,37 +327,45 @@ class MedicalImageGenerator:
 
     # ── Prompt builder ─────────────────────────────────────────────────────────
 
-    def _build_prompt(self, content: GeneratedContent) -> str:
+    def _build_prompt(self, content: GeneratedContent, visual_query: str = "") -> str:
+        """Build a FLUX-optimised prompt: modality anchors style, Gemini query provides specificity."""
         subj_key = _subject_key(content)
-        fmt_key = content.content_format.value
+        modality = _SUBJECT_MODALITY.get(subj_key, "medical education diagram")
+        labels = (content.visual_labels or content.image_based_data or [])[:3]
 
-        subject_style = _SUBJECT_VISUAL_STYLE.get(
-            subj_key, "medical education illustration, clean schematic style"
-        )
-        format_guidance = _FORMAT_VISUAL_GUIDANCE.get(
-            fmt_key, "clear educational medical diagram, labelled structures"
-        )
+        # visual_query from Gemini is the most specific signal — put it right after modality
+        core = visual_query or content.title or content.poster_text or subj_key.replace("_", " ")
 
-        topic = content.poster_text or content.title or subj_key.replace("_", " ")
-        visual_desc = content.visual_description or ""
-        labels = ", ".join((content.visual_labels or content.image_based_data or [])[:4])
-        subject_display = subj_key.replace("_", " ").title()
-
-        prompt = (
-            f"Medical education illustration for {subject_display}: {topic}. "
-            f"Visual style: {subject_style}. "
-            f"Purpose: {format_guidance}. "
-        )
-        if visual_desc:
-            prompt += f"Specific visual requirement: {visual_desc}. "
+        parts = [modality, core]
         if labels:
-            prompt += (
-                f"The image must clearly show and label these features: {labels}. "
-                "Each labelled feature must be visually distinct and identifiable. "
-            )
+            parts.append("labeled: " + ", ".join(labels))
+        parts.append("educational, clean white background, no text overlay, no watermark")
 
-        prompt += f"{_ACCURACY_BLOCK} {_STYLE_BLOCK} {_SAFETY_BLOCK}"
-        return prompt[:4000]
+        return ", ".join(parts)[:450]
+
+
+# Modality-first descriptors — anchors FLUX to the right visual domain
+_SUBJECT_MODALITY: dict[str, str] = {
+    "anatomy":               "labeled anatomical cross-section diagram, color-coded tissue layers, Netter medical atlas style",
+    "physiology":            "physiology graph or process schematic with labeled axes, clean educational infographic",
+    "biochemistry":          "biochemical pathway diagram, color-coded molecules, directional arrows",
+    "pathology":             "histopathology microscope slide H&E stain, pink eosinophilic cytoplasm, purple nuclei, circular field of view",
+    "pharmacology":          "pharmacology dose-response curve or receptor mechanism diagram, labeled axes",
+    "microbiology":          "microbiology microscopy Gram stain, labeled bacteria morphology, circular microscope field",
+    "forensic_medicine":     "forensic body chart injury pattern diagram, anatomical illustration",
+    "community_medicine":    "epidemiology infographic or 2x2 contingency table, clean data-visualization style",
+    "general_medicine":      "medical ECG tracing with labeled PQRST waves, or clinical examination schematic",
+    "general_surgery":       "surgical anatomy diagram, operative field illustration, labeled structures",
+    "obstetrics_gynecology": "obstetrics diagram fetal lie or pelvic anatomy cross-section, labeled",
+    "pediatrics":            "pediatric growth chart or clinical assessment schematic, clear labels",
+    "ophthalmology":         "ophthalmology fundus diagram or eye cross-section, labeled disc vessels retina",
+    "ent":                   "otoscopic tympanic membrane view labeled, or nasal anatomy cross-section",
+    "orthopedics":           "orthopedic joint anatomy or fracture classification schematic, labeled X-ray style",
+    "dermatology":           "skin layers cross-section diagram, labeled lesion morphology, dermoscopy pattern",
+    "psychiatry":            "lateral brain diagram labeled lobes and limbic structures, neurotransmitter pathway",
+    "radiology":             "PA chest X-ray with labeled findings, black and white radiograph, annotated landmarks",
+    "anesthesiology":        "airway anatomy sagittal cross-section, laryngoscopy view, Mallampati classification diagram",
+}
 
 
 def _subject_key(content: GeneratedContent) -> str:

@@ -133,6 +133,14 @@ class TelegramPoster:
         logger.info("Telegram poll sent to %s", target)
         return True
 
+    async def send_visual_post(self, image_path: Path, full_text: str) -> bool:
+        """Send AI medical image as photo then full educational text as a follow-up message."""
+        lines = [l for l in full_text.split("\n") if l.strip()]
+        short_caption = lines[0][:300] if lines else "🏥 MedicoHelp"
+        await self.send_photo(image_path, short_caption)
+        await self.send_message(full_text)
+        return True
+
     async def send_message_with_keyboard(
         self,
         text: str,

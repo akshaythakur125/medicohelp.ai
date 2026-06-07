@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-_SPACED_REPETITION_DAYS = 7
+_SPACED_REPETITION_DAYS = 36500  # never repeat a seen topic (100 years)
 _WEAK_TOPIC_COOLDOWN_DAYS = 3
 _PERFORMANCE_DECAY_DAYS = 30
 
