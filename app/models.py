@@ -63,6 +63,9 @@ class ContentFormat(str, Enum):
     # Tier 3
     osce_station = "osce_station"
     weekly_theme_intro = "weekly_theme_intro"
+    # Utility
+    common_mistake = "common_mistake"
+    study_schedule = "study_schedule"
 
 
 class NewsTopic(str, Enum):
@@ -98,6 +101,8 @@ class PostLane(str, Enum):
     # Tier 3
     osce_prep = "osce_prep"
     weekly_theme = "weekly_theme"
+    # Utility
+    mistake_corner = "mistake_corner"
 
 
 class Difficulty(str, Enum):

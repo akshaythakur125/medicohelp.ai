@@ -46,6 +46,9 @@ class BotCommandHandler:
             self._offset = update["update_id"] + 1
             await self._handle(update)
 
+    # Public commands any user can call by DMing the bot
+    _PUBLIC_COMMANDS = {"/start", "/help", "/drug", "/compare", "/algorithm", "/ddx", "/mistake"}
+
     async def _handle(self, update: dict) -> None:
         message = update.get("message") or update.get("edited_message", {})
         if not message:
@@ -54,69 +57,109 @@ class BotCommandHandler:
         text: str = (message.get("text") or "").strip()
         chat_id = str(message.get("chat", {}).get("id", ""))
 
-        if chat_id != self.settings.admin_chat_id:
-            return  # Ignore non-admin messages
-
         if not text.startswith("/"):
             return
 
         cmd, _, args = text.partition(" ")
         cmd = cmd.lower().split("@")[0]  # Strip bot username suffix
 
+        is_admin = chat_id == self.settings.admin_chat_id
+        is_public_cmd = cmd in self._PUBLIC_COMMANDS
+
+        # Non-admin gets public commands only
+        if not is_admin and not is_public_cmd:
+            return
+
         try:
-            if cmd == "/help":
-                await self._cmd_help(chat_id)
-            elif cmd == "/status":
-                await self._cmd_status(chat_id)
-            elif cmd == "/post":
-                await self._cmd_post(chat_id, args.strip())
-            elif cmd == "/pause":
-                await self._cmd_pause(chat_id)
-            elif cmd == "/resume":
-                await self._cmd_resume(chat_id)
-            elif cmd == "/post_format":
-                await self._cmd_post_format(chat_id, args.strip())
-            elif cmd == "/stats":
-                await self._cmd_stats(chat_id)
-            elif cmd == "/weak":
-                await self._cmd_weak(chat_id)
-            elif cmd == "/start":
-                await self._cmd_help(chat_id)
-            elif cmd == "/mode":
-                await self._cmd_mode(chat_id, args.strip())
-            elif cmd == "/challenge":
-                await self._cmd_challenge(chat_id)
-            elif cmd == "/streak":
-                await self._cmd_streak(chat_id)
-            elif cmd == "/battle":
-                await self._cmd_battle(chat_id)
-            elif cmd == "/engagement":
-                await self._cmd_engagement(chat_id)
+            # ── Public commands (all users) ──────────────────────────────
+            if cmd in ("/start", "/help"):
+                await self._cmd_help(chat_id, is_admin=is_admin)
+            elif cmd == "/drug":
+                await self._cmd_query(chat_id, "drug", args.strip())
+            elif cmd == "/compare":
+                await self._cmd_query(chat_id, "compare", args.strip())
+            elif cmd == "/algorithm":
+                await self._cmd_query(chat_id, "algorithm", args.strip())
+            elif cmd == "/ddx":
+                await self._cmd_query(chat_id, "ddx", args.strip())
+            elif cmd == "/mistake":
+                await self._cmd_query(chat_id, "mistake", args.strip())
+            # ── Admin-only commands ───────────────────────────────────────
+            elif is_admin:
+                if cmd == "/status":
+                    await self._cmd_status(chat_id)
+                elif cmd == "/post":
+                    await self._cmd_post(chat_id, args.strip())
+                elif cmd == "/pause":
+                    await self._cmd_pause(chat_id)
+                elif cmd == "/resume":
+                    await self._cmd_resume(chat_id)
+                elif cmd == "/post_format":
+                    await self._cmd_post_format(chat_id, args.strip())
+                elif cmd == "/stats":
+                    await self._cmd_stats(chat_id)
+                elif cmd == "/weak":
+                    await self._cmd_weak(chat_id)
+                elif cmd == "/mode":
+                    await self._cmd_mode(chat_id, args.strip())
+                elif cmd == "/challenge":
+                    await self._cmd_challenge(chat_id)
+                elif cmd == "/streak":
+                    await self._cmd_streak(chat_id)
+                elif cmd == "/battle":
+                    await self._cmd_battle(chat_id)
+                elif cmd == "/engagement":
+                    await self._cmd_engagement(chat_id)
         except Exception as exc:
             logger.exception("Bot command %s failed.", cmd)
             await self.telegram.send_message_to(chat_id, f"❌ Error: {exc}")
 
-    async def _cmd_help(self, chat_id: str) -> None:
-        msg = (
-            "<b>MedicoHelp Bot — Admin Commands</b>\n\n"
-            "/status — Bot status &amp; next schedule\n"
-            "/post — Trigger an immediate revision post\n"
-            "/post anatomy — Post a specific subject\n"
-            "/post anatomy mcq — Post specific subject + format\n"
-            "/pause — Pause all scheduled posting\n"
-            "/resume — Resume scheduled posting\n"
-            "/post_format mcq — Post a specific format across subjects\n"
-            "/stats — Show engine stats &amp; weak topics\n"
-            "/weak — Force a weak-topic recall post\n"
-            "/mode — Set education mode (comprehensive, first_year_mbbs, etc.)\n"
-            "/challenge — Post the daily challenge MCQ\n"
-            "/streak — Show your current revision streak\n"
-            "/battle — Check weekly battle status\n"
-            "/engagement — Show engagement summary\n"
-            "/help — Show this help\n\n"
-            "<i>Only messages from your ADMIN_CHAT_ID are processed.</i>"
+    async def _cmd_help(self, chat_id: str, is_admin: bool = False) -> None:
+        public_help = (
+            "<b>🏥 MedicoHelp AI — On-Demand Commands</b>\n\n"
+            "DM me anytime for instant medical reference:\n\n"
+            "💊 /drug &lt;name&gt;\n"
+            "  <i>e.g.</i> /drug metformin\n"
+            "  → Full drug profile: MOA, uses, SEs, contraindications\n\n"
+            "⚖️ /compare &lt;A&gt; vs &lt;B&gt;\n"
+            "  <i>e.g.</i> /compare crohns vs colitis\n"
+            "  → Side-by-side comparison table\n\n"
+            "📋 /algorithm &lt;scenario&gt;\n"
+            "  <i>e.g.</i> /algorithm anaphylaxis\n"
+            "  → Step-by-step management\n\n"
+            "🔍 /ddx &lt;symptoms&gt;\n"
+            "  <i>e.g.</i> /ddx chest pain radiating to back\n"
+            "  → Ranked differential diagnosis\n\n"
+            "❌ /mistake &lt;topic&gt;\n"
+            "  <i>e.g.</i> /mistake beta blockers\n"
+            "  → Common mistake students make + correction\n\n"
+            "<i>Responses are AI-generated for educational revision only.</i>"
         )
+        admin_extra = (
+            "\n\n<b>── Admin Controls ──</b>\n"
+            "/status · /post · /pause · /resume\n"
+            "/post_format · /stats · /weak · /mode\n"
+            "/challenge · /streak · /battle · /engagement"
+        )
+        msg = public_help + (admin_extra if is_admin else "")
         await self.telegram.send_message_to(chat_id, msg)
+
+    async def _cmd_query(self, chat_id: str, query_type: str, args: str) -> None:
+        """Handle on-demand AI queries from any user."""
+        if not args:
+            examples = {
+                "drug": "/drug metformin",
+                "compare": "/compare crohns vs colitis",
+                "algorithm": "/algorithm anaphylaxis",
+                "ddx": "/ddx chest pain radiating to jaw",
+                "mistake": "/mistake beta blockers",
+            }
+            await self.telegram.send_message_to(
+                chat_id,
+                f"Please provide a topic. Example: <code>{examples.get(query_type, '')}</code>",
+            )
+            return
+        await self.orchestrator.query_on_demand(query_type, args, chat_id)
 
     async def _cmd_status(self, chat_id: str) -> None:
         schedule = self.settings.post_schedule_times or f"every {self.settings.post_interval_hours}h"

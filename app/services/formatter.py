@@ -52,6 +52,8 @@ _FORMAT_LABEL: dict[str, str] = {
     # Tier 3
     "osce_station": "OSCE STATION",
     "weekly_theme_intro": "WEEKLY THEME",
+    "common_mistake": "COMMON MISTAKE",
+    "study_schedule": "STUDY PLAN",
 }
 
 _MAX_LEN = 4096
@@ -145,6 +147,10 @@ def format_for_telegram(content: GeneratedContent) -> str:
         body = _body_osce_station(content)
     elif fmt == ContentFormat.weekly_theme_intro:
         body = _body_weekly_theme_intro(content)
+    elif fmt == ContentFormat.common_mistake:
+        body = _body_common_mistake(content)
+    elif fmt == ContentFormat.study_schedule:
+        body = _body_study_schedule(content)
     else:
         body = _body_notes(content)
 
@@ -543,6 +549,47 @@ def format_battle_winner(scores: dict[str, int]) -> str:
         f"🥇 <b>Winner: User {winner}</b> — {scores[winner]} pts\n\n"
         f"{format_battle_leaderboard(scores)}\n\n"
         f"<i>Next battle starts Sunday! Stay sharp!</i>"
+    )
+
+
+def _body_common_mistake(content: GeneratedContent) -> str:
+    """Common Mistakes Corner — the correction students never forget."""
+    parts: list[str] = []
+    if content.poster_text:
+        parts.append(f"<b>{_esc(content.poster_text)}</b>\n")
+    parts.append(_esc(content.caption))
+    if content.question:
+        parts.append(f"\n<b>Test Yourself:</b> <i>{_esc(content.question)}</i>")
+    if content.correct_answer:
+        inner = f"✅ <b>{_esc(content.correct_answer)}</b>"
+        if content.explanation:
+            inner += f"\n\n{_esc(content.explanation)}"
+        parts.append(f"<tg-spoiler>{inner}</tg-spoiler>")
+        parts.append("<i>👆 Tap to reveal</i>")
+    return "\n".join(parts)
+
+
+def _body_study_schedule(content: GeneratedContent) -> str:
+    """Daily study plan post."""
+    parts: list[str] = []
+    if content.poster_text:
+        parts.append(f"<b>📅 {_esc(content.poster_text)}</b>\n")
+    parts.append(_esc(content.caption))
+    return "\n".join(parts)
+
+
+def format_study_schedule_post(days_remaining: int, subject: str, topics: list[str]) -> str:
+    """Format a study schedule post with day counter."""
+    topic_lines = "\n".join(f"  {i+1}. {t}" for i, t in enumerate(topics[:3]))
+    header = f"📅 <b>Day {days_remaining} to Go — Today: {subject}</b>\n" if days_remaining > 0 else f"📅 <b>Today: {subject}</b>\n"
+    return (
+        f"{header}\n"
+        f"🎯 <b>Must-Cover Today:</b>\n{topic_lines}\n\n"
+        f"📖 <b>Strategy:</b>\n"
+        f"  • Morning: Read concepts + notes\n"
+        f"  • Afternoon: Solve 20-30 MCQs\n"
+        f"  • Evening: Flashcard revision\n\n"
+        f"<i>Stay consistent — one good day compounds into success.</i>"
     )
 
 

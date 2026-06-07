@@ -165,6 +165,21 @@ class PostingScheduler:
         )
         logger.info("Exam countdown job scheduled daily at 06:30 %s", self.settings.timezone)
 
+        # Study schedule — daily at 07:15 (only meaningful when exam_date is set)
+        self.scheduler.add_job(
+            self._run_study_schedule,
+            trigger=CronTrigger(
+                hour=7,
+                minute=15,
+                timezone=self.settings.timezone,
+            ),
+            id="study_schedule_daily",
+            replace_existing=True,
+            max_instances=1,
+            coalesce=True,
+        )
+        logger.info("Study schedule job scheduled daily at 07:15 %s", self.settings.timezone)
+
     def _register_post_jobs(self) -> None:
         schedule_times = [
             t.strip()
@@ -318,6 +333,16 @@ class PostingScheduler:
             await self.orchestrator.send_exam_countdown(publish_to_telegram=True)
         except Exception as exc:
             logger.exception("Exam countdown failed: %s", exc)
+
+    async def _run_study_schedule(self) -> None:
+        """Post daily study schedule (only when exam_date is set)."""
+        if not self.settings.exam_date:
+            return
+        logger.info("Study schedule job triggered.")
+        try:
+            await self.orchestrator.generate_study_schedule_post(publish_to_telegram=True)
+        except Exception as exc:
+            logger.exception("Study schedule post failed: %s", exc)
 
     # ── Restart safety ───────────────────────────────────────────────────
 

@@ -180,6 +180,9 @@ class ContentStrategy:
         PostLane.case_series,
         PostLane.flashcard,
         PostLane.quick_revision,
+        # Utility
+        PostLane.mistake_corner,
+        PostLane.mcq_variant,
     ]
 
     _FORMAT_MAP = {
@@ -207,6 +210,8 @@ class ContentStrategy:
         # Tier 3
         PostLane.osce_prep: ContentFormat.osce_station,
         PostLane.weekly_theme: ContentFormat.weekly_theme_intro,
+        # Utility
+        PostLane.mistake_corner: ContentFormat.common_mistake,
     }
 
     _DIFFICULTY_WEIGHTS = [Difficulty.easy] * 3 + [Difficulty.moderate] * 4 + [Difficulty.exam_level] * 3

@@ -387,6 +387,94 @@ class PostOrchestrator:
             return await self.telegram.send_message(text)
         return False
 
+    # ── Study Schedule ────────────────────────────────────────────────────
+
+    # 30-day NEET PG study schedule mapping: (start_day, end_day, subject, key_topics)
+    _STUDY_PLAN: list[tuple[int, int, str, list[str]]] = [
+        (29, 30, "Anatomy", ["Brachial plexus injuries", "Nerve lesions & deficit patterns", "Clinically tested surface markings"]),
+        (27, 28, "Physiology", ["Oxygen-haemoglobin dissociation curve", "Cardiac output & Starling's law", "Renal physiology — GFR, tubular functions"]),
+        (25, 26, "Biochemistry", ["Enzyme kinetics — Km, Vmax", "Urea cycle defects", "Vitamins: deficiency & toxicity"]),
+        (23, 24, "Pathology", ["Granuloma types — TB vs sarcoid vs fungal", "Neoplasia — benign vs malignant features", "Inflammation mediators"]),
+        (21, 22, "Pharmacology", ["Autonomic drugs — adrenergic & cholinergic", "Antibiotics — mechanism & resistance", "Cardiac drugs — antiarrhythmics, antihypertensives"]),
+        (19, 20, "Microbiology", ["Gram stain & culture patterns", "Zoonoses & vectors", "Antifungals & antivirals"]),
+        (18, 18, "Forensic Medicine", ["Postmortem changes — lividity, rigor, putrefaction", "Wounds classification", "Medico-legal autopsies"]),
+        (17, 17, "Community Medicine", ["Vaccines & cold chain", "Nutritional deficiency diseases", "Screening tests — sensitivity, specificity"]),
+        (15, 16, "General Medicine", ["ECG — arrhythmias, MI patterns", "Endocrinology — diabetes, thyroid, adrenal", "Rheumatology — autoantibodies"]),
+        (13, 14, "General Surgery", ["Abdominal X-ray findings", "Hernias — direct vs indirect", "Surgical anatomy of thyroid & breast"]),
+        (11, 12, "Obstetrics & Gynecology", ["Partograph interpretation", "APH causes — placenta praevia vs abruption", "PCOS diagnostic criteria"]),
+        (9, 10, "Pediatrics", ["Vaccine schedule — NIS & IAP", "Nutritional disorders — PEM classification", "Developmental milestones"]),
+        (8, 8, "Ophthalmology", ["Glaucoma — open vs closed angle", "Cataract surgery complications", "Retinal detachment signs"]),
+        (7, 7, "ENT", ["Tuning fork tests", "Cholesteatoma features", "CSF rhinorrhoea causes"]),
+        (6, 6, "Orthopedics", ["Fracture healing & complications", "Nerve injuries at fracture sites", "Spine anatomy & cord syndromes"]),
+        (5, 5, "Dermatology", ["Bullous disorders — pemphigus vs pemphigoid", "Infections — tinea, leprosy", "Psoriasis pathology"]),
+        (4, 4, "Psychiatry", ["Schizophrenia first-rank symptoms", "Drug of choice for each disorder", "ICD-10 vs DSM-5 key differences"]),
+        (3, 3, "Radiology", ["Chest X-ray systematic reading", "CT patterns — consolidation, ground-glass", "Barium swallow findings"]),
+        (2, 2, "Anesthesiology", ["Airway assessment — Mallampati", "MAC values & anaesthetic depth", "Muscle relaxants & reversal"]),
+        (1, 1, "High-Yield Revision", ["PYQ pattern analysis — last 5 years", "Rapid revision of all one-liners", "Mock test simulation"]),
+    ]
+
+    def get_todays_study_subjects(self) -> tuple[str, list[str]]:
+        """Return (subject, topics) for today based on days remaining to exam."""
+        days = self.get_exam_days_remaining()
+        if days is None or days > 30:
+            # No exam set or >30 days: use weekly theme
+            subj = self.get_weekly_theme_subject()
+            return subj.value.replace("_", " ").title(), []
+
+        for start, end, subject, topics in self._STUDY_PLAN:
+            if end >= days >= start:
+                return subject, topics
+
+        return "General Revision", ["Review weak topics", "MCQ practice", "Flashcard run"]
+
+    async def generate_study_schedule_post(self, publish_to_telegram: bool = True) -> bool:
+        """Post today's structured study plan."""
+        days = self.get_exam_days_remaining()
+        subject, topics = self.get_todays_study_subjects()
+
+        from app.services.formatter import format_study_schedule_post
+        text = format_study_schedule_post(days or 0, subject, topics)
+        if publish_to_telegram:
+            return await self.telegram.send_message(text)
+        return False
+
+    # ── On-Demand AI Query (for bot commands) ────────────────────────────
+
+    async def query_on_demand(
+        self,
+        query_type: str,
+        query_args: str,
+        reply_chat_id: str,
+    ) -> None:
+        """Generate AI content on-demand for a user query and reply to their chat."""
+        FORMAT_MAP = {
+            "drug": ContentFormat.drug_of_day,
+            "compare": ContentFormat.comparison_table,
+            "algorithm": ContentFormat.management_algorithm,
+            "ddx": ContentFormat.clinical_case,
+            "mistake": ContentFormat.common_mistake,
+        }
+        target_format = FORMAT_MAP.get(query_type, ContentFormat.rapid_revision)
+
+        # Pick best subject from args or fallback to random
+        subject = random.choice(list(Subject))
+        for s in Subject:
+            if s.value.replace("_", " ") in query_args.lower() or s.value in query_args.lower():
+                subject = s
+                break
+
+        try:
+            await self.telegram.send_message_to(reply_chat_id, "⏳ Generating…")
+            content = await self.ai_client.generate(subject, target_format)
+            from app.services.formatter import format_for_telegram
+            text = format_for_telegram(content)
+            await self.telegram.send_message_to(reply_chat_id, text)
+        except Exception as exc:
+            logger.warning("On-demand query failed: %s", exc)
+            await self.telegram.send_message_to(
+                reply_chat_id, "❌ Could not generate a response. Try again shortly."
+            )
+
     # ── Education Mode Filtering ───────────────────────────────────────
 
     def _filter_subject_by_mode(self, subject: Subject) -> Subject | None:
@@ -600,6 +688,14 @@ class PostOrchestrator:
                 difficulty=planned.difficulty,
             )
 
+        if planned.lane == PostLane.mistake_corner and not subject_override:
+            return await self.generate_smart_format_post(
+                subject=planned.subject,
+                smart_format="common_mistake",
+                publish_to_telegram=publish_to_telegram,
+                difficulty=planned.difficulty,
+            )
+
         if planned.lane == PostLane.weekly_theme and not subject_override:
             return await self.generate_weekly_theme_post(publish_to_telegram=publish_to_telegram)
 
@@ -765,6 +861,8 @@ class PostOrchestrator:
             "case_unfolding": ContentFormat.case_unfolding,
             "osce_station": ContentFormat.osce_station,
             "weekly_theme_intro": ContentFormat.weekly_theme_intro,
+            "common_mistake": ContentFormat.common_mistake,
+            "study_schedule": ContentFormat.study_schedule,
         }
 
         content: GeneratedContent | None = None
